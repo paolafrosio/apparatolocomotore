@@ -845,9 +845,14 @@
         <section class="skeleton-panel">
             <div class="toolbar">
                 <span class="hint-text" id="toolbar-hint">Scegli Ossa o Muscoli e clicca sui punti</span>
-                <label class="toggle-labels">
-                    <input type="checkbox" id="toggle-names"> Mostra nomi
-                </label>
+                <div style="display:flex; gap:0.45rem; align-items:center; flex-wrap:wrap;">
+                    <label class="toggle-labels">
+                        <input type="checkbox" id="toggle-names"> Mostra nomi
+                    </label>
+                    <button type="button" class="toggle-labels" id="btn-calibrate" style="border:1.5px solid var(--primary); cursor:pointer;">
+                        🎯 Calibra punti
+                    </button>
+                </div>
             </div>
 
             <div class="layer-switch-bar">
@@ -864,7 +869,6 @@
                 <button type="button" class="view-btn" data-view="right">Lato Dx</button>
                 <button type="button" class="view-btn" data-view="back">Retro</button>
                 <button type="button" class="view-btn" data-view="left">Lato Sx</button>
-                <button type="button" class="view-btn" id="btn-calibrate" title="Trascina i pallini sulle tue immagini e copia le coordinate">🎯 Calibra</button>
             </div>
 
             <div class="anatomy-stage" id="anatomy-stage">
