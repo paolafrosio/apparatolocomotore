@@ -237,9 +237,9 @@
         .anatomy-stage {
             position: relative;
             width: 100%;
-            max-width: 440px;
-            aspect-ratio: 2 / 3;
-            background: radial-gradient(circle at center, #0f172a 0%, #020617 100%);
+            max-width: 100%;
+            aspect-ratio: 16 / 10;
+            background: #000000;
             border-radius: 14px;
             overflow: hidden;
             border: 2px solid #1e293b;
@@ -266,9 +266,16 @@
             width: 100%;
             height: 100%;
             object-fit: contain;
+            object-position: center center;
             display: block;
+            margin: 0 auto;
             pointer-events: none;
-            transition: filter 0.3s ease;
+            transition: filter 0.3s ease, transform 0.25s ease;
+        }
+
+        .anatomy-stage.crop-black .plate-img {
+            transform: scale(1.65);
+            transform-origin: center center;
         }
 
         .fallback-svg {
@@ -869,6 +876,7 @@
                 <button type="button" class="view-btn" data-view="right">Lato Dx</button>
                 <button type="button" class="view-btn" data-view="back">Retro</button>
                 <button type="button" class="view-btn" data-view="left">Lato Sx</button>
+                <button type="button" class="view-btn" id="btn-crop-black" title="Ingrandisce lo scheletro eliminando i margini neri">🔍 Centra e Ingrandisci</button>
             </div>
 
             <div class="anatomy-stage" id="anatomy-stage">
@@ -1778,48 +1786,17 @@
         function showPlateImage(src) {
             fallbackSvg.style.display = "none";
             plateImg.style.display = "block";
+            plateImg.onload = () => {
+                if (plateImg.naturalWidth && plateImg.naturalHeight) {
+                    anatomyStage.style.aspectRatio = `${plateImg.naturalWidth} / ${plateImg.naturalHeight}`;
+                }
+            };
             plateImg.src = src;
         }
 
-        /* ================= CONTROLLI ZOOM & PAN ================= */
-        function applyZoomTransform() {
-            const maxPanX = (zoomScale - 1) * anatomyStage.clientWidth;
-            const maxPanY = (zoomScale - 1) * anatomyStage.clientHeight;
-            panX = Math.min(0, Math.max(-maxPanX, panX));
-            panY = Math.min(0, Math.max(-maxPanY, panY));
-            zoomCanvas.style.transform = `translate(${panX}px, ${panY}px) scale(${zoomScale})`;
-        }
-
-        function setZoom(newScale) {
-            const oldScale = zoomScale;
-            zoomScale = Math.min(2.6, Math.max(1, newScale));
-            if (zoomScale === 1) {
-                panX = 0;
-                panY = 0;
-            } else {
-                const cx = anatomyStage.clientWidth / 2;
-                const cy = anatomyStage.clientHeight / 2;
-                panX = cx - ((cx - panX) / oldScale) * zoomScale;
-                panY = cy - ((cy - panY) / oldScale) * zoomScale;
-            }
-            applyZoomTransform();
-        }
-
-        document.getElementById("zoom-in").addEventListener("click", () => setZoom(zoomScale + 0.35));
-        document.getElementById("zoom-out").addEventListener("click", () => setZoom(zoomScale - 0.35));
-        document.getElementById("zoom-reset").addEventListener("click", () => setZoom(1));
-
-        let isDraggingStage = false;
-        let dragStartX = 0;
-        let dragStartY = 0;
-
-        anatomyStage.addEventListener("pointerdown", e => {
-            if (e.target.closest(".hotspot") || e.target.closest(".zoom-controls")) return;
-            if (zoomScale <= 1) return;
-            isDraggingStage = true;
-            dragStartX = e.clientX - panX;
-            dragStartY = e.clientY - panY;
-            anatomyStage.setPointerCapture(e.pointerId);
+        document.getElementById("btn-crop-black").addEventListener("click", function () {
+            const active = anatomyStage.classList.toggle("crop-black");
+            this.classList.toggle("active", active);
         });
 
         anatomyStage.addEventListener("pointermove", e => {
