@@ -238,7 +238,8 @@
             position: relative;
             width: 100%;
             max-width: 100%;
-            aspect-ratio: 16 / 10;
+            height: 620px;
+            max-height: 75vh;
             background: #000000;
             border-radius: 14px;
             overflow: hidden;
@@ -247,6 +248,36 @@
             touch-action: none;
             user-select: none;
             cursor: grab;
+        }
+
+        .anatomy-stage:active {
+            cursor: grabbing;
+        }
+
+        .zoom-canvas {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transform-origin: center center;
+            will-change: transform;
+        }
+
+        .plate-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center center;
+            display: block;
+            pointer-events: none;
+            transition: filter 0.3s ease;
+        }
+
+        .anatomy-stage.full-fit .plate-img {
+            object-fit: contain;
         }
 
         .anatomy-stage:active {
@@ -835,7 +866,7 @@
 
     <header>
         <div class="brand">
-            <span class="brand-badge">CPIA • SCIENZE</span>
+            <span class="brand-badge">CPIA • SCIENZE v3</span>
             <div>
                 <h1>Apparato Locomotore & Pronto Soccorso</h1>
                 <p>Esplora ossa e muscoli, poi visita i pazienti in emergenza</p>
@@ -876,7 +907,7 @@
                 <button type="button" class="view-btn" data-view="right">Lato Dx</button>
                 <button type="button" class="view-btn" data-view="back">Retro</button>
                 <button type="button" class="view-btn" data-view="left">Lato Sx</button>
-                <button type="button" class="view-btn" id="btn-crop-black" title="Ingrandisce lo scheletro eliminando i margini neri">🔍 Centra e Ingrandisci</button>
+                <button type="button" class="view-btn" id="btn-crop-black" title="Mostra immagine intera oppure ingrandita al centro">🖼️ Adatta / Intera</button>
             </div>
 
             <div class="anatomy-stage" id="anatomy-stage">
@@ -1786,16 +1817,43 @@
         function showPlateImage(src) {
             fallbackSvg.style.display = "none";
             plateImg.style.display = "block";
-            plateImg.onload = () => {
-                if (plateImg.naturalWidth && plateImg.naturalHeight) {
-                    anatomyStage.style.aspectRatio = `${plateImg.naturalWidth} / ${plateImg.naturalHeight}`;
-                }
-            };
             plateImg.src = src;
         }
 
+        let isDraggingStage = false;
+        let dragStartX = 0;
+        let dragStartY = 0;
+
+        function applyZoomTransform() {
+            zoomCanvas.style.transform = `translate(${panX}px, ${panY}px) scale(${zoomScale})`;
+        }
+
+        document.getElementById("zoom-in").addEventListener("click", () => {
+            zoomScale = Math.min(3, Number((zoomScale + 0.25).toFixed(2)));
+            applyZoomTransform();
+        });
+
+        document.getElementById("zoom-out").addEventListener("click", () => {
+            zoomScale = Math.max(0.75, Number((zoomScale - 0.25).toFixed(2)));
+            applyZoomTransform();
+        });
+
+        document.getElementById("zoom-reset").addEventListener("click", () => {
+            zoomScale = 1;
+            panX = 0;
+            panY = 0;
+            applyZoomTransform();
+        });
+
+        anatomyStage.addEventListener("pointerdown", e => {
+            if (isCalibrating) return;
+            isDraggingStage = true;
+            dragStartX = e.clientX - panX;
+            dragStartY = e.clientY - panY;
+        });
+
         document.getElementById("btn-crop-black").addEventListener("click", function () {
-            const active = anatomyStage.classList.toggle("crop-black");
+            const active = anatomyStage.classList.toggle("full-fit");
             this.classList.toggle("active", active);
         });
 
