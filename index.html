@@ -1067,7 +1067,46 @@
             },
             {
                 id: "rotula", name: "Rotula", region: "Arti inferiori",
-        /* ================= DATABASE MUSCOLI (11 GRUPPI MUSCOLARI RICHIESTI) ================= */
+                desc: "Piccolo osso piatto e tondeggiante posto davanti all'articolazione del ginocchio.",
+                func: "Protegge il ginocchio e migliora la leva del muscolo quadricipite quando estendiamo la gamba.",
+                joints: "Articolazione femoro-rotulea (ginocchio).",
+                muscles: "Quadricipite femorale (tramite il tendine rotuleo).",
+                views: {
+                    front: { x: 41.2, y: 72.4 },
+                    right: { x: 49.7, y: 71.7 },
+                    back:  { x: 55.7, y: 69.2, hidden: true },
+                    left:  { x: 45.9, y: 72.8 }
+                }
+            },
+            {
+                id: "tibia", name: "Tibia", region: "Arti inferiori",
+                desc: "Osso lungo e robusto della gamba situato nella parte anteriore e interna (lo stinco).",
+                func: "Sostiene quasi tutto il peso della gamba dal ginocchio fino alla caviglia.",
+                joints: "Articolazione del ginocchio (in alto) e della caviglia (in basso).",
+                muscles: "Tibiale anteriore, quadricipite femorale e gastrocnemio (polpaccio).",
+                views: {
+                    front: { x: 45.2, y: 80.5 },
+                    right: { x: 51.6, y: 81.3 },
+                    back:  { x: 56.8, y: 79.5 },
+                    left:  { x: 42.9, y: 80.3 }
+                }
+            },
+            {
+                id: "perone", name: "Perone", region: "Arti inferiori",
+                desc: "Osso lungo e sottile situato sul lato esterno della gamba, parallelo alla tibia.",
+                func: "Dà stabilità alla caviglia e offre attacco ai muscoli della gamba.",
+                joints: "Articolazione tibio-peroneale e caviglia.",
+                muscles: "Muscoli peronieri e soleo.",
+                views: {
+                    front: { x: 42.5, y: 85.4 },
+                    right: { x: 58.5, y: 85.3 },
+                    back:  { x: 61, y: 85.1 },
+                    left:  { x: 36.1, y: 82.9 }
+                }
+            }
+        ];
+
+        /* ================= DATABASE MUSCOLI (12 GRUPPI MUSCOLARI RICHIESTI) ================= */
         const MUSCLES = [
             {
                 id: "trapezio", name: "Trapezio", region: "Tronco",
