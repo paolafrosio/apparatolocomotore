@@ -370,6 +370,11 @@
             gap: 0.35rem;
             cursor: pointer;
             z-index: 5;
+            touch-action: none;
+        }
+
+        .anatomy-stage.calibrating-mode .hotspot {
+            cursor: move;
         }
 
         .hotspot-dot {
@@ -859,7 +864,7 @@
                     <label class="toggle-labels">
                         <input type="checkbox" id="toggle-names"> Mostra nomi
                     </label>
-                    <button type="button" class="toggle-labels" id="btn-calibrate" style="border:1.5px solid var(--primary); cursor:pointer;">
+                    <button type="button" class="toggle-labels" id="btn-calibrate" onclick="toggleCalibrationMode()" style="border:1.5px solid var(--primary); cursor:pointer;">
                         🎯 Calibra punti
                     </button>
                 </div>
@@ -875,10 +880,10 @@
             </div>
 
             <div class="view-controls" id="view-controls">
-                <button type="button" class="view-btn active" data-view="front">Fronte</button>
-                <button type="button" class="view-btn" data-view="right">Lato Dx</button>
-                <button type="button" class="view-btn" data-view="back">Retro</button>
-                <button type="button" class="view-btn" data-view="left">Lato Sx</button>
+                <button type="button" class="view-btn active" data-view="front" onclick="switchAnatomyView('front')">Fronte</button>
+                <button type="button" class="view-btn" data-view="right" onclick="switchAnatomyView('right')">Lato Dx</button>
+                <button type="button" class="view-btn" data-view="back" onclick="switchAnatomyView('back')">Retro</button>
+                <button type="button" class="view-btn" data-view="left" onclick="switchAnatomyView('left')">Lato Sx</button>
                 <button type="button" class="view-btn" id="btn-crop-black" title="Mostra immagine intera oppure ingrandita al centro">🖼️ Adatta / Intera</button>
             </div>
 
@@ -1116,7 +1121,7 @@
                 bones: "Cranio, Clavicola, Scapola e Colonna vertebrale.",
                 views: {
                     front: { x: 50, y: 17.5, hidden: true },
-                    right: { x: 49.6, y: 23.1 },
+                    right: { x: 61.7, y: 15.9 },
                     back:  { x: 49.6, y: 23.1 },
                     left:  { x: 28.9, y: 20.2 }
                 }
@@ -1129,7 +1134,7 @@
                 bones: "Clavicola, Scapola e Omero.",
                 views: {
                     front: { x: 26.3, y: 19.2 },
-                    right: { x: 27.1, y: 18.3 },
+                    right: { x: 60.8, y: 19.7 },
                     back:  { x: 27.1, y: 18.3 },
                     left:  { x: 40, y: 18.4 }
                 }
@@ -1142,7 +1147,7 @@
                 bones: "Clavicola, Sterno, Costole e Omero.",
                 views: {
                     front: { x: 60.4, y: 22.6 },
-                    right: { x: 56.2, y: 23, hidden: true },
+                    right: { x: 42.4, y: 23.5 },
                     back:  { x: 56.2, y: 23, hidden: true },
                     left:  { x: 55.5, y: 23 }
                 }
@@ -1155,7 +1160,7 @@
                 bones: "Scapola, Omero e Radio.",
                 views: {
                     front: { x: 20.8, y: 28.8 },
-                    right: { x: 66.5, y: 28.5, hidden: true },
+                    right: { x: 56.2, y: 29.7 },
                     back:  { x: 66.5, y: 28.5, hidden: true },
                     left:  { x: 43.5, y: 27.1 }
                 }
@@ -1168,7 +1173,7 @@
                 bones: "Scapola, Omero e Ulna.",
                 views: {
                     front: { x: 29.7, y: 31.1 },
-                    right: { x: 73.5, y: 31.6 },
+                    right: { x: 66, y: 28.1 },
                     back:  { x: 73.5, y: 31.6 },
                     left:  { x: 31.6, y: 29 }
                 }
@@ -1181,8 +1186,8 @@
                 bones: "Colonna vertebrale, Bacino, Costole e Omero.",
                 views: {
                     front: { x: 42, y: 31, hidden: true },
-                    right: { x: 32.5, y: 34.6 },
-                    back:  { x: 32.5, y: 34.6 },
+                    right: { x: 52.3, y: 36 },
+                    back:  { x: 36.5, y: 33.3 },
                     left:  { x: 44.7, y: 34.8 }
                 }
             },
@@ -1194,9 +1199,9 @@
                 bones: "Sterno, Costole e Bacino.",
                 views: {
                     front: { x: 47.8, y: 35.5 },
-                    right: { x: 52.2, y: 35.5, hidden: true },
+                    right: { x: 38.5, y: 35.3 },
                     back:  { x: 52.2, y: 35.5, hidden: true },
-                    left:  { x: 54.5, y: 35.5 }
+                    left:  { x: 57.8, y: 36.9 }
                 }
             },
             {
@@ -1207,8 +1212,8 @@
                 bones: "Bacino e Femore.",
                 views: {
                     front: { x: 42.5, y: 46.5, hidden: true },
-                    right: { x: 54.2, y: 50.3 },
-                    back:  { x: 54.2, y: 50.3 },
+                    right: { x: 61.3, y: 48.8 },
+                    back:  { x: 56.5, y: 49.3 },
                     left:  { x: 35, y: 49.8 }
                 }
             },
@@ -1220,7 +1225,7 @@
                 bones: "Bacino, Femore, Rotula e Tibia.",
                 views: {
                     front: { x: 40, y: 58.4 },
-                    right: { x: 57.5, y: 58.5, hidden: true },
+                    right: { x: 41.3, y: 60 },
                     back:  { x: 57.5, y: 58.5, hidden: true },
                     left:  { x: 56.6, y: 58.8 }
                 }
@@ -1233,9 +1238,9 @@
                 bones: "Bacino, Femore, Tibia e Perone.",
                 views: {
                     front: { x: 42.5, y: 59.5, hidden: true },
-                    right: { x: 57.5, y: 59.5 },
+                    right: { x: 57, y: 64.3 },
                     back:  { x: 57.5, y: 59.5 },
-                    left:  { x: 36.9, y: 61.2 }
+                    left:  { x: 40.3, y: 63.8 }
                 }
             },
             {
@@ -1246,7 +1251,7 @@
                 bones: "Tibia e ossa del piede.",
                 views: {
                     front: { x: 42, y: 78.5 },
-                    right: { x: 58, y: 78.5, hidden: true },
+                    right: { x: 49.8, y: 79.8 },
                     back:  { x: 58, y: 78.5, hidden: true },
                     left:  { x: 46.9, y: 79.1 }
                 }
@@ -1259,7 +1264,7 @@
                 bones: "Femore, Tibia, Perone e Calcagno (piede).",
                 views: {
                     front: { x: 42, y: 78.5, hidden: true },
-                    right: { x: 57.5, y: 78.5 },
+                    right: { x: 59.9, y: 80.9 },
                     back:  { x: 57.5, y: 78.5 },
                     left:  { x: 35.8, y: 80.6 }
                 }
@@ -1913,6 +1918,7 @@
                 el.dataset.id = item.id;
                 el.style.left = pos.x + "%";
                 el.style.top = pos.y + "%";
+                el.style.cursor = isCalibrating ? "move" : "pointer";
 
                 el.innerHTML = `
                     <span class="hotspot-dot"></span>
@@ -1935,6 +1941,7 @@
                 // Trascinamento libero in modalità Calibra
                 el.addEventListener("pointerdown", e => {
                     if (!isCalibrating) return;
+                    e.preventDefault();
                     e.stopPropagation();
                     el.setPointerCapture(e.pointerId);
                     const onMove = ev => {
@@ -1962,22 +1969,40 @@
             renderAnatomyHighlight();
         }
 
-        function toggleCalibItemVisibility(id) {
+        function updateHotspotPositions() {
             const list = currentLayer === "bones" ? BONES : MUSCLES;
-            const item = list.find(it => it.id === id);
-            if (!item) return;
-            const v = item.views[currentView];
-            v.hidden = !v.hidden;
-            if (!v.hidden && (typeof v.x !== "number" || typeof v.y !== "number")) {
-                v.x = 50;
-                v.y = 50;
+            document.querySelectorAll(".hotspot").forEach(el => {
+                const item = list.find(i => i.id === el.dataset.id);
+                if (!item) return;
+                const pos = getItemPosition(item);
+                el.style.left = pos.x + "%";
+                el.style.top = pos.y + "%";
+            });
+            renderAnatomyHighlight();
+        }
+
+        function renderAnatomyHighlight() {
+            const targetId = hoveredItemId || (currentLayer === "bones" ? selectedBone?.id : selectedMuscle?.id);
+            const list = currentLayer === "bones" ? BONES : MUSCLES;
+            const item = list.find(i => i.id === targetId);
+            if (!item) {
+                highlightSvg.innerHTML = "";
+                return;
             }
-            renderHotspots();
-            renderCalibrationPanel();
+            const pos = getItemPosition(item);
+            if (pos.hidden) {
+                highlightSvg.innerHTML = "";
+                return;
+            }
+            const color = currentLayer === "bones" ? "#38bdf8" : "#f87171";
+            highlightSvg.innerHTML = `
+                <circle cx="${pos.x}" cy="${pos.y}" r="3.2" fill="${color}" fill-opacity="0.28" stroke="${color}" stroke-width="0.45" />
+            `;
         }
 
         function renderCalibrationPanel() {
             const list = currentLayer === "bones" ? BONES : MUSCLES;
+            const layerLabel = currentLayer === "bones" ? "Ossa" : "Muscoli";
             const summary = list.map(it => {
                 const v = it.views[currentView];
                 return `${it.id}: { x: ${v.x}, y: ${v.y}${v.hidden ? ", hidden: true" : ""} }`;
@@ -1987,26 +2012,15 @@
                 <div class="bone-header">
                     <div>
                         <span class="region-tag">🎯 Modalità Calibrazione</span>
-                        <h2 class="bone-title">Posiziona o nascondi (${currentView})</h2>
+                        <h2 class="bone-title">${layerLabel} — Vista: ${currentView}</h2>
                     </div>
-                    <button type="button" class="speak-btn" onclick="copyCalibratedCoords()">📋 Copia coordinate</button>
+                    <button type="button" class="speak-btn" id="btn-copy-coords" onclick="copyCalibratedCoords()">📋 Copia coordinate</button>
                 </div>
                 <div class="info-box">
-                    <h3>Attiva / Elimina punti su questa vista</h3>
-                    <p style="font-size:0.88rem; margin-bottom:0.55rem;">Clicca su un nome qui sotto per mostrarlo (verde) o eliminarlo (barrato) da questa vista, oppure trascina i pallini sull'immagine.</p>
-                    <div style="display:flex; flex-wrap:wrap; gap:0.38rem;">
-                        ${list.map(it => {
-                            const isHidden = Boolean(it.views[currentView]?.hidden);
-                            return `
-                                <button type="button" onclick="toggleCalibItemVisibility('${it.id}')"
-                                    style="padding:0.32rem 0.65rem; border-radius:8px; font-size:0.82rem; font-weight:700; cursor:pointer; border:1.5px solid ${isHidden ? '#cbd5e1' : '#16a34a'}; background:${isHidden ? '#f1f5f9' : '#dcfce7'}; color:${isHidden ? '#64748b' : '#14532d'}; text-decoration:${isHidden ? 'line-through' : 'none'};">
-                                    ${isHidden ? '🚫' : '👁️'} ${it.name}
-                                </button>
-                            `;
-                        }).join("")}
-                    </div>
+                    <h3>Trascina i pallini sull'immagine</h3>
+                    <p style="font-size:0.9rem;">Sposta ogni pallino direttamente sopra l'osso o il muscolo corrispondente. Puoi cambiare vista (Fronte, Lato Dx, Retro, Lato Sx) o livello (Ossa / Muscoli) in qualsiasi momento.</p>
                 </div>
-                <textarea id="calib-output" readonly style="width:100%; height:185px; font-family:monospace; font-size:0.8rem; padding:0.65rem; border-radius:10px; border:1px solid var(--border); background:#f8fafc;">${summary}</textarea>
+                <textarea id="calib-output" readonly style="width:100%; height:240px; font-family:monospace; font-size:0.82rem; padding:0.75rem; border-radius:10px; border:1px solid var(--border); background:#f8fafc;">${summary}</textarea>
             `;
         }
 
@@ -2015,438 +2029,53 @@
             if (!ta) return;
             ta.select();
             document.execCommand("copy");
-        }
-
-        function updateHotspotPositions() {
-            renderHotspots();
-        }
-
-        function renderAnatomyHighlight() {
-            highlightSvg.innerHTML = "";
-            const activeId = hoveredItemId || (currentMode === "explore"
-                ? (currentLayer === "bones" ? selectedBone?.id : selectedMuscle?.id)
-                : null);
-
-            if (!activeId) return;
-
-            const list = currentLayer === "bones" ? BONES : MUSCLES;
-            const item = list.find(i => i.id === activeId);
-            if (!item) return;
-
-            const pos = getItemPosition(item);
-            if (pos.hidden) return;
-
-            const strokeColor = currentLayer === "bones" ? "#38bdf8" : "#facc15";
-            highlightSvg.innerHTML = `
-                <circle cx="${pos.x}" cy="${pos.y}" r="3.2"
-                    fill="${strokeColor}" fill-opacity="0.25"
-                    stroke="${strokeColor}" stroke-width="0.45" />
-            `;
-        }
-
-        function speakCurrentItem() {
-            const activeItem = currentLayer === "bones" ? selectedBone : selectedMuscle;
-            speakItalian(`${activeItem.name}. ${activeItem.desc} Funzione: ${activeItem.func}`);
-        }
-
-        function setRegionFilter(region) {
-            selectedRegionFilter = region;
-            renderExplorePanel();
-        }
-
-        function selectExploreItemById(id) {
-            const list = currentLayer === "bones" ? BONES : MUSCLES;
-            const found = list.find(i => i.id === id);
-            if (!found) return;
-
-            if (found.views[currentView]?.hidden) {
-                const visibleView = ["front", "back", "right", "left"].find(v => !found.views[v]?.hidden) || "front";
-                currentView = visibleView;
-                document.querySelectorAll(".view-btn").forEach(b => {
-                    b.classList.toggle("active", b.dataset.view === currentView);
-                });
-                loadAnatomyPlate(currentLayer, currentView);
+            const btn = document.getElementById("btn-copy-coords");
+            if (btn) {
+                btn.textContent = "✅ Coordinate copiate!";
+                setTimeout(() => { btn.textContent = "📋 Copia coordinate"; }, 1800);
             }
-
-            if (currentLayer === "bones") selectedBone = found;
-            else selectedMuscle = found;
-
-            renderHotspots();
-            highlightSelectedBone(found.id);
-            renderExplorePanel();
         }
 
-        /* ================= MODALITÀ 1: ATLANTE LOCOMOTORE ================= */
-        function renderExplorePanel() {
-            const isBones = currentLayer === "bones";
-            const items = isBones ? BONES : MUSCLES;
-            const activeItem = isBones ? selectedBone : selectedMuscle;
-            const regions = ["Tutte", "Testa", "Tronco", "Arti superiori", "Arti inferiori"];
-            const filteredItems = selectedRegionFilter === "Tutte"
-                ? items
-                : items.filter(i => i.region === selectedRegionFilter);
-
-            infoPanel.innerHTML = `
-                <div class="bone-header">
-                    <div>
-                        <span class="region-tag ${isBones ? "" : "muscle-tag"}">
-                            ${isBones ? "🦴 Osso" : "💪 Muscolo"} • ${activeItem.region}
-                        </span>
-                        <h2 class="bone-title">${activeItem.name}</h2>
-                    </div>
-                    <button type="button" class="speak-btn" onclick="speakCurrentItem()">
-                        🔊 Ascolta
-                    </button>
-                </div>
-
-                <div class="info-box ${isBones ? "" : "muscle-box"}">
-                    <h3>Com'è fatto</h3>
-                    <p>${activeItem.desc}</p>
-                </div>
-
-                <div class="info-box ${isBones ? "" : "muscle-box"}">
-                    <h3>A cosa serve</h3>
-                    <p>${activeItem.func}</p>
-                </div>
-
-                <div>
-                    <div style="font-size: 0.85rem; font-weight: 700; color: var(--muted); margin-bottom: 0.45rem;">
-                        Scegli ${isBones ? "un osso" : "un muscolo"}:
-                    </div>
-                    <div class="filter-bar">
-                        ${regions.map(r => `
-                            <button type="button" class="filter-chip ${selectedRegionFilter === r ? "active" : ""}"
-                                onclick="setRegionFilter('${r}')">${r}</button>
-                        `).join("")}
-                    </div>
-                    <div class="bone-grid">
-                        ${filteredItems.map(it => `
-                            <button type="button" class="bone-chip ${it.id === activeItem.id ? "active" : ""}"
-                                onclick="selectExploreItemById('${it.id}')">${it.name}</button>
-                        `).join("")}
-                    </div>
-                </div>
-            `;
-        }
-
-        /* ================= MODALITÀ 2: PRONTO SOCCORSO ================= */
-        function renderErIntroScreen() {
-            setXrayVisual(true);
-            resetHotspotStates();
-
-            infoPanel.innerHTML = `
-                <div class="er-start-wrapper">
-                    <div class="er-blurred-preview">
-                        <div class="er-status-bar">
-                            <span>🚑 Caso 1 / ${ER_CASES.length}</span>
-                            <span>Punti: 0 • Serie: 0🔥</span>
-                        </div>
-                        <div class="patient-card triage-giallo" style="margin-top: 0.85rem;">
-                            <div class="patient-header">
-                                <div class="patient-avatar">🚴</div>
-                                <div>
-                                    <span class="urgency-tag triage-giallo">🟡 CODICE GIALLO • Urgenza</span>
-                                    <h3>Paziente in arrivo...</h3>
-                                </div>
-                            </div>
-                            <p class="patient-symptom">«Sono caduto dalla bicicletta e sento un forte dolore...»</p>
-                        </div>
-                    </div>
-
-                    <div class="er-start-overlay">
-                        <div class="er-start-card">
-                            <div style="font-size: 2.2rem; margin-bottom: 0.35rem;">🚑</div>
-                            <h2 style="font-size: 1.35rem; font-weight: 800; color: #0f172a;">
-                                Pronto Soccorso Ortopedico
-                            </h2>
-                            <p style="font-size: 0.94rem; color: var(--muted); margin-top: 0.45rem;">
-                                Leggi i sintomi del paziente, osserva il codice Triage e clicca sull'osso o sul muscolo lesionato.
-                            </p>
-                            <div class="triage-legend" style="margin-top: 0.8rem; justify-content: center;">
-                                <span>🔴 Emergenza</span>
-                                <span>🟡 Urgenza</span>
-                                <span>🟢 Lieve</span>
-                            </div>
-                            <button type="button" class="er-start-btn" onclick="beginErShift()">
-                                ▶️ Inizia il Turno
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            `;
-        }
-
-        function beginErShift() {
-            erQueue = [...ER_CASES].sort(() => Math.random() - 0.5);
-            erIndex = 0;
-            erScore = 0;
-            erStreak = 0;
-            erMissedCases = [];
-            loadErCase();
-        }
-
-        function loadErCase() {
-            if (erIndex >= erQueue.length) {
-                renderErSummary();
-                return;
-            }
-            const c = erQueue[erIndex];
-            erStep = "find_bone";
-            erHintUsed = false;
-
-            if (currentLayer !== c.layer) {
-                switchAnatomyLayer(c.layer);
-            } else {
-                resetHotspotStates();
-            }
-            setXrayVisual(true);
-            renderErPanel();
-        }
-
-        function handleErHotspotClick(item) {
-            if (erStep !== "find_bone") return;
-            const c = erQueue[erIndex];
-
-            if (item.id === c.targetId) {
-                erStep = "answer_q";
-                erScore += erHintUsed ? 5 : 10;
-                erStreak++;
-                const dot = document.querySelector(`.hotspot[data-id="${item.id}"]`);
-                if (dot) dot.classList.add("correct");
-                renderErPanel(`✅ Esatto! Hai individuato: ${item.name}. Ora rispondi alla domanda medica.`);
-            } else {
-                erStreak = 0;
-                const dot = document.querySelector(`.hotspot[data-id="${item.id}"]`);
-                if (dot) {
-                    dot.classList.add("wrong");
-                    setTimeout(() => dot.classList.remove("wrong"), 700);
+        function toggleCalibrationMode() {
+            isCalibrating = !isCalibrating;
+            const btn = document.getElementById("btn-calibrate");
+            anatomyStage.classList.toggle("calibrating-mode", isCalibrating);
+            if (isCalibrating) {
+                if (btn) {
+                    btn.style.background = "#fef08a";
+                    btn.style.borderColor = "#ca8a04";
+                    btn.style.color = "#854d0e";
+                    btn.textContent = "✅ Fine calibrazione";
                 }
-                renderErPanel(`❌ Non è ${item.name}. Rileggi i sintomi e riprova!`, true);
-            }
-        }
-
-        function answerErQuestion(optIdx) {
-            if (erStep !== "answer_q") return;
-            const c = erQueue[erIndex];
-            erStep = "done";
-
-            const buttons = document.querySelectorAll(".er-opt-btn");
-            buttons.forEach((btn, idx) => {
-                btn.disabled = true;
-                if (idx === c.correctOpt) btn.classList.add("correct");
-                else if (idx === optIdx) btn.classList.add("wrong");
-            });
-
-            if (optIdx === c.correctOpt) {
-                erScore += 5;
-                renderErPanel("🎉 Diagnosi completata con successo! (+5 punti bonus)");
+                anatomyStage.classList.add("show-all-labels");
+                toolbarHint.textContent = "Trascina i pallini sull'immagine per posizionarli";
+                renderCalibrationPanel();
             } else {
-                if (!erMissedCases.includes(c)) erMissedCases.push(c);
-                renderErPanel("ℹ️ Risposta non corretta: guarda la risposta giusta evidenziata in verde.", true);
+                if (btn) {
+                    btn.style.background = "";
+                    btn.style.borderColor = "var(--primary)";
+                    btn.style.color = "";
+                    btn.textContent = "🎯 Calibra punti";
+                }
+                anatomyStage.classList.toggle("show-all-labels", toggleNames.checked);
+                toolbarHint.textContent = "Scegli Ossa o Muscoli e clicca sui punti";
+                if (currentMode === "explore") renderExplorePanel();
+                else if (currentMode === "er") renderErIntroScreen();
+                else renderQuizPanel();
             }
+            renderHotspots();
         }
 
-        function useErHint() {
-            erHintUsed = true;
-            renderErPanel();
-        }
-
-        function nextErCase() {
-            erIndex++;
-            loadErCase();
-        }
-
-        function renderErPanel(feedbackMsg = "", isError = false) {
-            const c = erQueue[erIndex];
-            if (!c) return;
-            const triageMeta = TRIAGE_INFO[c.triage] || TRIAGE_INFO.giallo;
-            const layerLabel = c.layer === "bones" ? "🦴 OSSO" : "💪 MUSCOLO";
-
-            infoPanel.innerHTML = `
-                <div class="er-status-bar">
-                    <span>🚑 Caso ${erIndex + 1} / ${erQueue.length}</span>
-                    <span>Punti: ${erScore} • Serie: ${erStreak}🔥</span>
-                </div>
-
-                <div class="patient-card triage-${c.triage}">
-                    <div class="patient-header">
-                        <div class="patient-avatar">${c.avatar}</div>
-                        <div>
-                            <span class="urgency-tag triage-${c.triage}">${triageMeta.label}</span>
-                            <h3 style="font-size: 1.15rem; font-weight: 800;">${c.patient}</h3>
-                        </div>
-                    </div>
-                    <div class="triage-explain">${triageMeta.explain}</div>
-                    <p class="patient-symptom">«${c.story}»</p>
-                </div>
-
-                <div class="info-box">
-                    <h3>Fase 1 • Visita allo scanner (${layerLabel})</h3>
-                    <p>Clicca sulla tavola anatomica il punto corrispondente alla lesione.</p>
-                    ${erStep === "find_bone" ? `
-                        <div style="margin-top: 0.55rem;">
-                            ${erHintUsed
-                                ? `<div style="color:#0369a1; font-weight:700;">💡 Indizio: ${c.hint}</div>`
-                                : `<button type="button" class="secondary-btn" onclick="useErHint()">💡 Chiedi indizio (-5 pt)</button>`
-                            }
-                        </div>
-                    ` : ""}
-                </div>
-
-                ${(erStep === "answer_q" || erStep === "done") ? `
-                    <div class="info-box">
-                        <h3>Fase 2 • Domanda clinica</h3>
-                        <p style="font-weight: 700; margin-bottom: 0.65rem;">${c.question}</p>
-                        <div class="quiz-options">
-                            ${c.options.map((opt, idx) => `
-                                <button type="button" class="option-btn er-opt-btn" onclick="answerErQuestion(${idx})">
-                                    ${opt}
-                                </button>
-                            `).join("")}
-                        </div>
-                    </div>
-                ` : ""}
-
-                ${feedbackMsg ? `
-                    <div class="feedback-box ${isError ? "error" : "success"}">${feedbackMsg}</div>
-                ` : ""}
-
-                ${erStep === "done" ? `
-                    <button type="button" class="next-btn" onclick="nextErCase()">
-                        ${erIndex + 1 < erQueue.length ? "Prossimo paziente ➡️" : "Vedi referto finale 📋"}
-                    </button>
-                ` : ""}
-            `;
-        }
-
-        function renderErSummary() {
-            setXrayVisual(false);
-            resetHotspotStates();
-
-            infoPanel.innerHTML = `
-                <div style="text-align: center; padding: 0.5rem 0;">
-                    <div style="font-size: 2.8rem;">🏆</div>
-                    <h2 style="font-size: 1.55rem; font-weight: 800;">Turno Completato!</h2>
-                    <p style="font-size: 1.05rem; color: var(--muted); margin-top: 0.35rem;">
-                        Punteggio finale: <strong style="color: var(--primary-dark);">${erScore} punti</strong>
-                    </p>
-                </div>
-
-                <div class="info-box">
-                    <h3>Riepilogo clinico</h3>
-                    <p>
-                        ${erMissedCases.length === 0
-                            ? "Ottimo lavoro! Hai diagnosticato correttamente tutti i pazienti al primo tentativo."
-                            : `Hai incontrato qualche difficoltà su ${erMissedCases.length} caso/i. Puoi ripeterli subito per consolidare!`
-                        }
-                    </p>
-                </div>
-
-                <div style="display: flex; gap: 0.65rem; flex-wrap: wrap;">
-                    <button type="button" class="next-btn" onclick="beginErShift()">🔄 Nuovo Turno Completo</button>
-                    ${erMissedCases.length > 0 ? `
-                        <button type="button" class="secondary-btn" onclick="retryMissedErCases()">
-                            🩺 Ripeti solo i casi sbagliati (${erMissedCases.length})
-                        </button>
-                    ` : ""}
-                    <button type="button" class="secondary-btn" onclick="window.print()">🖨️ Stampa Referto</button>
-                </div>
-            `;
-        }
-
-        function retryMissedErCases() {
-            erQueue = [...erMissedCases];
-            erMissedCases = [];
-            erIndex = 0;
-            loadErCase();
-        }
-
-        /* ================= MODALITÀ 3: QUIZ ================= */
-        function renderQuizPanel() {
-            setXrayVisual(false);
-            resetHotspotStates();
-
-            if (quizIndex >= QUIZ_QUESTIONS.length) {
-                infoPanel.innerHTML = `
-                    <div style="text-align: center; padding: 1rem 0;">
-                        <div style="font-size: 2.6rem;">📝</div>
-                        <h2 style="font-size: 1.5rem; font-weight: 800;">Quiz Terminato!</h2>
-                        <p style="font-size: 1.1rem; margin-top: 0.5rem;">
-                            Hai risposto correttamente a <strong>${quizScore} su ${QUIZ_QUESTIONS.length}</strong> domande.
-                        </p>
-                        <button type="button" class="next-btn" style="margin-top: 1.1rem;" onclick="restartQuiz()">
-                            🔄 Ripeti il Quiz
-                        </button>
-                    </div>
-                `;
-                return;
-            }
-
-            const q = QUIZ_QUESTIONS[quizIndex];
-            infoPanel.innerHTML = `
-                <div class="er-status-bar">
-                    <span>📝 Domanda ${quizIndex + 1} di ${QUIZ_QUESTIONS.length}</span>
-                    <span>Risposte esatte: ${quizScore}</span>
-                </div>
-
-                <div class="info-box">
-                    <h3>Verifica rapida</h3>
-                    <p style="font-size: 1.12rem; font-weight: 700;">${q.q}</p>
-                </div>
-
-                <div class="quiz-options">
-                    ${q.opts.map((opt, idx) => `
-                        <button type="button" class="option-btn quiz-opt-btn" onclick="answerQuiz(${idx})">
-                            ${opt}
-                        </button>
-                    `).join("")}
-                </div>
-
-                <div id="quiz-feedback"></div>
-            `;
-        }
-
-        function answerQuiz(idx) {
-            if (quizAnswered) return;
-            quizAnswered = true;
-            const q = QUIZ_QUESTIONS[quizIndex];
-            const buttons = document.querySelectorAll(".quiz-opt-btn");
-            buttons.forEach((b, i) => {
-                b.disabled = true;
-                if (i === q.ans) b.classList.add("correct");
-                else if (i === idx) b.classList.add("wrong");
+        function switchAnatomyView(view) {
+            currentView = view;
+            document.querySelectorAll(".view-btn[data-view]").forEach(b => {
+                b.classList.toggle("active", b.dataset.view === currentView);
             });
-
-            const fb = document.getElementById("quiz-feedback");
-            if (idx === q.ans) {
-                quizScore++;
-                fb.innerHTML = `
-                    <div class="feedback-box success" style="margin-bottom: 0.75rem;">
-                        ✅ Esatto! ${q.exp}
-                    </div>
-                    <button type="button" class="next-btn" onclick="nextQuizQuestion()">Prossima domanda ➡️</button>
-                `;
-            } else {
-                fb.innerHTML = `
-                    <div class="feedback-box error" style="margin-bottom: 0.75rem;">
-                        ❌ Non esatto. ${q.exp}
-                    </div>
-                    <button type="button" class="next-btn" onclick="nextQuizQuestion()">Prossima domanda ➡️</button>
-                `;
+            renderHotspots();
+            if (isCalibrating) {
+                renderCalibrationPanel();
             }
-        }
-
-        function nextQuizQuestion() {
-            quizIndex++;
-            quizAnswered = false;
-            renderQuizPanel();
-        }
-
-        function restartQuiz() {
-            quizIndex = 0;
-            quizScore = 0;
-            quizAnswered = false;
-            renderQuizPanel();
+            loadAnatomyPlate(currentLayer, currentView);
         }
 
         /* ================= CONTROLLI LAYER, VISTE, AUDIO E SELEZIONE ================= */
@@ -2456,24 +2085,25 @@
             document.getElementById("btn-layer-muscles").classList.toggle("active-muscles", layer === "muscles");
             selectedRegionFilter = "Tutte";
             renderHotspots();
-            if (currentMode === "explore") {
+            if (isCalibrating) {
+                renderCalibrationPanel();
+            } else if (currentMode === "explore") {
                 renderExplorePanel();
             }
             loadAnatomyPlate(currentLayer, currentView);
         }
 
         function handleAnatomyItemClick(item) {
-            if (currentMode === "er") {
-                handleErHotspotClick(item);
-                return;
-            }
             if (currentLayer === "bones") selectedBone = item;
             else selectedMuscle = item;
 
             highlightSelectedBone(item.id);
             renderAnatomyHighlight();
+
             if (currentMode === "explore") {
                 renderExplorePanel();
+            } else if (currentMode === "er" && erStep === "locate") {
+                checkErLocation(item);
             }
         }
 
@@ -2505,8 +2135,237 @@
         }
 
         toggleNames.addEventListener("change", () => {
-            anatomyStage.classList.toggle("show-all-labels", toggleNames.checked);
+            anatomyStage.classList.toggle("show-all-labels", isCalibrating || toggleNames.checked);
         });
+
+        /* ================= PANNELLO ESPLORAZIONE ================= */
+        function renderExplorePanel() {
+            const isBones = currentLayer === "bones";
+            const list = isBones ? BONES : MUSCLES;
+            const current = isBones ? selectedBone : selectedMuscle;
+            const regions = ["Tutte", "Testa", "Tronco", "Arti superiori", "Arti inferiori"];
+            const filtered = selectedRegionFilter === "Tutte"
+                ? list
+                : list.filter(i => i.region === selectedRegionFilter);
+
+            highlightSelectedBone(current.id);
+
+            infoPanel.innerHTML = `
+                <div class="bone-header">
+                    <div>
+                        <span class="region-tag ${isBones ? "" : "muscle-tag"}">${isBones ? "🦴 Osso" : "💪 Muscolo"} • ${current.region}</span>
+                        <h2 class="bone-title">${current.name}</h2>
+                    </div>
+                    <button type="button" class="speak-btn" onclick="speakItalian('${current.name}. ${current.desc} Funzione: ${current.func}')">🔊 Ascolta</button>
+                </div>
+
+                <div class="info-box ${isBones ? "" : "muscle-box"}">
+                    <h3>Descrizione anatomica</h3>
+                    <p>${current.desc}</p>
+                </div>
+
+                <div class="info-box ${isBones ? "" : "muscle-box"}">
+                    <h3>Funzione principale</h3>
+                    <p>${current.func}</p>
+                </div>
+
+                <div class="info-box ${isBones ? "" : "muscle-box"}">
+                    <h3>Articolazioni e collegamenti</h3>
+                    <p><strong>Articolazioni:</strong> ${current.joints}<br>
+                    <strong>${isBones ? "Muscoli collegati" : "Ossa collegate"}:</strong> ${isBones ? current.muscles : current.bones}</p>
+                </div>
+
+                <div>
+                    <div class="filter-bar">
+                        ${regions.map(r => `
+                            <button type="button" class="filter-chip ${selectedRegionFilter === r ? "active" : ""}" onclick="selectedRegionFilter='${r}'; renderExplorePanel();">${r}</button>
+                        `).join("")}
+                    </div>
+                    <div class="bone-grid">
+                        ${filtered.map(it => `
+                            <button type="button" class="bone-chip ${it.id === current.id ? "active" : ""}" onclick="handleAnatomyItemClick(${isBones ? "BONES" : "MUSCLES"}.find(x=>x.id==='${it.id}'))">${it.name}</button>
+                        `).join("")}
+                    </div>
+                </div>
+            `;
+        }
+
+        /* ================= MODALITÀ PRONTO SOCCORSO ================= */
+        function renderErIntroScreen() {
+            resetHotspotStates();
+            infoPanel.innerHTML = `
+                <div class="er-start-wrapper">
+                    <div class="er-start-overlay">
+                        <div class="er-start-card">
+                            <span class="region-tag muscle-tag">🚑 Simulazione Clinica CPIA</span>
+                            <h2 style="font-size:1.45rem; font-weight:800; margin:0.4rem 0;">Turno al Pronto Soccorso</h2>
+                            <p style="color:var(--muted); font-size:0.95rem;">Ascolta i sintomi del paziente, individua sull'immagine anatomica l'osso o il muscolo coinvolto e rispondi alla domanda medica.</p>
+                            <button type="button" class="er-start-btn" onclick="startErShift()">Inizia il turno 🩺</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function startErShift() {
+            erQueue = [...ER_CASES].sort(() => Math.random() - 0.5);
+            erIndex = 0;
+            erScore = 0;
+            erStreak = 0;
+            erMissedCases = [];
+            loadErCase();
+        }
+
+        function loadErCase() {
+            if (erIndex >= erQueue.length) {
+                infoPanel.innerHTML = `
+                    <div class="patient-card">
+                        <span class="region-tag">Turno completato</span>
+                        <h2 class="bone-title" style="margin:0.4rem 0;">Risultato: ${erScore} / ${erQueue.length}</h2>
+                        <p style="margin-bottom:1rem;">Hai completato tutte le visite al Pronto Soccorso Ortopedico!</p>
+                        <button type="button" class="next-btn" onclick="startErShift()">Nuovo turno 🔄</button>
+                    </div>
+                `;
+                return;
+            }
+            const c = erQueue[erIndex];
+            erStep = "locate";
+            erHintUsed = false;
+            resetHotspotStates();
+            if (currentLayer !== c.layer) switchAnatomyLayer(c.layer);
+
+            const tr = TRIAGE_INFO[c.triage];
+            infoPanel.innerHTML = `
+                <div class="er-status-bar">
+                    <span>Paziente ${erIndex + 1} di ${erQueue.length}</span>
+                    <span>Punti: ${erScore} • Serie: ${erStreak} 🔥</span>
+                </div>
+                <div class="patient-card triage-${c.triage}">
+                    <div class="patient-header">
+                        <div class="patient-avatar">${c.avatar}</div>
+                        <div>
+                            <span class="urgency-tag triage-${c.triage}">${tr.label}</span>
+                            <h3 style="font-size:1.1rem; font-weight:800;">${c.patient}</h3>
+                        </div>
+                    </div>
+                    <div class="triage-explain">${tr.explain}</div>
+                    <p class="patient-symptom">"${c.story}"</p>
+                </div>
+                <div id="er-feedback" class="feedback-box">
+                    👉 Passa alla scheda <strong>${c.layer === "bones" ? "🦴 Ossa" : "💪 Muscoli"}</strong> e clicca sul punto interessato sull'immagine.
+                </div>
+                <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
+                    <button type="button" class="secondary-btn" onclick="document.getElementById('er-feedback').innerHTML='💡 Suggerimento: ${c.hint.replace(/'/g, "\\'")}'">💡 Aiuto</button>
+                </div>
+            `;
+        }
+
+        function checkErLocation(item) {
+            const c = erQueue[erIndex];
+            const fb = document.getElementById("er-feedback");
+            const el = document.querySelector(`.hotspot[data-id="${item.id}"]`);
+            if (item.id === c.targetId) {
+                erStep = "question";
+                if (el) el.classList.add("correct");
+                fb.className = "feedback-box success";
+                fb.innerHTML = `✅ Esatto! Hai individuato: <strong>${item.name}</strong>. Ora rispondi alla domanda:`;
+                const qDiv = document.createElement("div");
+                qDiv.className = "quiz-options";
+                qDiv.innerHTML = `
+                    <p style="font-weight:700; margin-top:0.5rem;">${c.question}</p>
+                    ${c.options.map((opt, idx) => `
+                        <button type="button" class="option-btn" onclick="answerErQuestion(${idx}, this)">${opt}</button>
+                    `).join("")}
+                `;
+                infoPanel.appendChild(qDiv);
+            } else {
+                erStreak = 0;
+                if (el) el.classList.add("wrong");
+                fb.className = "feedback-box error";
+                fb.innerHTML = `❌ Non è <strong>${item.name}</strong>. Riprova osservando bene la zona del dolore!`;
+            }
+        }
+
+        function answerErQuestion(idx, btn) {
+            if (erStep !== "question") return;
+            erStep = "done";
+            const c = erQueue[erIndex];
+            const buttons = infoPanel.querySelectorAll(".option-btn");
+            buttons.forEach((b, i) => {
+                b.disabled = true;
+                if (i === c.correctOpt) b.classList.add("correct");
+                else if (i === idx) b.classList.add("wrong");
+            });
+            if (idx === c.correctOpt) {
+                erScore++;
+                erStreak++;
+            } else {
+                erStreak = 0;
+            }
+            const next = document.createElement("button");
+            next.type = "button";
+            next.className = "next-btn";
+            next.textContent = "Prossimo paziente ➡️";
+            next.onclick = () => { erIndex++; loadErCase(); };
+            infoPanel.appendChild(next);
+        }
+
+        /* ================= MODALITÀ QUIZ ================= */
+        function renderQuizPanel() {
+            if (quizIndex >= QUIZ_QUESTIONS.length) {
+                infoPanel.innerHTML = `
+                    <div class="patient-card">
+                        <span class="region-tag">Quiz completato</span>
+                        <h2 class="bone-title" style="margin:0.4rem 0;">Punteggio: ${quizScore} / ${QUIZ_QUESTIONS.length}</h2>
+                        <button type="button" class="next-btn" onclick="quizIndex=0; quizScore=0; renderQuizPanel();">Ripeti Quiz 🔄</button>
+                    </div>
+                `;
+                return;
+            }
+            const q = QUIZ_QUESTIONS[quizIndex];
+            quizAnswered = false;
+            infoPanel.innerHTML = `
+                <div class="er-status-bar">
+                    <span>Domanda ${quizIndex + 1} di ${QUIZ_QUESTIONS.length}</span>
+                    <span>Punteggio: ${quizScore}</span>
+                </div>
+                <h2 style="font-size:1.25rem; font-weight:800;">${q.q}</h2>
+                <div class="quiz-options">
+                    ${q.opts.map((opt, idx) => `
+                        <button type="button" class="option-btn" onclick="checkQuizAnswer(${idx}, this)">${opt}</button>
+                    `).join("")}
+                </div>
+                <div id="quiz-feedback"></div>
+            `;
+        }
+
+        function checkQuizAnswer(idx, btn) {
+            if (quizAnswered) return;
+            quizAnswered = true;
+            const q = QUIZ_QUESTIONS[quizIndex];
+            const buttons = infoPanel.querySelectorAll(".option-btn");
+            buttons.forEach((b, i) => {
+                b.disabled = true;
+                if (i === q.ans) b.classList.add("correct");
+                else if (i === idx) b.classList.add("wrong");
+            });
+            const fb = document.getElementById("quiz-feedback");
+            if (idx === q.ans) {
+                quizScore++;
+                fb.className = "feedback-box success";
+                fb.innerHTML = `✅ Corretto! ${q.exp}`;
+            } else {
+                fb.className = "feedback-box error";
+                fb.innerHTML = `❌ Risposta errata. ${q.exp}`;
+            }
+            const next = document.createElement("button");
+            next.type = "button";
+            next.className = "next-btn";
+            next.style.marginTop = "0.75rem";
+            next.textContent = "Prossima domanda ➡️";
+            next.onclick = () => { quizIndex++; renderQuizPanel(); };
+            infoPanel.appendChild(next);
+        }
 
         /* ================= NAVIGAZIONE MODALITÀ ================= */
         document.querySelectorAll(".mode-btn").forEach(btn => {
