@@ -280,35 +280,6 @@
             object-fit: contain;
         }
 
-        .anatomy-stage:active {
-            cursor: grabbing;
-        }
-
-        .zoom-canvas {
-            position: absolute;
-            inset: 0;
-            width: 100%;
-            height: 100%;
-            transform-origin: 0 0;
-            will-change: transform;
-        }
-
-        .plate-img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-            object-position: center center;
-            display: block;
-            margin: 0 auto;
-            pointer-events: none;
-            transition: filter 0.3s ease, transform 0.25s ease;
-        }
-
-        .anatomy-stage.crop-black .plate-img {
-            transform: scale(1.65);
-            transform-origin: center center;
-        }
-
         .fallback-svg {
             width: 100%;
             height: 100%;
@@ -944,10 +915,10 @@
                 joints: "Suture craniche (articolazioni fisse) e articolazione temporo-mandibolare.",
                 muscles: "Muscoli mimici del volto, massetere e temporale.",
                 views: {
-                    front: { x: 50.0, y: 6.5 },
+                    front: { x: 50, y: 6.5 },
                     right: { x: 49.5, y: 6.5 },
-                    back:  { x: 50.0, y: 6.5 },
-                    left:  { x: 50.5, y: 6.5 }
+                    back:  { x: 49, y: 7.1 },
+                    left:  { x: 46.1, y: 7.5 }
                 }
             },
             {
@@ -957,10 +928,10 @@
                 joints: "Articolazione temporo-mandibolare (mobile).",
                 muscles: "Massetere e muscolo temporale.",
                 views: {
-                    front: { x: 50.0, y: 12.1 },
-                    right: { x: 52.4, y: 12.0 },
-                    back:  { x: 50.0, y: 12.1, hidden: true },
-                    left:  { x: 47.6, y: 12.0 }
+                    front: { x: 50.3, y: 15.1 },
+                    right: { x: 48.3, y: 14.7 },
+                    back:  { x: 50, y: 12.1, hidden: true },
+                    left:  { x: 47.6, y: 14.5 }
                 }
             },
             {
@@ -970,10 +941,10 @@
                 joints: "Articolazione acromion-claveare e sterno-claveare.",
                 muscles: "Deltoide, grande pettorale e trapezio.",
                 views: {
-                    front: { x: 43.2, y: 17.5 },
-                    right: { x: 51.8, y: 17.6 },
+                    front: { x: 43.3, y: 20.2 },
+                    right: { x: 53, y: 19.2 },
                     back:  { x: 56.8, y: 17.5, hidden: true },
-                    left:  { x: 48.2, y: 17.6 }
+                    left:  { x: 44.5, y: 19.7 }
                 }
             },
             {
@@ -984,9 +955,9 @@
                 muscles: "Trapezio, deltoide e cuffia dei rotatori.",
                 views: {
                     front: { x: 42.5, y: 21.5, hidden: true },
-                    right: { x: 47.2, y: 21.5 },
-                    back:  { x: 42.5, y: 21.5 },
-                    left:  { x: 52.8, y: 21.5 }
+                    right: { x: 59.1, y: 23.4 },
+                    back:  { x: 43.4, y: 22.5 },
+                    left:  { x: 38.1, y: 24.4 }
                 }
             },
             {
@@ -996,10 +967,10 @@
                 joints: "Articolazioni sterno-costali (con le cartilagini delle costole).",
                 muscles: "Grande pettorale e retto dell'addome.",
                 views: {
-                    front: { x: 50.0, y: 22.5 },
-                    right: { x: 54.0, y: 22.5 },
-                    back:  { x: 50.0, y: 22.5, hidden: true },
-                    left:  { x: 46.0, y: 22.5 }
+                    front: { x: 50, y: 26.1 },
+                    right: { x: 45.3, y: 26.4 },
+                    back:  { x: 50, y: 22.5, hidden: true },
+                    left:  { x: 51.9, y: 26.9 }
                 }
             },
             {
@@ -1009,10 +980,10 @@
                 joints: "Articolazioni costo-vertebrali e sterno-costali (semimobili).",
                 muscles: "Muscoli intercostali e diaframma.",
                 views: {
-                    front: { x: 44.0, y: 25.5 },
-                    right: { x: 51.2, y: 25.5 },
-                    back:  { x: 56.0, y: 25.5 },
-                    left:  { x: 48.8, y: 25.5 }
+                    front: { x: 44.3, y: 28.9 },
+                    right: { x: 47.7, y: 31 },
+                    back:  { x: 53.4, y: 26.4 },
+                    left:  { x: 47.5, y: 32.5 }
                 }
             },
             {
@@ -1022,10 +993,10 @@
                 joints: "Dischi intervertebrali (articolazioni semimobili).",
                 muscles: "Muscoli paravertebrali, trapezio e muscoli addominali.",
                 views: {
-                    front: { x: 50.0, y: 34.5 },
-                    right: { x: 46.8, y: 31.0 },
-                    back:  { x: 50.0, y: 29.5 },
-                    left:  { x: 53.2, y: 31.0 }
+                    front: { x: 50.4, y: 35.5 },
+                    right: { x: 56.7, y: 33.1 },
+                    back:  { x: 49.1, y: 32.7 },
+                    left:  { x: 41.1, y: 31.9 }
                 }
             },
             {
@@ -1035,10 +1006,10 @@
                 joints: "Articolazione della spalla (in alto) e del gomito (in basso).",
                 muscles: "Deltoide, bicipite brachiale e tricipite brachiale.",
                 views: {
-                    front: { x: 35.6, y: 25.8 },
-                    right: { x: 49.5, y: 25.8 },
-                    back:  { x: 64.4, y: 25.8 },
-                    left:  { x: 50.5, y: 25.8 }
+                    front: { x: 37.3, y: 29.7 },
+                    right: { x: 55.4, y: 29 },
+                    back:  { x: 63, y: 33.1 },
+                    left:  { x: 42.4, y: 28.2 }
                 }
             },
             {
@@ -1048,10 +1019,10 @@
                 joints: "Articolazione del gomito e del polso.",
                 muscles: "Bicipite brachiale e muscoli flessori/estensori della mano.",
                 views: {
-                    front: { x: 32.2, y: 39.2 },
-                    right: { x: 51.3, y: 39.2 },
-                    back:  { x: 67.8, y: 39.2 },
-                    left:  { x: 48.7, y: 39.2 }
+                    front: { x: 32, y: 43.2 },
+                    right: { x: 50.8, y: 47.7 },
+                    back:  { x: 67, y: 41.6 },
+                    left:  { x: 43.7, y: 40.9 }
                 }
             },
             {
@@ -1061,10 +1032,10 @@
                 joints: "Articolazione del gomito (troclea) e del polso.",
                 muscles: "Tricipite brachiale e muscoli dell'avambraccio.",
                 views: {
-                    front: { x: 34.6, y: 39.8 },
-                    right: { x: 49.3, y: 39.8 },
-                    back:  { x: 65.4, y: 39.8 },
-                    left:  { x: 50.7, y: 39.8 }
+                    front: { x: 34.4, y: 46.2 },
+                    right: { x: 54.3, y: 46.2 },
+                    back:  { x: 64.9, y: 45.6 },
+                    left:  { x: 42, y: 43.3 }
                 }
             },
             {
@@ -1074,10 +1045,10 @@
                 joints: "Articolazione sacro-iliaca e articolazione dell'anca (coxo-femorale).",
                 muscles: "Grande gluteo, ileopsoas e muscoli addominali.",
                 views: {
-                    front: { x: 43.2, y: 44.0 },
-                    right: { x: 50.0, y: 44.2 },
-                    back:  { x: 56.8, y: 44.0 },
-                    left:  { x: 50.0, y: 44.2 }
+                    front: { x: 45, y: 45.7 },
+                    right: { x: 50.7, y: 43.9 },
+                    back:  { x: 56.8, y: 44 },
+                    left:  { x: 44.2, y: 46.2 }
                 }
             },
             {
@@ -1088,9 +1059,9 @@
                 muscles: "Quadricipite femorale, bicipite femorale e grande gluteo.",
                 views: {
                     front: { x: 43.4, y: 58.2 },
-                    right: { x: 50.0, y: 58.2 },
+                    right: { x: 50, y: 58.2 },
                     back:  { x: 56.6, y: 58.2 },
-                    left:  { x: 50.0, y: 58.2 }
+                    left:  { x: 45.6, y: 63.8 }
                 }
             },
             {
@@ -1101,9 +1072,9 @@
                 muscles: "Quadricipite femorale (tramite il tendine rotuleo).",
                 views: {
                     front: { x: 44.3, y: 69.2 },
-                    right: { x: 52.3, y: 69.2 },
+                    right: { x: 49.7, y: 71.7 },
                     back:  { x: 55.7, y: 69.2, hidden: true },
-                    left:  { x: 47.7, y: 69.2 }
+                    left:  { x: 47.7, y: 72 }
                 }
             },
             {
@@ -1114,9 +1085,9 @@
                 muscles: "Tricipite della sura (polpaccio) e tibiale anteriore.",
                 views: {
                     front: { x: 45.2, y: 80.5 },
-                    right: { x: 50.8, y: 80.5 },
+                    right: { x: 51.6, y: 81.3 },
                     back:  { x: 54.8, y: 80.5 },
-                    left:  { x: 49.2, y: 80.5 }
+                    left:  { x: 46.4, y: 80.2 }
                 }
             },
             {
@@ -1126,10 +1097,10 @@
                 joints: "Articolazione tibio-peroneale e caviglia (malleolo esterno).",
                 muscles: "Muscoli peronieri e polpaccio.",
                 views: {
-                    front: { x: 42.8, y: 81.2 },
-                    right: { x: 48.6, y: 81.2 },
+                    front: { x: 42.5, y: 85.4 },
+                    right: { x: 55.2, y: 86.3 },
                     back:  { x: 57.2, y: 81.2 },
-                    left:  { x: 51.4, y: 81.2 }
+                    left:  { x: 42.6, y: 82.8 }
                 }
             }
         ];
