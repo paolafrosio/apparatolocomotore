@@ -524,8 +524,11 @@
         .filter-bar {
             display: flex;
             flex-wrap: wrap;
-            gap: 0.4rem;
-            margin-bottom: 0.55rem;
+            gap: 0.45rem;
+            margin-top: 0.4rem;
+            margin-bottom: 1.05rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid #e2e8f0;
         }
 
         .filter-chip {
@@ -864,9 +867,6 @@
                     <label class="toggle-labels">
                         <input type="checkbox" id="toggle-names"> Mostra nomi
                     </label>
-                    <button type="button" class="toggle-labels" id="btn-calibrate" onclick="toggleCalibrationMode()" style="border:1.5px solid var(--primary); cursor:pointer;">
-                        🎯 Calibra punti
-                    </button>
                 </div>
             </div>
 
@@ -884,7 +884,6 @@
                 <button type="button" class="view-btn" data-view="right" onclick="switchAnatomyView('right')">Lato Dx</button>
                 <button type="button" class="view-btn" data-view="back" onclick="switchAnatomyView('back')">Retro</button>
                 <button type="button" class="view-btn" data-view="left" onclick="switchAnatomyView('left')">Lato Sx</button>
-                <button type="button" class="view-btn" id="btn-crop-black" title="Mostra immagine intera oppure ingrandita al centro">🖼️ Adatta / Intera</button>
             </div>
 
             <div class="anatomy-stage" id="anatomy-stage">
@@ -925,6 +924,19 @@
                     right: { x: 54.8, y: 7.1 },
                     back:  { x: 49, y: 7.1 },
                     left:  { x: 43.9, y: 9 }
+                }
+            },
+            {
+                id: "mascella", name: "Mascella", region: "Testa",
+                desc: "Osso fisso del viso situato sopra la bocca, che forma l'arcata dentaria superiore, il palato e parte delle orbite oculari.",
+                func: "Sostiene i denti superiori, partecipa alla masticazione e delimita le cavità nasali.",
+                joints: "Suture cranio-facciali (articolazioni fisse con zigomo, naso e cranio).",
+                muscles: "Muscoli mimici del volto (orbicolare della bocca, zigomatico).",
+                views: {
+                    front: { x: 50.2, y: 12.6 },
+                    right: { x: 46.8, y: 12.4 },
+                    back:  { x: 50, y: 11.0, hidden: true },
+                    left:  { x: 52.8, y: 12.4 }
                 }
             },
             {
@@ -1871,15 +1883,9 @@
         });
 
         anatomyStage.addEventListener("pointerdown", e => {
-            if (isCalibrating) return;
             isDraggingStage = true;
             dragStartX = e.clientX - panX;
             dragStartY = e.clientY - panY;
-        });
-
-        document.getElementById("btn-crop-black").addEventListener("click", function () {
-            const active = anatomyStage.classList.toggle("full-fit");
-            this.classList.toggle("active", active);
         });
 
         anatomyStage.addEventListener("pointermove", e => {
@@ -1918,7 +1924,7 @@
                 el.dataset.id = item.id;
                 el.style.left = pos.x + "%";
                 el.style.top = pos.y + "%";
-                el.style.cursor = isCalibrating ? "move" : "pointer";
+                el.style.cursor = "pointer";
 
                 el.innerHTML = `
                     <span class="hotspot-dot"></span>
@@ -1935,32 +1941,7 @@
                 });
                 el.addEventListener("click", e => {
                     e.stopPropagation();
-                    if (!isCalibrating) handleAnatomyItemClick(item);
-                });
-
-                // Trascinamento libero in modalità Calibra
-                el.addEventListener("pointerdown", e => {
-                    if (!isCalibrating) return;
-                    e.preventDefault();
-                    e.stopPropagation();
-                    el.setPointerCapture(e.pointerId);
-                    const onMove = ev => {
-                        const rect = zoomCanvas.getBoundingClientRect();
-                        const nx = Math.min(98, Math.max(2, ((ev.clientX - rect.left) / rect.width) * 100));
-                        const ny = Math.min(98, Math.max(2, ((ev.clientY - rect.top) / rect.height) * 100));
-                        item.views[currentView].x = Number(nx.toFixed(1));
-                        item.views[currentView].y = Number(ny.toFixed(1));
-                        el.style.left = item.views[currentView].x + "%";
-                        el.style.top = item.views[currentView].y + "%";
-                        renderAnatomyHighlight();
-                    };
-                    const onUp = () => {
-                        el.removeEventListener("pointermove", onMove);
-                        el.removeEventListener("pointerup", onUp);
-                        renderCalibrationPanel();
-                    };
-                    el.addEventListener("pointermove", onMove);
-                    el.addEventListener("pointerup", onUp);
+                    handleAnatomyItemClick(item);
                 });
 
                 hotspotsLayer.appendChild(el);
@@ -2000,81 +1981,12 @@
             `;
         }
 
-        function renderCalibrationPanel() {
-            const list = currentLayer === "bones" ? BONES : MUSCLES;
-            const layerLabel = currentLayer === "bones" ? "Ossa" : "Muscoli";
-            const summary = list.map(it => {
-                const v = it.views[currentView];
-                return `${it.id}: { x: ${v.x}, y: ${v.y}${v.hidden ? ", hidden: true" : ""} }`;
-            }).join("\n");
-
-            infoPanel.innerHTML = `
-                <div class="bone-header">
-                    <div>
-                        <span class="region-tag">🎯 Modalità Calibrazione</span>
-                        <h2 class="bone-title">${layerLabel} — Vista: ${currentView}</h2>
-                    </div>
-                    <button type="button" class="speak-btn" id="btn-copy-coords" onclick="copyCalibratedCoords()">📋 Copia coordinate</button>
-                </div>
-                <div class="info-box">
-                    <h3>Trascina i pallini sull'immagine</h3>
-                    <p style="font-size:0.9rem;">Sposta ogni pallino direttamente sopra l'osso o il muscolo corrispondente. Puoi cambiare vista (Fronte, Lato Dx, Retro, Lato Sx) o livello (Ossa / Muscoli) in qualsiasi momento.</p>
-                </div>
-                <textarea id="calib-output" readonly style="width:100%; height:240px; font-family:monospace; font-size:0.82rem; padding:0.75rem; border-radius:10px; border:1px solid var(--border); background:#f8fafc;">${summary}</textarea>
-            `;
-        }
-
-        function copyCalibratedCoords() {
-            const ta = document.getElementById("calib-output");
-            if (!ta) return;
-            ta.select();
-            document.execCommand("copy");
-            const btn = document.getElementById("btn-copy-coords");
-            if (btn) {
-                btn.textContent = "✅ Coordinate copiate!";
-                setTimeout(() => { btn.textContent = "📋 Copia coordinate"; }, 1800);
-            }
-        }
-
-        function toggleCalibrationMode() {
-            isCalibrating = !isCalibrating;
-            const btn = document.getElementById("btn-calibrate");
-            anatomyStage.classList.toggle("calibrating-mode", isCalibrating);
-            if (isCalibrating) {
-                if (btn) {
-                    btn.style.background = "#fef08a";
-                    btn.style.borderColor = "#ca8a04";
-                    btn.style.color = "#854d0e";
-                    btn.textContent = "✅ Fine calibrazione";
-                }
-                anatomyStage.classList.add("show-all-labels");
-                toolbarHint.textContent = "Trascina i pallini sull'immagine per posizionarli";
-                renderCalibrationPanel();
-            } else {
-                if (btn) {
-                    btn.style.background = "";
-                    btn.style.borderColor = "var(--primary)";
-                    btn.style.color = "";
-                    btn.textContent = "🎯 Calibra punti";
-                }
-                anatomyStage.classList.toggle("show-all-labels", toggleNames.checked);
-                toolbarHint.textContent = "Scegli Ossa o Muscoli e clicca sui punti";
-                if (currentMode === "explore") renderExplorePanel();
-                else if (currentMode === "er") renderErIntroScreen();
-                else renderQuizPanel();
-            }
-            renderHotspots();
-        }
-
         function switchAnatomyView(view) {
             currentView = view;
             document.querySelectorAll(".view-btn[data-view]").forEach(b => {
                 b.classList.toggle("active", b.dataset.view === currentView);
             });
             renderHotspots();
-            if (isCalibrating) {
-                renderCalibrationPanel();
-            }
             loadAnatomyPlate(currentLayer, currentView);
         }
 
@@ -2085,9 +1997,7 @@
             document.getElementById("btn-layer-muscles").classList.toggle("active-muscles", layer === "muscles");
             selectedRegionFilter = "Tutte";
             renderHotspots();
-            if (isCalibrating) {
-                renderCalibrationPanel();
-            } else if (currentMode === "explore") {
+            if (currentMode === "explore") {
                 renderExplorePanel();
             }
             loadAnatomyPlate(currentLayer, currentView);
@@ -2135,7 +2045,7 @@
         }
 
         toggleNames.addEventListener("change", () => {
-            anatomyStage.classList.toggle("show-all-labels", isCalibrating || toggleNames.checked);
+            anatomyStage.classList.toggle("show-all-labels", toggleNames.checked);
         });
 
         /* ================= PANNELLO ESPLORAZIONE ================= */
