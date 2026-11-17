@@ -1067,58 +1067,45 @@
             },
             {
                 id: "rotula", name: "Rotula", region: "Arti inferiori",
-                desc: "Piccolo osso piatto e tondeggiante posto davanti all'articolazione del ginocchio.",
-                func: "Protegge il ginocchio e migliora la leva del muscolo quadricipite quando stendiamo la gamba.",
-                joints: "Articolazione del ginocchio (femoro-rotulea).",
-                muscles: "Quadricipite femorale (tramite il tendine rotuleo).",
-                views: {
-                    front: { x: 41.2, y: 72.4 },
-                    right: { x: 49.7, y: 71.7 },
-                    back:  { x: 55.7, y: 69.2, hidden: true },
-                    left:  { x: 45.9, y: 72.8 }
-                }
-            },
-            {
-                id: "tibia", name: "Tibia", region: "Arti inferiori",
-                desc: "Osso lungo e robusto della parte inferiore della gamba (lo stinco), posto sul lato interno.",
-                func: "Sostiene la maggior parte del peso della gamba tra il ginocchio e la caviglia.",
-                joints: "Articolazione del ginocchio e della caviglia.",
-                muscles: "Tricipite della sura (polpaccio) e tibiale anteriore.",
-                views: {
-                    front: { x: 45.2, y: 80.5 },
-                    right: { x: 51.6, y: 81.3 },
-                    back:  { x: 56.8, y: 79.5 },
-                    left:  { x: 42.9, y: 80.3 }
-                }
-            },
-            {
-                id: "perone", name: "Perone", region: "Arti inferiori",
-                desc: "Osso lungo e sottile parallelo alla tibia, posto sul lato esterno della gamba.",
-                func: "Dà stabilità alla caviglia e offre attacco a molti muscoli della gamba.",
-                joints: "Articolazione tibio-peroneale e caviglia (malleolo esterno).",
-                muscles: "Muscoli peronieri e polpaccio.",
-                views: {
-                    front: { x: 42.5, y: 85.4 },
-                    right: { x: 58.5, y: 85.3 },
-                    back:  { x: 61, y: 85.1 },
-                    left:  { x: 36.1, y: 82.9 }
-                }
-            }
-        ];
-
-        /* ================= DATABASE MUSCOLI (9 GRUPPI MUSCOLARI - COORDINATE CALIBRATE SULLE 4 VISTE) ================= */
+        /* ================= DATABASE MUSCOLI (11 GRUPPI MUSCOLARI RICHIESTI) ================= */
         const MUSCLES = [
             {
-                id: "pettorale", name: "Pettorale", region: "Tronco",
+                id: "trapezio", name: "Trapezio", region: "Tronco",
+                desc: "Grande muscolo piatto a forma di triangolo situato nella parte alta della schiena e del collo.",
+                func: "Solleva e avvicina le scapole, estende la testa e sostiene le spalle.",
+                joints: "Articolazione scapolo-toracica e colonna cervicale.",
+                bones: "Cranio, Clavicola, Scapola e Colonna vertebrale.",
+                views: {
+                    front: { x: 50.0, y: 17.5, hidden: true },
+                    right: { x: 54.5, y: 17.5 },
+                    back:  { x: 50.0, y: 18.5 },
+                    left:  { x: 45.5, y: 17.5 }
+                }
+            },
+            {
+                id: "deltoide", name: "Deltoide", region: "Arti superiori",
+                desc: "Muscolo triangolare che avvolge e forma la rotondità della spalla.",
+                func: "Solleva il braccio lateralmente, in avanti e indietro.",
+                joints: "Articolazione della spalla (scapolo-omerale).",
+                bones: "Clavicola, Scapola e Omero.",
+                views: {
+                    front: { x: 35.5, y: 21.0 },
+                    right: { x: 50.5, y: 21.0 },
+                    back:  { x: 64.5, y: 21.0 },
+                    left:  { x: 49.5, y: 21.0 }
+                }
+            },
+            {
+                id: "grande_pettorale", name: "Grande pettorale", region: "Tronco",
                 desc: "Ampio muscolo a ventaglio che copre la parte anteriore del torace.",
                 func: "Avvicina il braccio al corpo e lo ruota verso l'interno (es. spingere o abbracciare).",
                 joints: "Articolazione della spalla.",
                 bones: "Clavicola, Sterno, Costole e Omero.",
                 views: {
-                    front: { x: 43.8, y: 22.8 },
-                    right: { x: 54.0, y: 22.8 },
-                    back:  { x: 56.2, y: 22.8, hidden: true },
-                    left:  { x: 46.0, y: 22.8 }
+                    front: { x: 43.8, y: 23.0 },
+                    right: { x: 44.5, y: 23.0 },
+                    back:  { x: 56.2, y: 23.0, hidden: true },
+                    left:  { x: 55.5, y: 23.0 }
                 }
             },
             {
@@ -1128,10 +1115,10 @@
                 joints: "Articolazione del gomito e della spalla.",
                 bones: "Scapola, Omero e Radio.",
                 views: {
-                    front: { x: 35.0, y: 27.5 },
-                    right: { x: 51.6, y: 27.5 },
-                    back:  { x: 65.0, y: 27.5, hidden: true },
-                    left:  { x: 48.4, y: 27.5 }
+                    front: { x: 33.5, y: 28.5 },
+                    right: { x: 48.0, y: 28.5 },
+                    back:  { x: 66.5, y: 28.5, hidden: true },
+                    left:  { x: 52.0, y: 28.5 }
                 }
             },
             {
@@ -1141,49 +1128,49 @@
                 joints: "Articolazione del gomito.",
                 bones: "Scapola, Omero e Ulna.",
                 views: {
-                    front: { x: 35.0, y: 27.5, hidden: true },
-                    right: { x: 47.6, y: 27.5 },
-                    back:  { x: 65.0, y: 27.5 },
-                    left:  { x: 52.4, y: 27.5 }
+                    front: { x: 30.5, y: 29.5 },
+                    right: { x: 53.5, y: 28.5 },
+                    back:  { x: 68.5, y: 28.5 },
+                    left:  { x: 46.5, y: 28.5 }
                 }
             },
             {
-                id: "addominali", name: "Addominali", region: "Tronco",
+                id: "dorsale", name: "Dorsale", region: "Tronco",
+                desc: "Il muscolo più largo della schiena (gran dorsale), che copre la parte medio-bassa del dorso.",
+                func: "Abbassa, estende e avvicina il braccio al tronco (es. tirare o arrampicarsi).",
+                joints: "Articolazione della spalla.",
+                bones: "Colonna vertebrale, Bacino, Costole e Omero.",
+                views: {
+                    front: { x: 42.0, y: 31.0, hidden: true },
+                    right: { x: 54.0, y: 31.0 },
+                    back:  { x: 43.0, y: 31.0 },
+                    left:  { x: 46.0, y: 31.0 }
+                }
+            },
+            {
+                id: "retto_addominale", name: "Retto addominale", region: "Tronco",
                 desc: "Lungo muscolo piatto situato nella parte anteriore dell'addome.",
                 func: "Flette il busto in avanti, protegge gli organi addominali e aiuta l'espirazione.",
                 joints: "Articolazioni della colonna vertebrale.",
                 bones: "Sterno, Costole e Bacino.",
                 views: {
-                    front: { x: 48.0, y: 35.0 },
-                    right: { x: 53.6, y: 35.0 },
-                    back:  { x: 52.0, y: 35.0, hidden: true },
-                    left:  { x: 46.4, y: 35.0 }
+                    front: { x: 47.8, y: 35.5 },
+                    right: { x: 45.5, y: 35.5 },
+                    back:  { x: 52.2, y: 35.5, hidden: true },
+                    left:  { x: 54.5, y: 35.5 }
                 }
             },
             {
-                id: "diaframma", name: "Diaframma", region: "Tronco",
-                desc: "Muscolo piatto a forma di cupola che separa il torace dall'addome.",
-                func: "È il principale muscolo della respirazione: abbassandosi fa entrare l'aria nei polmoni.",
-                joints: "Gabbia toracica e vertebre lombari.",
-                bones: "Costole, Sterno e Colonna vertebrale.",
-                views: {
-                    front: { x: 50.0, y: 28.5 },
-                    right: { x: 51.0, y: 28.5 },
-                    back:  { x: 50.0, y: 28.5, hidden: true },
-                    left:  { x: 49.0, y: 28.5 }
-                }
-            },
-            {
-                id: "gluteo", name: "Gluteo", region: "Arti inferiori",
-                desc: "Il muscolo più voluminoso e potente del corpo umano, situato nella regione posteriore del bacino.",
-                func: "Estende la coscia indietro, mantiene la posizione eretta e permette di salire le scale.",
+                id: "glutei", name: "Glutei", region: "Arti inferiori",
+                desc: "Insieme di potenti muscoli (grande, medio e piccolo gluteo) nella regione posteriore del bacino.",
+                func: "Estendono la coscia indietro, mantengono la posizione eretta e permettono di salire le scale.",
                 joints: "Articolazione dell'anca (coxo-femorale).",
                 bones: "Bacino e Femore.",
                 views: {
-                    front: { x: 42.5, y: 45.5, hidden: true },
-                    right: { x: 46.2, y: 45.5 },
-                    back:  { x: 55.8, y: 45.5 },
-                    left:  { x: 53.8, y: 45.5 }
+                    front: { x: 42.5, y: 46.5, hidden: true },
+                    right: { x: 54.5, y: 46.5 },
+                    back:  { x: 56.0, y: 46.5 },
+                    left:  { x: 45.5, y: 46.5 }
                 }
             },
             {
@@ -1193,36 +1180,49 @@
                 joints: "Articolazione del ginocchio e dell'anca.",
                 bones: "Bacino, Femore, Rotula e Tibia.",
                 views: {
-                    front: { x: 43.4, y: 58.2 },
-                    right: { x: 52.4, y: 58.2 },
-                    back:  { x: 56.6, y: 58.2, hidden: true },
-                    left:  { x: 47.6, y: 58.2 }
+                    front: { x: 42.5, y: 58.5 },
+                    right: { x: 47.5, y: 58.5 },
+                    back:  { x: 57.5, y: 58.5, hidden: true },
+                    left:  { x: 52.5, y: 58.5 }
                 }
             },
             {
-                id: "bicipite_femorale", name: "Femorale", region: "Arti inferiori",
-                desc: "Muscolo posteriore della coscia (antagonista del quadricipite).",
+                id: "ischiotibiale", name: "Ischiotibiale", region: "Arti inferiori",
+                desc: "Gruppo di muscoli posteriori della coscia (antagonisti del quadricipite).",
                 func: "Flette il ginocchio piegando la gamba indietro ed estende l'anca.",
                 joints: "Articolazione del ginocchio e dell'anca.",
-                bones: "Bacino, Femore e Perone.",
+                bones: "Bacino, Femore, Tibia e Perone.",
                 views: {
-                    front: { x: 43.4, y: 58.2, hidden: true },
-                    right: { x: 47.4, y: 58.2 },
-                    back:  { x: 56.6, y: 58.2 },
-                    left:  { x: 52.6, y: 58.2 }
+                    front: { x: 42.5, y: 59.5, hidden: true },
+                    right: { x: 53.5, y: 59.5 },
+                    back:  { x: 57.5, y: 59.5 },
+                    left:  { x: 46.5, y: 59.5 }
                 }
             },
             {
-                id: "polpaccio", name: "Polpaccio", region: "Arti inferiori",
-                desc: "Muscolo posteriore della gamba collegato al tendine d'Achille.",
+                id: "tibiale_anteriore", name: "Tibiale anteriore", region: "Arti inferiori",
+                desc: "Muscolo allungato situato nella parte anteriore ed esterna della gamba, accanto alla tibia.",
+                func: "Solleva la punta del piede verso l'alto (flessione dorsale) durante il cammino.",
+                joints: "Articolazione della caviglia.",
+                bones: "Tibia e ossa del piede.",
+                views: {
+                    front: { x: 42.0, y: 78.5 },
+                    right: { x: 47.5, y: 78.5 },
+                    back:  { x: 58.0, y: 78.5, hidden: true },
+                    left:  { x: 52.5, y: 78.5 }
+                }
+            },
+            {
+                id: "gemello", name: "Gemello", region: "Arti inferiori",
+                desc: "Muscolo superficiale del polpaccio (gastrocnemio) collegato al tendine d'Achille.",
                 func: "Estende il piede verso il basso permettendo di sollevarsi sulle punte e spingersi nel passo.",
                 joints: "Articolazione della caviglia e del ginocchio.",
                 bones: "Femore, Tibia, Perone e Calcagno (piede).",
                 views: {
-                    front: { x: 42.2, y: 78.5 },
-                    right: { x: 47.2, y: 78.5 },
-                    back:  { x: 56.2, y: 78.5 },
-                    left:  { x: 52.8, y: 78.5 }
+                    front: { x: 42.0, y: 78.5, hidden: true },
+                    right: { x: 53.5, y: 78.5 },
+                    back:  { x: 57.5, y: 78.5 },
+                    left:  { x: 46.5, y: 78.5 }
                 }
             }
         ];
@@ -1297,9 +1297,9 @@
                 avatar: "⚽",
                 triage: "verde",
                 layer: "muscles",
-                targetId: "polpaccio",
+                targetId: "gemello",
                 story: "Al 85° minuto della partita ho sentito un crampo fortissimo e uno strappo dietro la parte bassa della gamba mentre spingevo sul piede.",
-                hint: "Passa alla vista MUSCOLI e clicca il muscolo posteriore della gamba.",
+                hint: "Passa alla vista MUSCOLI (Retro o Lato) e clicca il muscolo del polpaccio.",
                 question: "A quale tendine molto famoso è collegato questo muscolo?",
                 options: [
                     "Tendine d'Achille (sul calcagno)",
