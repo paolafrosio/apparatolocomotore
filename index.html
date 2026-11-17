@@ -290,7 +290,114 @@
 
         .anatomy-stage.xray-mode .plate-img,
         .anatomy-stage.xray-mode .fallback-svg {
-            filter: drop-shadow(0 0 12px rgba(56, 189, 248, 0.55)) contrast(1.1);
+            filter: drop-shadow(0 0 14px rgba(56, 189, 248, 0.7)) contrast(1.18) brightness(1.05);
+        }
+
+        .xray-scanline {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            z-index: 2;
+            opacity: 0;
+            background: linear-gradient(
+                to bottom,
+                transparent 0%,
+                rgba(56, 189, 248, 0.08) 45%,
+                rgba(56, 189, 248, 0.35) 50%,
+                rgba(56, 189, 248, 0.08) 55%,
+                transparent 100%
+            );
+            background-size: 100% 220%;
+            transition: opacity 0.3s ease;
+        }
+
+        .anatomy-stage.xray-mode .xray-scanline {
+            opacity: 1;
+            animation: xrayScan 3.2s linear infinite;
+        }
+
+        @keyframes xrayScan {
+            0% { background-position: 0% -100%; }
+            100% { background-position: 0% 200%; }
+        }
+
+        .xray-toggle-btn {
+            border: 1px solid #0284c7;
+            background: #f0f9ff;
+            color: #0369a1;
+            padding: 0.35rem 0.7rem;
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 0.85rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .xray-toggle-btn.active {
+            background: #0284c7;
+            color: #ffffff;
+            box-shadow: 0 0 10px rgba(2, 132, 199, 0.45);
+        }
+
+        .sound-toggle-btn {
+            border: 1px solid rgba(255, 255, 255, 0.28);
+            background: rgba(255, 255, 255, 0.12);
+            color: #ffffff;
+            padding: 0.5rem 0.75rem;
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 0.85rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .sound-toggle-btn:hover {
+            background: rgba(255, 255, 255, 0.22);
+        }
+
+        .triage-choice-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+
+        @media (max-width: 540px) {
+            .triage-choice-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .triage-pick-btn {
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            padding: 0.65rem 0.5rem;
+            font-family: inherit;
+            font-size: 0.86rem;
+            font-weight: 800;
+            cursor: pointer;
+            background: #ffffff;
+            transition: transform 0.12s, box-shadow 0.12s;
+        }
+
+        .triage-pick-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+        }
+
+        .triage-pick-btn.pick-rosso { border-color: #dc2626; color: #991b1b; background: #fef2f2; }
+        .triage-pick-btn.pick-giallo { border-color: #eab308; color: #854d0e; background: #fefce8; }
+        .triage-pick-btn.pick-verde { border-color: #16a34a; color: #166534; background: #f0fdf4; }
+
+        .grade-badge-card {
+            background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%);
+            color: #ffffff;
+            border-radius: 14px;
+            padding: 1.2rem;
+            text-align: center;
+            margin-bottom: 0.75rem;
         }
 
         .highlight-svg {
@@ -856,6 +963,7 @@
             <button class="mode-btn active" data-mode="explore">1. Apparato Locomotore 🦴</button>
             <button class="mode-btn" data-mode="er">2. Pronto Soccorso 🚑</button>
             <button class="mode-btn" data-mode="quiz">3. Quiz 📝</button>
+            <button type="button" class="sound-toggle-btn" id="btn-sound-toggle" onclick="toggleSoundEffects()" title="Attiva o disattiva suoni discreti">🔊 Audio</button>
         </nav>
     </header>
 
@@ -864,6 +972,7 @@
             <div class="toolbar">
                 <span class="hint-text" id="toolbar-hint">Scegli Ossa o Muscoli e clicca sui punti</span>
                 <div style="display:flex; gap:0.45rem; align-items:center; flex-wrap:wrap;">
+                    <button type="button" class="xray-toggle-btn" id="btn-xray-toggle" onclick="setXrayVisual(!isXrayVisual)">🩻 Raggi X</button>
                     <label class="toggle-labels">
                         <input type="checkbox" id="toggle-names"> Mostra nomi
                     </label>
@@ -901,6 +1010,7 @@
                 <div class="zoom-canvas" id="zoom-canvas">
                     <img id="plate-img" class="plate-img" alt="Tavola anatomica dell'apparato locomotore" />
                     <svg id="fallback-svg" class="fallback-svg" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet"></svg>
+                    <div class="xray-scanline"></div>
                     <svg class="highlight-svg" id="highlight-svg" viewBox="0 0 100 100" preserveAspectRatio="none"></svg>
                     <div class="hotspots-layer" id="hotspots-layer"></div>
                 </div>
@@ -1287,7 +1397,7 @@
         const TRIAGE_INFO = {
             rosso: {
                 label: "🔴 CODICE ROSSO • Emergenza",
-                explain: "Accesso immediato (0 min): trauma grave con possibile rischio per la vita o la circolazione."
+                explain: "Accesso immediato (0 min): trauma grave con possibile rischio per la vita, la respirazione o i vasi sanguigni."
             },
             giallo: {
                 label: "🟡 CODICE GIALLO • Urgenza",
@@ -1314,7 +1424,14 @@
                     "Proteggere il cervello dagli urti",
                     "Permettere di masticare il cibo"
                 ],
-                correctOpt: 0
+                correctOpt: 0,
+                firstAidQuestion: "Qual è l'intervento corretto di Primo Soccorso in attesa del medico?",
+                firstAidOptions: [
+                    "Immobilizzare il braccio al corpo con un foulard/reggibraccio e applicare ghiaccio avvolto in un panno",
+                    "Ruotare con forza la spalla per rimettere l'osso a posto",
+                    "Far sollevare pesi per scaldare l'articolazione"
+                ],
+                firstAidCorrect: 0
             },
             {
                 patient: "Elena, 67 anni",
@@ -1330,7 +1447,14 @@
                     "Articolazione del ginocchio (con rotula e tibia)",
                     "Articolazione del polso"
                 ],
-                correctOpt: 1
+                correctOpt: 1,
+                firstAidQuestion: "Cosa bisogna fare immediatamente in caso di sospetta frattura del femore?",
+                firstAidOptions: [
+                    "Chiamare subito il 112/118, NON spostare il paziente e tenerlo coperto e tranquillo",
+                    "Aiutarlo a camminare fino all'auto",
+                    "Massaggiare energicamente la coscia"
+                ],
+                firstAidCorrect: 0
             },
             {
                 patient: "Ahmed, 34 anni (Muratore)",
@@ -1346,7 +1470,14 @@
                     "Il muscolo massetere",
                     "Il grande gluteo"
                 ],
-                correctOpt: 0
+                correctOpt: 0,
+                firstAidQuestion: "Qual è il comportamento corretto in caso di forte trauma toracico con dolore respiratorio?",
+                firstAidOptions: [
+                    "Far restare il paziente semiseduto, evitare fasciature strette e attivare i soccorsi (112/118)",
+                    "Stringere forte una cintura attorno al torace",
+                    "Farlo sdraiare a pancia in giù"
+                ],
+                firstAidCorrect: 0
             },
             {
                 patient: "Sofia, 19 anni (Calciatrice)",
@@ -1362,7 +1493,14 @@
                     "Tendine rotuleo",
                     "Legamento crociato"
                 ],
-                correctOpt: 0
+                correctOpt: 0,
+                firstAidQuestion: "Qual è il protocollo standard di Primo Soccorso (R.I.C.E.) per uno strappo muscolare?",
+                firstAidOptions: [
+                    "Riposo, Ghiaccio (avvolto in un panno), Compressione leggera ed Elevazione della gamba",
+                    "Applicare subito una borsa dell'acqua bollente e continuare a correre",
+                    "Fare salti sul posto per sciogliere il muscolo"
+                ],
+                firstAidCorrect: 0
             },
             {
                 patient: "Carlos, 41 anni (Traslocatore)",
@@ -1378,7 +1516,14 @@
                     "Il quadricipite femorale",
                     "Il retto dell'addome"
                 ],
-                correctOpt: 0
+                correctOpt: 0,
+                firstAidQuestion: "Cosa fare subito dopo uno stiramento muscolare al braccio?",
+                firstAidOptions: [
+                    "Interrompere lo sforzo, mettere il braccio a riposo e applicare impacchi freddi per 15-20 minuti",
+                    "Sollevare un altro peso per bilanciare",
+                    "Mettere il ghiaccio direttamente a contatto con la pelle nuda per un'ora"
+                ],
+                firstAidCorrect: 0
             },
             {
                 patient: "Fatima, 24 anni (Pattinatrice)",
@@ -1394,7 +1539,14 @@
                     "Il muscolo trapezio",
                     "Il deltoide"
                 ],
-                correctOpt: 0
+                correctOpt: 0,
+                firstAidQuestion: "Come gestire un trauma diretto al ginocchio in attesa della radiografia?",
+                firstAidOptions: [
+                    "Tenere la gamba a riposo nella posizione più comoda senza forzare il piegamento e applicare ghiaccio protetto",
+                    "Piegare e stendere il ginocchio velocemente",
+                    "Camminare caricando tutto il peso sulla gamba"
+                ],
+                firstAidCorrect: 0
             },
             {
                 patient: "Luca, 31 anni",
@@ -1410,7 +1562,14 @@
                     "Il perone",
                     "La tibia"
                 ],
-                correctOpt: 0
+                correctOpt: 0,
+                firstAidQuestion: "Qual è l'azione corretta in caso di sospetta frattura dell'avambraccio?",
+                firstAidOptions: [
+                    "Togliere subito anelli/bracciali (prima che gonfi) e immobilizzare avambraccio e polso",
+                    "Tirare la mano per raddrizzare l'avambraccio",
+                    "Lasciare anelli e orologio stretti al polso"
+                ],
+                firstAidCorrect: 0
             },
             {
                 patient: "Nadia, 38 anni (Podista)",
@@ -1426,17 +1585,126 @@
                     "Due capi muscolari",
                     "Un solo muscolo piatto"
                 ],
-                correctOpt: 0
+                correctOpt: 0,
+                firstAidQuestion: "Cosa è consigliato nelle prime 24-48 ore dopo una distrazione muscolare alla coscia?",
+                firstAidOptions: [
+                    "Riposo, impacchi freddi a intervalli, bendaggio elastico non troppo stretto e valutazione medica",
+                    "Massaggio profondo immediato e sauna",
+                    "Stretching intenso forzato sul muscolo dolorante"
+                ],
+                firstAidCorrect: 0
+            },
+            {
+                patient: "Davide, 22 anni (Pugile dilettante)",
+                avatar: "🥊",
+                triage: "giallo",
+                layer: "bones",
+                targetId: "mascella",
+                story: "Ho ricevuto un colpo forte sotto lo zigomo destro, sopra il labbro superiore: sento dolore ai denti superiori e gonfiore al viso.",
+                hint: "Guarda l'osso fisso del viso sopra la bocca (arcata dentaria superiore).",
+                question: "Qual è la differenza principale tra mascella e mandibola?",
+                options: [
+                    "La mascella è fissa e sostiene i denti superiori; la mandibola è mobile",
+                    "La mascella si trova nella gamba",
+                    "La mascella è l'unico osso mobile della testa"
+                ],
+                correctOpt: 0,
+                firstAidQuestion: "Cosa fare subito in caso di trauma facciale alla mascella?",
+                firstAidOptions: [
+                    "Applicare ghiaccio avvolto in un panno sulla guancia, mantenere la testa sollevata e recarsi al Pronto Soccorso",
+                    "Masticare cibi duri per verificare se i denti tengono",
+                    "Sdraiarsi completamente piatti se c'è sanguinamento dal naso"
+                ],
+                firstAidCorrect: 0
+            },
+            {
+                patient: "Giulia, 45 anni (Impiegata)",
+                avatar: "💻",
+                triage: "verde",
+                layer: "muscles",
+                targetId: "trapezio",
+                story: "Dopo un brusco movimento del collo ho una contrattura dolorosa nella parte alta tra il collo e le spalle.",
+                hint: "Passa alla vista MUSCOLI (Retro o Lato) e clicca il grande muscolo tra collo e spalle.",
+                question: "Quale movimento compie questo muscolo?",
+                options: [
+                    "Solleva e avvicina le scapole e sostiene collo e spalle",
+                    "Piega il ginocchio",
+                    "Flette il gomito"
+                ],
+                correctOpt: 0,
+                firstAidQuestion: "In caso di contrattura muscolare non traumatica al trapezio (senza botte o incidenti), cosa aiuta?",
+                firstAidOptions: [
+                    "Riposo dai movimenti bruschi, impacco tiepido per rilassare la contrattura ed eventuale parere medico",
+                    "Movimenti rapidi e violenti di rotazione del collo",
+                    "Sollevare pesi sopra la testa"
+                ],
+                firstAidCorrect: 0
+            },
+            {
+                patient: "Matteo, 30 anni (Palestra)",
+                avatar: "🏋️",
+                triage: "verde",
+                layer: "muscles",
+                targetId: "retto_addominale",
+                story: "Facendo esercizi intensi per il busto ho sentito una fitta nella parte anteriore della pancia.",
+                hint: "Passa alla vista MUSCOLI (Fronte) e clicca il muscolo anteriore dell'addome.",
+                question: "Oltre a flettere il busto in avanti, quale altra funzione ha questo muscolo?",
+                options: [
+                    "Protegge gli organi addominali e aiuta l'espirazione",
+                    "Solleva la punta del piede",
+                    "Ruota il palmo della mano"
+                ],
+                correctOpt: 0,
+                firstAidQuestion: "Qual è il primo accorgimento in caso di stiramento addominale durante l'attività fisica?",
+                firstAidOptions: [
+                    "Fermare subito l'esercizio, mettersi in posizione comoda e applicare freddo localizzato se c'è dolore acuto",
+                    "Continuare la serie di esercizi addominali fino al termine",
+                    "Comprimere con forza l'addome"
+                ],
+                firstAidCorrect: 0
+            },
+            {
+                patient: "Chiara, 52 anni (Escursionista)",
+                avatar: "🥾",
+                triage: "verde",
+                layer: "muscles",
+                targetId: "glutei",
+                story: "Salendo un sentiero molto ripido ho sentito un forte dolore nella regione posteriore del bacino.",
+                hint: "Passa alla vista MUSCOLI (Retro o Lato) e clicca i muscoli posteriori del bacino.",
+                question: "Qual è il ruolo principale dei muscoli glutei?",
+                options: [
+                    "Estendono la coscia indietro, mantengono la postura eretta e aiutano a salire",
+                    "Chiudono la bocca durante la masticazione",
+                    "Avvicinano il braccio al petto"
+                ],
+                correctOpt: 0,
+                firstAidQuestion: "Cosa fare subito dopo uno stiramento muscolare ai glutei in montagna?",
+                firstAidOptions: [
+                    "Fermarsi a riposo, evitare salite ripide e applicare freddo appena possibile",
+                    "Correre in discesa per arrivare prima",
+                    "Fare affondi profondi a freddo"
+                ],
+                firstAidCorrect: 0
             }
         ];
 
-        /* ================= QUIZ ================= */
+        /* ================= QUIZ (15 DOMANDE, 8 CASUALI PER PARTITA) ================= */
         const QUIZ_QUESTIONS = [
             {
                 q: "Quale osso protegge il cervello dagli urti?",
                 opts: ["Cranio", "Sterno", "Femore"],
                 ans: 0,
                 exp: "Il cranio è una scatola ossea resistente che protegge l'encefalo."
+            },
+            {
+                q: "Qual è la differenza tra mascella e mandibola?",
+                opts: [
+                    "La mascella è fissa (arcata superiore), la mandibola è mobile (arcata inferiore)",
+                    "Sono entrambe ossa mobili",
+                    "La mascella si trova nel braccio"
+                ],
+                ans: 0,
+                exp: "La mascella forma il palato e l'arcata dentaria superiore ed è fissa; la mandibola è l'unico osso mobile del cranio."
             },
             {
                 q: "Come si chiamano i punti in cui due ossa si incontrano permettendo il movimento?",
@@ -1467,6 +1735,58 @@
                 opts: ["Il midollo spinale", "I polmoni", "Lo stomaco"],
                 ans: 0,
                 exp: "Le vertebre formano un canale che protegge il midollo spinale."
+            },
+            {
+                q: "Quali ossa formano la gabbia toracica insieme alle vertebre dorsali?",
+                opts: ["Sterno e costole", "Clavicola e scapola", "Tibia e perone"],
+                ans: 0,
+                exp: "Le 12 paia di costole e lo sterno chiudono la gabbia toracica proteggendo cuore e polmoni."
+            },
+            {
+                q: "Quale osso piatto e tondeggiante protegge la parte anteriore del ginocchio?",
+                opts: ["Rotula", "Scapola", "Ulna"],
+                ans: 0,
+                exp: "La rotula protegge il ginocchio e migliora la leva del quadricipite."
+            },
+            {
+                q: "Quali sono le due ossa dell'avambraccio?",
+                opts: ["Radio e ulna", "Tibia e perone", "Omero e clavicola"],
+                ans: 0,
+                exp: "Il radio si trova sul lato del pollice e l'ulna sul lato del mignolo."
+            },
+            {
+                q: "Quali sono le due ossa della gamba (tra ginocchio e caviglia)?",
+                opts: ["Tibia e perone", "Radio e ulna", "Femore e rotula"],
+                ans: 0,
+                exp: "La tibia sostiene il carico principale e il perone dà stabilità laterale alla caviglia."
+            },
+            {
+                q: "Quale muscolo si trova nella parte anteriore della coscia ed estende il ginocchio?",
+                opts: ["Quadricipite", "Ischiotibiale", "Gemello"],
+                ans: 0,
+                exp: "Il quadricipite è formato da 4 capi muscolari e raddrizza la gamba."
+            },
+            {
+                q: "Come si chiama il muscolo superficiale del polpaccio collegato al tendine d'Achille?",
+                opts: ["Gemello (gastrocnemio)", "Deltoide", "Grande pettorale"],
+                ans: 0,
+                exp: "Il gemello permette di sollevarsi sulle punte dei piedi e spingersi nel passo."
+            },
+            {
+                q: "Quale muscolo avvolge la spalla e permette di sollevare il braccio?",
+                opts: ["Deltoide", "Tibiale anteriore", "Retto addominale"],
+                ans: 0,
+                exp: "Il deltoide dà la forma rotonda alla spalla e solleva il braccio."
+            },
+            {
+                q: "Che cosa significa quando due muscoli sono 'antagonisti' (es. bicipite e tricipite)?",
+                opts: [
+                    "Che compiono movimenti opposti (uno si contrae mentre l'altro si rilassa)",
+                    "Che si trovano nello stesso piede",
+                    "Che non sono collegati alle ossa"
+                ],
+                ans: 0,
+                exp: "I muscoli lavorano spesso a coppie antagoniste per permettere movimenti controllati in entrambe le direzioni."
             }
         ];
 
@@ -1479,7 +1799,8 @@
         let selectedRegionFilter = "Tutte";
         let hoveredItemId = null;
         let isXrayVisual = false;
-        let isCalibrating = false;
+        let soundEnabled = true;
+        let audioCtx = null;
 
         let zoomScale = 1;
         let panX = 0;
@@ -1492,10 +1813,78 @@
         let erStep = "idle";
         let erHintUsed = false;
         let erMissedCases = [];
+        let erCurrentCorrectOpt = 0;
+        let erCurrentFirstAidCorrect = 0;
 
+        let quizSessionQuestions = [];
         let quizIndex = 0;
         let quizScore = 0;
         let quizAnswered = false;
+        let quizCurrentAns = 0;
+
+        function shuffleOptions(options, correctIndex) {
+            const paired = options.map((text, idx) => ({
+                text,
+                isCorrect: idx === correctIndex
+            }));
+            for (let i = paired.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [paired[i], paired[j]] = [paired[j], paired[i]];
+            }
+            return {
+                options: paired.map(p => p.text),
+                correctIndex: paired.findIndex(p => p.isCorrect)
+            };
+        }
+
+        function playTone(type) {
+            if (!soundEnabled) return;
+            try {
+                if (!audioCtx) {
+                    const Ctx = window.AudioContext || window.webkitAudioContext;
+                    if (!Ctx) return;
+                    audioCtx = new Ctx();
+                }
+                if (audioCtx.state === "suspended") audioCtx.resume();
+                const now = audioCtx.currentTime;
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+
+                if (type === "beep") {
+                    osc.type = "sine";
+                    osc.frequency.setValueAtTime(880, now);
+                    gain.gain.setValueAtTime(0.05, now);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.14);
+                    osc.start(now);
+                    osc.stop(now + 0.15);
+                } else if (type === "ok") {
+                    osc.type = "triangle";
+                    osc.frequency.setValueAtTime(523.25, now);
+                    osc.frequency.setValueAtTime(659.25, now + 0.09);
+                    gain.gain.setValueAtTime(0.06, now);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.24);
+                    osc.start(now);
+                    osc.stop(now + 0.25);
+                } else if (type === "err") {
+                    osc.type = "sine";
+                    osc.frequency.setValueAtTime(240, now);
+                    osc.frequency.setValueAtTime(195, now + 0.11);
+                    gain.gain.setValueAtTime(0.06, now);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.24);
+                    osc.start(now);
+                    osc.stop(now + 0.25);
+                }
+            } catch (e) {}
+        }
+
+        function toggleSoundEffects() {
+            soundEnabled = !soundEnabled;
+            const btn = document.getElementById("btn-sound-toggle");
+            if (btn) btn.textContent = soundEnabled ? "🔊 Audio" : "🔇 Muto";
+            if (soundEnabled) playTone("beep");
+        }
 
         const anatomyStage = document.getElementById("anatomy-stage");
         const zoomCanvas = document.getElementById("zoom-canvas");
@@ -2033,6 +2422,8 @@
         function setXrayVisual(enabled) {
             isXrayVisual = enabled;
             anatomyStage.classList.toggle("xray-mode", enabled);
+            const btn = document.getElementById("btn-xray-toggle");
+            if (btn) btn.classList.toggle("active", enabled);
         }
 
         function speakItalian(text) {
@@ -2103,13 +2494,14 @@
         /* ================= MODALITÀ PRONTO SOCCORSO ================= */
         function renderErIntroScreen() {
             resetHotspotStates();
+            setXrayVisual(true);
             infoPanel.innerHTML = `
                 <div class="er-start-wrapper">
                     <div class="er-start-overlay">
                         <div class="er-start-card">
                             <span class="region-tag muscle-tag">🚑 Simulazione Clinica CPIA</span>
                             <h2 style="font-size:1.45rem; font-weight:800; margin:0.4rem 0;">Turno al Pronto Soccorso</h2>
-                            <p style="color:var(--muted); font-size:0.95rem;">Ascolta i sintomi del paziente, individua sull'immagine anatomica l'osso o il muscolo coinvolto e rispondi alla domanda medica.</p>
+                            <p style="color:var(--muted); font-size:0.95rem;">Valuta il codice Triage, individua sul corpo l'osso o il muscolo coinvolto, rispondi al quesito anatomico e scegli l'intervento di Primo Soccorso.</p>
                             <button type="button" class="er-start-btn" onclick="startErShift()">Inizia il turno 🩺</button>
                         </div>
                     </div>
@@ -2118,130 +2510,248 @@
         }
 
         function startErShift() {
-            erQueue = [...ER_CASES].sort(() => Math.random() - 0.5);
+            erQueue = [...ER_CASES].sort(() => Math.random() - 0.5).slice(0, 6);
             erIndex = 0;
             erScore = 0;
             erStreak = 0;
             erMissedCases = [];
+            setXrayVisual(true);
             loadErCase();
+        }
+
+        function getErFinalGrade(score, total) {
+            const pct = total > 0 ? (score / total) * 100 : 0;
+            if (pct >= 90) return { title: "🏆 Primario di Pronto Soccorso", msg: "Eccellente! Ottima padronanza dell'anatomia e dei protocolli di primo soccorso." };
+            if (pct >= 70) return { title: "🩺 Specialista in Ortopedia", msg: "Molto bene! Hai gestito i pazienti con sicurezza e precisione." };
+            if (pct >= 45) return { title: "📋 Medico di Guardia", msg: "Buon lavoro! Rivedi qualche distretto anatomico per migliorare ancora." };
+            return { title: "🎓 Tirocinante in Formazione", msg: "Continua a esercitarti nella sezione Apparato Locomotore e riprova il turno!" };
         }
 
         function loadErCase() {
             if (erIndex >= erQueue.length) {
+                playTone("ok");
+                const grade = getErFinalGrade(erScore, erQueue.length);
                 infoPanel.innerHTML = `
-                    <div class="patient-card">
-                        <span class="region-tag">Turno completato</span>
-                        <h2 class="bone-title" style="margin:0.4rem 0;">Risultato: ${erScore} / ${erQueue.length}</h2>
-                        <p style="margin-bottom:1rem;">Hai completato tutte le visite al Pronto Soccorso Ortopedico!</p>
-                        <button type="button" class="next-btn" onclick="startErShift()">Nuovo turno 🔄</button>
+                    <div class="grade-badge-card">
+                        <div style="font-size:0.82rem; text-transform:uppercase; letter-spacing:0.6px; color:#93c5fd; font-weight:700;">Grado raggiunto</div>
+                        <h2 style="font-size:1.45rem; font-weight:800; margin:0.35rem 0;">${grade.title}</h2>
+                        <p style="font-size:1.05rem; font-weight:700; color:#facc15;">Punteggio finale: ${erScore} / ${erQueue.length}</p>
+                        <p style="font-size:0.9rem; color:#e2e8f0; margin-top:0.35rem;">${grade.msg}</p>
                     </div>
+                    ${erMissedCases.length > 0 ? `
+                        <div class="info-box">
+                            <h3>📌 Argomenti da ripassare</h3>
+                            <p>${erMissedCases.join(", ")}</p>
+                        </div>
+                    ` : ""}
+                    <button type="button" class="next-btn" onclick="startErShift()">Nuovo turno con altri pazienti 🔄</button>
                 `;
                 return;
             }
             const c = erQueue[erIndex];
-            erStep = "locate";
+            erStep = "triage";
             erHintUsed = false;
             resetHotspotStates();
-            if (currentLayer !== c.layer) switchAnatomyLayer(c.layer);
+            setXrayVisual(true);
+            playTone("beep");
 
-            const tr = TRIAGE_INFO[c.triage];
             infoPanel.innerHTML = `
                 <div class="er-status-bar">
                     <span>Paziente ${erIndex + 1} di ${erQueue.length}</span>
                     <span>Punti: ${erScore} • Serie: ${erStreak} 🔥</span>
                 </div>
-                <div class="patient-card triage-${c.triage}">
+                <div class="patient-card">
                     <div class="patient-header">
                         <div class="patient-avatar">${c.avatar}</div>
-                        <div>
-                            <span class="urgency-tag triage-${c.triage}">${tr.label}</span>
+                        <div style="flex:1;">
+                            <span class="urgency-tag" style="background:#334155; color:#fff;">⏳ In attesa di Triage</span>
                             <h3 style="font-size:1.1rem; font-weight:800;">${c.patient}</h3>
                         </div>
+                        <button type="button" class="speak-btn" onclick="speakItalian('${c.story.replace(/'/g, "\\'")}')">🔊 Ascolta</button>
                     </div>
-                    <div class="triage-explain">${tr.explain}</div>
                     <p class="patient-symptom">"${c.story}"</p>
                 </div>
-                <div id="er-feedback" class="feedback-box">
-                    👉 Passa alla scheda <strong>${c.layer === "bones" ? "🦴 Ossa" : "💪 Muscoli"}</strong> e clicca sul punto interessato sull'immagine.
-                </div>
-                <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
-                    <button type="button" class="secondary-btn" onclick="document.getElementById('er-feedback').innerHTML='💡 Suggerimento: ${c.hint.replace(/'/g, "\\'")}'">💡 Aiuto</button>
+
+                <div id="er-step-box" class="feedback-box">
+                    <strong>Fase 1 • Assegna il Codice Triage:</strong> quale priorità ha questo paziente?
+                    <div class="triage-choice-grid">
+                        <button type="button" class="triage-pick-btn pick-rosso" onclick="chooseErTriage('rosso')">🔴 Codice Rosso<br><span style="font-weight:500; font-size:0.76rem;">Emergenza grave</span></button>
+                        <button type="button" class="triage-pick-btn pick-giallo" onclick="chooseErTriage('giallo')">🟡 Codice Giallo<br><span style="font-weight:500; font-size:0.76rem;">Sospetta frattura</span></button>
+                        <button type="button" class="triage-pick-btn pick-verde" onclick="chooseErTriage('verde')">🟢 Codice Verde<br><span style="font-weight:500; font-size:0.76rem;">Trauma muscolare lieve</span></button>
+                    </div>
                 </div>
             `;
         }
 
+        function chooseErTriage(chosen) {
+            if (erStep !== "triage") return;
+            const c = erQueue[erIndex];
+            const tr = TRIAGE_INFO[c.triage];
+            const ok = chosen === c.triage;
+            playTone(ok ? "ok" : "err");
+
+            if (currentLayer !== c.layer) switchAnatomyLayer(c.layer);
+            erStep = "locate";
+
+            const card = infoPanel.querySelector(".patient-card");
+            if (card) {
+                card.classList.add(`triage-${c.triage}`);
+                const tag = card.querySelector(".urgency-tag");
+                if (tag) {
+                    tag.className = `urgency-tag triage-${c.triage}`;
+                    tag.textContent = tr.label;
+                }
+            }
+
+            const stepBox = document.getElementById("er-step-box");
+            stepBox.className = ok ? "feedback-box success" : "feedback-box error";
+            stepBox.innerHTML = `
+                ${ok ? "✅ Triage corretto!" : `ℹ️ Il codice corretto è <strong>${tr.label}</strong>.`} ${tr.explain}
+                <div style="margin-top:0.55rem; color:#0f172a;">
+                    <strong>Fase 2 • Esame sullo scanner:</strong> clicca sull'immagine anatomica il punto interessato (Scheda <strong>${c.layer === "bones" ? "🦴 Ossa" : "💪 Muscoli"}</strong>).
+                </div>
+            `;
+
+            const helpWrap = document.createElement("div");
+            helpWrap.style.cssText = "display:flex; gap:0.5rem; flex-wrap:wrap;";
+            helpWrap.innerHTML = `<button type="button" class="secondary-btn" onclick="document.getElementById('er-step-box').innerHTML += '<div style=margin-top:0.4rem>💡 <strong>Suggerimento:</strong> ${c.hint.replace(/'/g, "\\'")}</div>'; this.disabled=true;">💡 Suggerimento anatomico</button>`;
+            infoPanel.appendChild(helpWrap);
+        }
+
         function checkErLocation(item) {
             const c = erQueue[erIndex];
-            const fb = document.getElementById("er-feedback");
+            const fb = document.getElementById("er-step-box");
             const el = document.querySelector(`.hotspot[data-id="${item.id}"]`);
             if (item.id === c.targetId) {
+                playTone("ok");
                 erStep = "question";
                 if (el) el.classList.add("correct");
                 fb.className = "feedback-box success";
-                fb.innerHTML = `✅ Esatto! Hai individuato: <strong>${item.name}</strong>. Ora rispondi alla domanda:`;
+                fb.innerHTML = `✅ Esatto! Hai individuato: <strong>${item.name}</strong>. Ora rispondi alla domanda di anatomia:`;
+                const shuffledQ = shuffleOptions(c.options, c.correctOpt);
+                erCurrentCorrectOpt = shuffledQ.correctIndex;
                 const qDiv = document.createElement("div");
                 qDiv.className = "quiz-options";
+                qDiv.id = "er-anatomy-q";
                 qDiv.innerHTML = `
-                    <p style="font-weight:700; margin-top:0.5rem;">${c.question}</p>
-                    ${c.options.map((opt, idx) => `
+                    <p style="font-weight:700; margin-top:0.35rem;">Fase 3 • ${c.question}</p>
+                    ${shuffledQ.options.map((opt, idx) => `
                         <button type="button" class="option-btn" onclick="answerErQuestion(${idx}, this)">${opt}</button>
                     `).join("")}
                 `;
                 infoPanel.appendChild(qDiv);
             } else {
+                playTone("err");
                 erStreak = 0;
                 if (el) el.classList.add("wrong");
                 fb.className = "feedback-box error";
-                fb.innerHTML = `❌ Non è <strong>${item.name}</strong>. Riprova osservando bene la zona del dolore!`;
+                fb.innerHTML = `❌ Non è <strong>${item.name}</strong>. Riprova osservando bene la zona descritta dal paziente!`;
             }
         }
 
         function answerErQuestion(idx, btn) {
             if (erStep !== "question") return;
-            erStep = "done";
+            erStep = "firstaid";
             const c = erQueue[erIndex];
-            const buttons = infoPanel.querySelectorAll(".option-btn");
+            const qBox = document.getElementById("er-anatomy-q");
+            const buttons = qBox.querySelectorAll(".option-btn");
             buttons.forEach((b, i) => {
                 b.disabled = true;
-                if (i === c.correctOpt) b.classList.add("correct");
+                if (i === erCurrentCorrectOpt) b.classList.add("correct");
                 else if (i === idx) b.classList.add("wrong");
             });
-            if (idx === c.correctOpt) {
+
+            const anatOk = idx === erCurrentCorrectOpt;
+            playTone(anatOk ? "ok" : "err");
+            btn.dataset.anatOk = anatOk ? "1" : "0";
+
+            const shuffledFa = shuffleOptions(c.firstAidOptions, c.firstAidCorrect);
+            erCurrentFirstAidCorrect = shuffledFa.correctIndex;
+
+            const faDiv = document.createElement("div");
+            faDiv.className = "quiz-options";
+            faDiv.id = "er-firstaid-q";
+            faDiv.innerHTML = `
+                <p style="font-weight:700; margin-top:0.45rem; color:#0369a1;">Fase 4 • Primo Soccorso: ${c.firstAidQuestion}</p>
+                ${shuffledFa.options.map((opt, i) => `
+                    <button type="button" class="option-btn" onclick="answerErFirstAid(${i}, ${anatOk})">${opt}</button>
+                `).join("")}
+            `;
+            infoPanel.appendChild(faDiv);
+        }
+
+        function answerErFirstAid(idx, anatOk) {
+            if (erStep !== "firstaid") return;
+            erStep = "done";
+            const c = erQueue[erIndex];
+            const faBox = document.getElementById("er-firstaid-q");
+            const buttons = faBox.querySelectorAll(".option-btn");
+            buttons.forEach((b, i) => {
+                b.disabled = true;
+                if (i === erCurrentFirstAidCorrect) b.classList.add("correct");
+                else if (i === idx) b.classList.add("wrong");
+            });
+
+            const faOk = idx === erCurrentFirstAidCorrect;
+            playTone(faOk ? "ok" : "err");
+
+            if (anatOk && faOk) {
                 erScore++;
                 erStreak++;
             } else {
                 erStreak = 0;
+                const itemObj = (c.layer === "bones" ? BONES : MUSCLES).find(x => x.id === c.targetId);
+                if (itemObj && !erMissedCases.includes(itemObj.name)) erMissedCases.push(itemObj.name);
             }
+
             const next = document.createElement("button");
             next.type = "button";
             next.className = "next-btn";
-            next.textContent = "Prossimo paziente ➡️";
+            next.textContent = erIndex + 1 < erQueue.length ? "Prossimo paziente ➡️" : "Vedi Grado Finale 🏆";
             next.onclick = () => { erIndex++; loadErCase(); };
             infoPanel.appendChild(next);
         }
 
         /* ================= MODALITÀ QUIZ ================= */
+        function startQuizSession() {
+            quizSessionQuestions = [...QUIZ_QUESTIONS].sort(() => Math.random() - 0.5).slice(0, 8);
+            quizIndex = 0;
+            quizScore = 0;
+            renderQuizPanel();
+        }
+
         function renderQuizPanel() {
-            if (quizIndex >= QUIZ_QUESTIONS.length) {
+            if (quizSessionQuestions.length === 0) {
+                startQuizSession();
+                return;
+            }
+            if (quizIndex >= quizSessionQuestions.length) {
+                playTone("ok");
                 infoPanel.innerHTML = `
                     <div class="patient-card">
                         <span class="region-tag">Quiz completato</span>
-                        <h2 class="bone-title" style="margin:0.4rem 0;">Punteggio: ${quizScore} / ${QUIZ_QUESTIONS.length}</h2>
-                        <button type="button" class="next-btn" onclick="quizIndex=0; quizScore=0; renderQuizPanel();">Ripeti Quiz 🔄</button>
+                        <h2 class="bone-title" style="margin:0.4rem 0;">Punteggio: ${quizScore} / ${quizSessionQuestions.length}</h2>
+                        <p style="margin-bottom:0.9rem; color:var(--muted);">Ogni partita estrae 8 domande casuali dal database completo di 15 quesiti.</p>
+                        <button type="button" class="next-btn" onclick="startQuizSession()">Nuovo Quiz con altre domande 🔄</button>
                     </div>
                 `;
                 return;
             }
-            const q = QUIZ_QUESTIONS[quizIndex];
+            const q = quizSessionQuestions[quizIndex];
+            const shuffledQuiz = shuffleOptions(q.opts, q.ans);
+            quizCurrentAns = shuffledQuiz.correctIndex;
             quizAnswered = false;
             infoPanel.innerHTML = `
                 <div class="er-status-bar">
-                    <span>Domanda ${quizIndex + 1} di ${QUIZ_QUESTIONS.length}</span>
+                    <span>Domanda ${quizIndex + 1} di ${quizSessionQuestions.length}</span>
                     <span>Punteggio: ${quizScore}</span>
                 </div>
-                <h2 style="font-size:1.25rem; font-weight:800;">${q.q}</h2>
+                <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:0.5rem;">
+                    <h2 style="font-size:1.22rem; font-weight:800;">${q.q}</h2>
+                    <button type="button" class="speak-btn" onclick="speakItalian('${q.q.replace(/'/g, "\\'")}')">🔊</button>
+                </div>
                 <div class="quiz-options">
-                    ${q.opts.map((opt, idx) => `
+                    ${shuffledQuiz.options.map((opt, idx) => `
                         <button type="button" class="option-btn" onclick="checkQuizAnswer(${idx}, this)">${opt}</button>
                     `).join("")}
                 </div>
@@ -2252,19 +2762,21 @@
         function checkQuizAnswer(idx, btn) {
             if (quizAnswered) return;
             quizAnswered = true;
-            const q = QUIZ_QUESTIONS[quizIndex];
+            const q = quizSessionQuestions[quizIndex];
             const buttons = infoPanel.querySelectorAll(".option-btn");
             buttons.forEach((b, i) => {
                 b.disabled = true;
-                if (i === q.ans) b.classList.add("correct");
+                if (i === quizCurrentAns) b.classList.add("correct");
                 else if (i === idx) b.classList.add("wrong");
             });
             const fb = document.getElementById("quiz-feedback");
-            if (idx === q.ans) {
+            if (idx === quizCurrentAns) {
                 quizScore++;
+                playTone("ok");
                 fb.className = "feedback-box success";
                 fb.innerHTML = `✅ Corretto! ${q.exp}`;
             } else {
+                playTone("err");
                 fb.className = "feedback-box error";
                 fb.innerHTML = `❌ Risposta errata. ${q.exp}`;
             }
@@ -2293,8 +2805,9 @@
                     toolbarHint.textContent = "Individua la lesione sullo scanner";
                     renderErIntroScreen();
                 } else if (currentMode === "quiz") {
+                    setXrayVisual(false);
                     toolbarHint.textContent = "Rispondi alle domande sull'apparato locomotore";
-                    renderQuizPanel();
+                    startQuizSession();
                 }
             });
         });
