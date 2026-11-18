@@ -2039,6 +2039,8 @@
         let erMissedCases = [];
         let erCurrentCorrectOpt = 0;
         let erCurrentFirstAidCorrect = 0;
+        let erCasePerfect = true;
+        let erLocationFirstTry = true;
 
         const PEER_PREFIX = "cpia-ps-ortopedico-";
         let peerInstance = null;
@@ -2429,56 +2431,214 @@
             if (btn) btn.classList.toggle("active", enabled);
         }
 
+        function getMetalClipSvg() {
+            return `
+                <svg class="clipboard-metal-clip" viewBox="0 0 180 72" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                    <defs>
+                        <linearGradient id="steelBody" x1="0" y1="0" x2="1" y2="0">
+                            <stop offset="0%" stop-color="#64748b"/>
+                            <stop offset="18%" stop-color="#f1f5f9"/>
+                            <stop offset="38%" stop-color="#94a3b8"/>
+                            <stop offset="52%" stop-color="#ffffff"/>
+                            <stop offset="72%" stop-color="#cbd5e1"/>
+                            <stop offset="88%" stop-color="#64748b"/>
+                            <stop offset="100%" stop-color="#475569"/>
+                        </linearGradient>
+                        <linearGradient id="steelWire" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0%" stop-color="#e2e8f0"/>
+                            <stop offset="50%" stop-color="#94a3b8"/>
+                            <stop offset="100%" stop-color="#334155"/>
+                        </linearGradient>
+                    </defs>
+                    <path d="M56 34 V14 C56 7 63 4 72 4 H108 C117 4 124 7 124 14 V34" stroke="url(#steelWire)" stroke-width="5.5" stroke-linecap="round"/>
+                    <circle cx="90" cy="14" r="5" fill="#472712" stroke="#cbd5e1" stroke-width="2.5"/>
+                    <rect x="26" y="30" width="128" height="34" rx="8" fill="url(#steelBody)" stroke="#334155" stroke-width="1.6"/>
+                    <rect x="34" y="36" width="112" height="5" rx="2.5" fill="#475569" opacity="0.55"/>
+                    <rect x="30" y="57" width="120" height="5" rx="2.5" fill="#1e293b"/>
+                    <circle cx="38" cy="48" r="3.2" fill="#475569" stroke="#f8fafc" stroke-width="1"/>
+                    <circle cx="142" cy="48" r="3.2" fill="#475569" stroke="#f8fafc" stroke-width="1"/>
+                </svg>
+            `;
+        }
+
+        function renderMedicalClipboard(innerHtml, subtitle = "Cartella Clinica • PS Ortopedia") {
+            infoPanel.classList.add("clipboard-mode");
+            infoPanel.innerHTML = `
+                ${getMetalClipSvg()}
+                <div class="medical-sheet">
+                    <div class="medical-sheet-header">
+                        <div class="hospital-emblem">
+                            <div class="hospital-cross">+</div>
+                            <div>
+                                <div style="font-size:0.72rem; font-weight:800; color:#dc2626; letter-spacing:0.6px; text-transform:uppercase;">Azienda Ospedaliera CPIA</div>
+                                <div style="font-size:1rem; font-weight:800; color:#0f172a;">Cartella Clinica di Accettazione</div>
+                            </div>
+                        </div>
+                        <div class="sheet-meta-box">
+                            <div>Mod. PS-ORT/26</div>
+                            <div style="color:#0369a1;">${subtitle}</div>
+                        </div>
+                    </div>
+                    ${innerHtml}
+                </div>
+            `;
+        }
+
+        function selectAnatomyItemFromChip(id) {
+            const list = currentLayer === "bones" ? BONES : MUSCLES;
+            const found = list.find(i => i.id === id);
+            if (!found) return;
+            if (currentLayer === "bones") selectedBone = found;
+            else selectedMuscle = found;
+
+            const pos = found.views[currentView] || found.views.front;
+            if (pos.hidden) {
+                const validView = Object.keys(found.views).find(v => !found.views[v].hidden) || "front";
+                switchAnatomyView(validView);
+            }
+            highlightSelectedBone(found.id);
+            renderAnatomyHighlight();
+            renderExplorePanel();
+        }
+
+        function renderExplorePanel() {
+            infoPanel.classList.remove("clipboard-mode");
+            const isBones = currentLayer === "bones";
+            const list = isBones ? BONES : MUSCLES;
+            const item = isBones ? selectedBone : selectedMuscle;
+            const regions = ["Tutte", ...new Set(list.map(i => i.region))];
+            const filtered = selectedRegionFilter === "Tutte"
+                ? list
+                : list.filter(i => i.region === selectedRegionFilter);
+
+            const exploreSpeechText = `${item.name}. ${item.desc}. Funzione: ${item.func}`;
+            prefetchItalianTts(exploreSpeechText, "neutral");
+
+            infoPanel.innerHTML = `
+                <div class="bone-header">
+                    <div>
+                        <span class="region-tag ${isBones ? "" : "muscle-tag"}">${isBones ? "🦴 Osso" : "💪 Muscolo"} • ${item.region}</span>
+                        <h2 class="bone-title">${item.name}</h2>
+                    </div>
+                    <button type="button" class="speak-btn" onclick="speakItalian('${item.name}. ${item.desc.replace(/'/g, "\\'")}. Funzione: ${item.func.replace(/'/g, "\\'")}', 'neutral', this)">🔊 Ascolta</button>
+                </div>
+
+                <div class="info-box ${isBones ? "" : "muscle-box"}">
+                    <h3>Che cos'è</h3>
+                    <p>${item.desc}</p>
+                </div>
+
+                <div class="info-box ${isBones ? "" : "muscle-box"}">
+                    <h3>Funzione principale</h3>
+                    <p>${item.func}</p>
+                </div>
+
+                <div class="info-box ${isBones ? "" : "muscle-box"}">
+                    <h3>Articolazioni e ${isBones ? "Muscoli collegati" : "Ossa collegate"}</h3>
+                    <p><strong>Articolazioni:</strong> ${item.joints}<br>
+                    <strong>${isBones ? "Muscoli" : "Ossa"}:</strong> ${isBones ? item.muscles : item.bones}</p>
+                </div>
+
+                <div>
+                    <h3 style="font-size:0.85rem; text-transform:uppercase; color:var(--muted); margin-bottom:0.45rem;">Filtra per regione</h3>
+                    <div class="filter-bar">
+                        ${regions.map(r => `
+                            <button type="button" class="filter-chip ${selectedRegionFilter === r ? "active" : ""}" onclick="selectedRegionFilter='${r}'; renderExplorePanel();">${r}</button>
+                        `).join("")}
+                    </div>
+                    <div class="bone-grid">
+                        ${filtered.map(el => `
+                            <button type="button" class="bone-chip ${el.id === item.id ? "active" : ""}" onclick="selectAnatomyItemFromChip('${el.id}')">${el.name}</button>
+                        `).join("")}
+                    </div>
+                </div>
+            `;
+            highlightSelectedBone(item.id);
+        }
+
+        function destroyActivePeer() {
+            if (playerHostConn) {
+                try { playerHostConn.close(); } catch (e) {}
+                playerHostConn = null;
+            }
+            if (peerInstance) {
+                try { peerInstance.destroy(); } catch (e) {}
+                peerInstance = null;
+            }
+            if (localRoomChannel) {
+                try { localRoomChannel.close(); } catch (e) {}
+                localRoomChannel = null;
+            }
+        }
+
         const preferredItalianVoices = {
             female: null,
             male: null,
             neutral: null
         };
+        const neuralTtsCache = new Map();
+        const neuralTtsInFlight = new Map();
+        let activeAudioPlayer = null;
+        let activeSpeakBtn = null;
 
         function selectBestItalianVoices() {
             if (!("speechSynthesis" in window)) return preferredItalianVoices;
             const voices = window.speechSynthesis.getVoices() || [];
-            const itVoices = voices.filter(v => (v.lang || "").toLowerCase().startsWith("it"));
+            const itVoices = voices.filter(v => {
+                const lang = (v.lang || "").toLowerCase();
+                const name = (v.name || "").toLowerCase();
+                return lang.startsWith("it") || name.includes("italian") || name.includes("italiano");
+            });
             if (itVoices.length === 0) return preferredItalianVoices;
 
-            const maleHints = ["diego", "giuseppe", "luca", "cosimo", "marco", "matteo", "alessandro", "male", "uomo", "maschile"];
-            const femaleHints = ["elsa", "isabella", "alice", "federica", "paola", "silvia", "bianca", "carla", "female", "donna", "femminile", "google italiano"];
+            const maleHints = [
+                "diego", "giuseppe", "luca", "cosimo", "fabio", "giovanni",
+                "lorenzo", "vittorio", "marco", "matteo", "alessandro",
+                "emanuele", "paolo", "andrea", "roberto", "stefano", "male", "uomo", "maschile"
+            ];
+            const femaleHints = [
+                "elsa", "isabella", "alice", "federica", "paola", "silvia",
+                "bianca", "carla", "fabiola", "lucia", "chiara", "elena",
+                "giulia", "sofia", "female", "donna", "femminile", "google italiano"
+            ];
+
+            const isNeuralVoice = (v) => {
+                const n = (v.name || "").toLowerCase();
+                return n.includes("natural") || n.includes("neural") || n.includes("online") || n.includes("enhanced") || n.includes("premium");
+            };
 
             const baseQualityScore = (v) => {
                 const name = (v.name || "").toLowerCase();
                 let score = 0;
-                if (name.includes("natural") || name.includes("neural") || name.includes("online")) score += 50;
-                if (name.includes("google")) score += 40;
-                if (name.includes("enhanced") || name.includes("premium") || name.includes("siri")) score += 35;
-                if (!v.localService) score += 15;
+                if (isNeuralVoice(v)) score += 150;
+                if (name.includes("google")) score += 110;
+                if (name.includes("microsoft")) score += 60;
+                if (name.includes("espeak") || name.includes("compact")) score -= 250;
                 return score;
             };
 
-            const pickForGender = (targetGender) => {
-                const scored = itVoices.map(v => {
-                    const name = (v.name || "").toLowerCase();
-                    let score = baseQualityScore(v);
-                    const isMaleName = maleHints.some(h => name.includes(h));
-                    const isFemaleName = femaleHints.some(h => name.includes(h));
+            const validItVoices = itVoices.filter(v => {
+                const name = (v.name || "").toLowerCase();
+                return !name.includes("espeak") && !name.includes("compact");
+            });
+            const pool = validItVoices.length > 0 ? validItVoices : itVoices;
+            const bestOverall = [...pool].sort((a, b) => baseQualityScore(b) - baseQualityScore(a))[0] || null;
 
-                    if (targetGender === "male") {
-                        if (isMaleName) score += 120;
-                        if (isFemaleName) score -= 80;
-                    } else if (targetGender === "female") {
-                        if (isFemaleName) score += 120;
-                        if (isMaleName) score -= 80;
-                    } else {
-                        if (isFemaleName || isMaleName) score += 25;
-                    }
-                    return { v, score };
-                });
-                scored.sort((a, b) => b.score - a.score);
-                return scored[0]?.v || null;
-            };
+            const maleVoices = pool
+                .filter(v => {
+                    const n = (v.name || "").toLowerCase();
+                    if (femaleHints.some(fh => n.includes(fh))) return false;
+                    return maleHints.some(h => n.includes(h));
+                })
+                .sort((a, b) => baseQualityScore(b) - baseQualityScore(a));
 
-            preferredItalianVoices.male = pickForGender("male");
-            preferredItalianVoices.female = pickForGender("female");
-            preferredItalianVoices.neutral = pickForGender("neutral");
+            const femaleVoices = pool
+                .filter(v => femaleHints.some(h => (v.name || "").toLowerCase().includes(h)))
+                .sort((a, b) => baseQualityScore(b) - baseQualityScore(a));
+
+            preferredItalianVoices.male = maleVoices[0] || bestOverall;
+            preferredItalianVoices.female = femaleVoices[0] || bestOverall;
+            preferredItalianVoices.neutral = bestOverall;
             return preferredItalianVoices;
         }
 
@@ -2489,239 +2649,183 @@
             };
         }
 
-        function speakItalian(text, gender = "neutral") {
-            if (!("speechSynthesis" in window) || !text) return;
-            window.speechSynthesis.cancel();
-
-            const pool = preferredItalianVoices.neutral ? preferredItalianVoices : selectBestItalianVoices();
-            const voice = pool[gender] || pool.neutral;
-            const voiceName = (voice?.name || "").toLowerCase();
-            const hasDedicatedMaleVoice = ["diego", "giuseppe", "luca", "cosimo", "marco", "matteo", "alessandro", "male", "uomo"].some(h => voiceName.includes(h));
-
-            const sentences = String(text)
-                .replace(/\s+/g, " ")
-                .split(/(?<=[.!?:;])\s+/)
-                .map(s => s.trim())
-                .filter(Boolean);
-
-            sentences.forEach(sentence => {
-                const utter = new SpeechSynthesisUtterance(sentence);
-                utter.lang = "it-IT";
-                if (voice) utter.voice = voice;
-                if (gender === "male") {
-                    utter.rate = 0.95;
-                    utter.pitch = hasDedicatedMaleVoice ? 0.98 : 0.82;
-                } else if (gender === "female") {
-                    utter.rate = 0.97;
-                    utter.pitch = 1.05;
-                } else {
-                    utter.rate = 0.96;
-                    utter.pitch = 1.02;
-                }
-                utter.volume = 1;
-                window.speechSynthesis.speak(utter);
-            });
-        }
-
-        toggleNames.addEventListener("change", () => {
-            anatomyStage.classList.toggle("show-all-labels", toggleNames.checked);
-        });
-
-        /* ================= PANNELLO ESPLORAZIONE ================= */
-        function renderExplorePanel() {
-            infoPanel.classList.remove("clipboard-mode");
-            const isBones = currentLayer === "bones";
-            const list = isBones ? BONES : MUSCLES;
-            const current = isBones ? selectedBone : selectedMuscle;
-            const regions = ["Tutte", "Testa", "Tronco", "Arti superiori", "Arti inferiori"];
-            const filtered = selectedRegionFilter === "Tutte"
-                ? list
-                : list.filter(i => i.region === selectedRegionFilter);
-
-            highlightSelectedBone(current.id);
-
-            infoPanel.innerHTML = `
-                <div class="bone-header">
-                    <div>
-                        <span class="region-tag ${isBones ? "" : "muscle-tag"}">${isBones ? "🦴 Osso" : "💪 Muscolo"} • ${current.region}</span>
-                        <h2 class="bone-title">${current.name}</h2>
-                    </div>
-                    <button type="button" class="speak-btn" onclick="speakItalian('${current.name}. ${current.desc} Funzione: ${current.func}')">🔊 Ascolta</button>
-                </div>
-
-                <div class="info-box ${isBones ? "" : "muscle-box"}">
-                    <h3>Descrizione anatomica</h3>
-                    <p>${current.desc}</p>
-                </div>
-
-                <div class="info-box ${isBones ? "" : "muscle-box"}">
-                    <h3>Funzione principale</h3>
-                    <p>${current.func}</p>
-                </div>
-
-                <div class="info-box ${isBones ? "" : "muscle-box"}">
-                    <h3>Articolazioni e collegamenti</h3>
-                    <p><strong>Articolazioni:</strong> ${current.joints}<br>
-                    <strong>${isBones ? "Muscoli collegati" : "Ossa collegate"}:</strong> ${isBones ? current.muscles : current.bones}</p>
-                </div>
-
-                <div>
-                    <div class="filter-bar">
-                        ${regions.map(r => `
-                            <button type="button" class="filter-chip ${selectedRegionFilter === r ? "active" : ""}" onclick="selectedRegionFilter='${r}'; renderExplorePanel();">${r}</button>
-                        `).join("")}
-                    </div>
-                    <div class="bone-grid">
-                        ${filtered.map(it => `
-                            <button type="button" class="bone-chip ${it.id === current.id ? "active" : ""}" onclick="handleAnatomyItemClick(${isBones ? "BONES" : "MUSCLES"}.find(x=>x.id==='${it.id}'))">${it.name}</button>
-                        `).join("")}
-                    </div>
-                </div>
-            `;
-        }
-
-        /* ================= MODALITÀ PRONTO SOCCORSO A SQUADRE (PEERJS - ZERO CONFIG) ================= */
-        function getMetalClipSvg() {
-            return `
-                <svg class="clipboard-metal-clip" viewBox="0 0 180 70" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                    <defs>
-                        <linearGradient id="steelBody" x1="0" y1="0" x2="1" y2="0">
-                            <stop offset="0%" stop-color="#64748b"/>
-                            <stop offset="18%" stop-color="#e2e8f0"/>
-                            <stop offset="42%" stop-color="#94a3b8"/>
-                            <stop offset="65%" stop-color="#f8fafc"/>
-                            <stop offset="85%" stop-color="#94a3b8"/>
-                            <stop offset="100%" stop-color="#475569"/>
-                        </linearGradient>
-                        <linearGradient id="steelPlate" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="0%" stop-color="#f1f5f9"/>
-                            <stop offset="35%" stop-color="#cbd5e1"/>
-                            <stop offset="75%" stop-color="#64748b"/>
-                            <stop offset="100%" stop-color="#334155"/>
-                        </linearGradient>
-                    </defs>
-                    <path d="M58 26 L58 14 Q58 4 72 4 L108 4 Q122 4 122 14 L122 26" fill="none" stroke="url(#steelBody)" stroke-width="6.5" stroke-linecap="round"/>
-                    <circle cx="90" cy="11" r="4.2" fill="#334155" stroke="#e2e8f0" stroke-width="1.5"/>
-                    <rect x="24" y="23" width="132" height="34" rx="7" fill="url(#steelPlate)" stroke="#334155" stroke-width="1.5"/>
-                    <rect x="34" y="29" width="112" height="6" rx="3" fill="#475569" opacity="0.55"/>
-                    <rect x="18" y="52" width="144" height="9" rx="4.5" fill="#1e293b"/>
-                    <circle cx="38" cy="41" r="3.2" fill="#475569" stroke="#f8fafc" stroke-width="1"/>
-                    <circle cx="142" cy="41" r="3.2" fill="#475569" stroke="#f8fafc" stroke-width="1"/>
-                </svg>
-            `;
-        }
-
-        function renderMedicalClipboard(innerHtml, subtitle = "Cartella Clinica di Accettazione") {
-            infoPanel.classList.add("clipboard-mode");
-            infoPanel.innerHTML = `
-                ${getMetalClipSvg()}
-                <div class="medical-sheet">
-                    <div class="medical-sheet-header">
-                        <div class="hospital-emblem">
-                            <div class="hospital-cross">+</div>
-                            <div>
-                                <div style="font-size:0.72rem; font-weight:800; color:#dc2626; letter-spacing:0.6px; text-transform:uppercase;">Azienda Ospedaliera CPIA</div>
-                                <div style="font-size:0.98rem; font-weight:800; color:#0f172a;">Pronto Soccorso Ortopedico</div>
-                            </div>
-                        </div>
-                        <div class="sheet-meta-box">
-                            <div>REP. TRAUMATOLOGIA</div>
-                            <div style="color:#0284c7;">${subtitle}</div>
-                        </div>
-                    </div>
-                    ${innerHtml}
-                </div>
-            `;
-        }
-
-        function destroyActivePeer() {
-            if (localRoomChannel) {
-                try { localRoomChannel.close(); } catch (e) {}
-                localRoomChannel = null;
+        function stopAllSpeech() {
+            if ("speechSynthesis" in window) {
+                window.speechSynthesis.cancel();
             }
-            if (playerHostConn) {
-                try { playerHostConn.close(); } catch (e) {}
-                playerHostConn = null;
+            if (activeAudioPlayer) {
+                try {
+                    activeAudioPlayer.pause();
+                    activeAudioPlayer.currentTime = 0;
+                } catch (e) {}
+                activeAudioPlayer = null;
             }
-            if (peerInstance) {
-                try { peerInstance.destroy(); } catch (e) {}
-                peerInstance = null;
+            if (activeSpeakBtn) {
+                activeSpeakBtn.textContent = activeSpeakBtn.dataset.origLabel || "🔊 Ascolta";
+                activeSpeakBtn.disabled = false;
+                activeSpeakBtn = null;
             }
         }
 
-        function setupLocalRoomChannel(pin, isHost) {
-            if (typeof BroadcastChannel === "undefined") return;
-            try {
-                localRoomChannel = new BroadcastChannel(PEER_PREFIX + pin);
-                localRoomChannel.onmessage = (event) => {
-                    const msg = event.data;
-                    if (!msg || typeof msg !== "object") return;
-                    if (isHost) {
-                        handleIncomingRoomMessage(msg, (reply) => {
-                            try { localRoomChannel.postMessage(reply); } catch (e) {}
-                        });
-                    } else if (msg.type === "welcome" && msg.targetTeamId === currentTeamDocId) {
-                        window.dispatchEvent(new CustomEvent("cpia-local-welcome", { detail: msg }));
-                    }
+        function pcm16Base64ToWavUrl(base64Pcm, sampleRate = 24000) {
+            const binary = atob(base64Pcm);
+            const pcmLen = binary.length;
+            const buffer = new ArrayBuffer(44 + pcmLen);
+            const view = new DataView(buffer);
+            const writeStr = (offset, str) => {
+                for (let i = 0; i < str.length; i++) view.setUint8(offset + i, str.charCodeAt(i));
+            };
+            writeStr(0, "RIFF");
+            view.setUint32(4, 36 + pcmLen, true);
+            writeStr(8, "WAVE");
+            writeStr(12, "fmt ");
+            view.setUint32(16, 16, true);
+            view.setUint16(20, 1, true);
+            view.setUint16(22, 1, true);
+            view.setUint32(24, sampleRate, true);
+            view.setUint32(28, sampleRate * 2, true);
+            view.setUint16(32, 2, true);
+            view.setUint16(34, 16, true);
+            writeStr(36, "data");
+            view.setUint32(40, pcmLen, true);
+            const bytes = new Uint8Array(buffer, 44);
+            for (let i = 0; i < pcmLen; i++) bytes[i] = binary.charCodeAt(i);
+            return URL.createObjectURL(new Blob([buffer], { type: "audio/wav" }));
+        }
+
+        function speakWithBrowserFallback(cleanText, gender = "neutral") {
+            if (!("speechSynthesis" in window)) return;
+            const selectedSet = selectBestItalianVoices();
+            const chosenVoice = selectedSet[gender] || selectedSet.neutral;
+            const u = new SpeechSynthesisUtterance(cleanText);
+            u.lang = "it-IT";
+            if (chosenVoice) u.voice = chosenVoice;
+            u.rate = 0.96;
+            u.pitch = 1.0;
+            u.volume = 1.0;
+            window.speechSynthesis.speak(u);
+        }
+
+        async function tryNeuralItalianTts(cleanText, gender) {
+            const cacheKey = `${gender}:${cleanText}`;
+            if (neuralTtsCache.has(cacheKey)) {
+                return neuralTtsCache.get(cacheKey);
+            }
+            if (neuralTtsInFlight.has(cacheKey)) {
+                return neuralTtsInFlight.get(cacheKey);
+            }
+
+            const fetchPromise = (async () => {
+                const voiceName = gender === "male" ? "Orus" : (gender === "female" ? "Aoede" : "Charon");
+                const stylePrompt = gender === "male"
+                    ? `Leggi in italiano con voce maschile naturale, chiara ed espressiva, come un paziente che descrive i propri sintomi: "${cleanText}"`
+                    : `Leggi in italiano con voce femminile naturale, chiara ed espressiva: "${cleanText}"`;
+
+                const apiKey = "";
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent?key=${apiKey}`;
+                const payload = {
+                    contents: [{ parts: [{ text: stylePrompt }] }],
+                    generationConfig: {
+                        responseModalities: ["AUDIO"],
+                        speechConfig: {
+                            voiceConfig: {
+                                prebuiltVoiceConfig: { voiceName }
+                            }
+                        }
+                    },
+                    model: "gemini-2.5-flash-preview-tts"
                 };
-            } catch (e) {}
+
+                const res = await fetch(apiUrl, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(payload)
+                });
+                if (!res.ok) throw new Error("TTS API error");
+                const data = await res.json();
+                const part = data?.candidates?.[0]?.content?.parts?.[0];
+                const audioData = part?.inlineData?.data;
+                const mimeType = part?.inlineData?.mimeType || "";
+                if (!audioData || !mimeType.startsWith("audio/")) throw new Error("No audio data");
+
+                const rateMatch = mimeType.match(/rate=(\d+)/);
+                const sampleRate = rateMatch ? parseInt(rateMatch[1], 10) : 24000;
+                const wavUrl = pcm16Base64ToWavUrl(audioData, sampleRate);
+                neuralTtsCache.set(cacheKey, wavUrl);
+                return wavUrl;
+            })();
+
+            neuralTtsInFlight.set(cacheKey, fetchPromise);
+            try {
+                return await fetchPromise;
+            } finally {
+                neuralTtsInFlight.delete(cacheKey);
+            }
         }
 
-        function handleIncomingRoomMessage(msg, sendReply) {
-            if (msg.type === "join") {
-                const teamId = msg.teamId || ("team_" + Date.now() + "_" + Math.random().toString(36).slice(2, 6));
-                const existing = latestRoomTeams.find(t => t.id === teamId);
-                if (existing) {
-                    existing.teamName = msg.teamName;
-                    existing.members = msg.members;
-                } else {
-                    latestRoomTeams.push({
-                        id: teamId,
-                        teamName: msg.teamName,
-                        members: msg.members || [],
-                        score: 0,
-                        currentCase: 0,
-                        completed: false,
-                        finishedAt: null,
-                        history: [{ step: 0, score: 0, ok: true }]
-                    });
+        function prefetchItalianTts(text, gender = "neutral") {
+            if (!text) return;
+            const cleanText = String(text).replace(/\s+/g, " ").trim();
+            tryNeuralItalianTts(cleanText, gender).catch(() => {});
+        }
+
+        function prefetchErQueueVoices(queue, startIdx = 0) {
+            if (!Array.isArray(queue)) return;
+            for (let i = startIdx; i < Math.min(queue.length, startIdx + 3); i++) {
+                const item = queue[i];
+                if (item && item.story) {
+                    prefetchItalianTts(item.story, item.gender || "neutral");
                 }
-                if (sendReply) {
-                    sendReply({
-                        type: "welcome",
-                        targetTeamId: teamId,
-                        teamId,
-                        caseIndices: hostSharedCaseIndices
-                    });
-                }
-                sortAndRenderHostLeaderboard();
-            } else if (msg.type === "progress") {
-                const t = latestRoomTeams.find(x => x.id === msg.teamId);
-                if (t) {
-                    const prevScore = t.score;
-                    const newScore = Number(msg.score) || 0;
-                    const newCase = Number(msg.currentCase) || 0;
-                    t.score = newScore;
-                    t.currentCase = newCase;
-                    t.completed = Boolean(msg.completed);
-                    if (!Array.isArray(t.history)) t.history = [{ step: 0, score: 0, ok: true }];
-                    const lastPoint = t.history[t.history.length - 1];
-                    if (!lastPoint || lastPoint.step !== newCase || lastPoint.score !== newScore) {
-                        t.history.push({
-                            step: newCase,
-                            score: newScore,
-                            ok: newScore > prevScore
-                        });
+            }
+        }
+
+        async function speakItalian(text, gender = "neutral", btnEl = null) {
+            if (!text) return;
+            stopAllSpeech();
+            const cleanText = String(text).replace(/\s+/g, " ").trim();
+            const cacheKey = `${gender}:${cleanText}`;
+
+            if (btnEl) {
+                if (!btnEl.dataset.origLabel) btnEl.dataset.origLabel = btnEl.textContent;
+                activeSpeakBtn = btnEl;
+                btnEl.textContent = "🔊 In lettura...";
+            }
+
+            // Se l'audio neurale è già pronto in cache, parte all'istante (0 ms)
+            if (neuralTtsCache.has(cacheKey)) {
+                try {
+                    const audio = new Audio(neuralTtsCache.get(cacheKey));
+                    activeAudioPlayer = audio;
+                    audio.onended = () => {
+                        if (activeSpeakBtn === btnEl && btnEl) {
+                            btnEl.textContent = btnEl.dataset.origLabel || "🔊 Ascolta";
+                            activeSpeakBtn = null;
+                        }
+                    };
+                    await audio.play();
+                    return;
+                } catch (e) {}
+            }
+
+            // Avvia subito in parallelo la preparazione neurale per il futuro
+            tryNeuralItalianTts(cleanText, gender).catch(() => {});
+
+            // Nel frattempo parte immediatamente (0 ms) senza farti aspettare
+            speakWithBrowserFallback(cleanText, gender);
+            if (btnEl) {
+                setTimeout(() => {
+                    if (activeSpeakBtn === btnEl) {
+                        btnEl.textContent = btnEl.dataset.origLabel || "🔊 Ascolta";
+                        activeSpeakBtn = null;
                     }
-                    if (t.completed && !t.finishedAt) t.finishedAt = Date.now();
-                    sortAndRenderHostLeaderboard();
-                }
+                }, 1800);
             }
         }
 
         const ECG_COLORS = ["#22c55e", "#38bdf8", "#facc15", "#f43f5e", "#c084fc", "#fb923c", "#2dd4bf", "#a3e635"];
 
         function buildTeamEcgChartHtml(teams, totalCases) {
+            const maxScore = totalCases * 4;
             const W = 540;
             const H = 170;
             const padLeft = 28;
@@ -2736,8 +2840,8 @@
             for (let x = padLeft; x <= W - padRight; x += 20) {
                 gridLines += `<line x1="${x}" y1="${padTop}" x2="${x}" y2="${H - padBottom}" stroke="rgba(16,185,129,0.12)" stroke-width="1"/>`;
             }
-            for (let s = 0; s <= totalCases; s++) {
-                const y = padTop + plotH - (s / Math.max(1, totalCases)) * plotH;
+            for (let s = 0; s <= maxScore; s += 4) {
+                const y = padTop + plotH - (s / Math.max(1, maxScore)) * plotH;
                 gridLines += `<line x1="${padLeft}" y1="${y.toFixed(1)}" x2="${W - padRight}" y2="${y.toFixed(1)}" stroke="rgba(16,185,129,0.22)" stroke-width="1"/>`;
                 gridLines += `<text x="${padLeft - 6}" y="${(y + 3).toFixed(1)}" fill="#64748b" font-size="9" font-weight="700" text-anchor="end">${s}</text>`;
             }
@@ -2751,7 +2855,7 @@
                 // Leggero offset verticale per non sovrapporre linee a pari punteggio
                 const laneOffset = ((idx % 4) - 1.5) * 1.4;
                 const getX = (step) => padLeft + (Math.min(step, totalCases) / Math.max(1, totalCases)) * plotW;
-                const getY = (score) => padTop + plotH - (Math.min(score, totalCases) / Math.max(1, totalCases)) * plotH + laneOffset;
+                const getY = (score) => padTop + plotH - (Math.min(score, maxScore) / Math.max(1, maxScore)) * plotH + laneOffset;
 
                 let d = `M ${getX(hist[0].step).toFixed(1)} ${getY(hist[0].score).toFixed(1)}`;
                 let lastX = getX(hist[0].step);
@@ -2813,7 +2917,7 @@
                 <div class="ecg-monitor-card">
                     <div class="ecg-monitor-header">
                         <span><span class="ecg-live-dot"></span>Monitor ECG • Andamento Squadre</span>
-                        <span style="color:#94a3b8;">0 → ${totalCases} Pazienti</span>
+                        <span style="color:#94a3b8;">0 → ${maxScore} Punti (${totalCases} Pazienti)</span>
                     </div>
                     <svg class="ecg-svg" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" aria-label="Grafico elettrocardiogramma andamento squadre">
                         ${gridLines}
@@ -2872,6 +2976,77 @@
 
         function generateSharedCaseOrder() {
             return [...ER_CASES].sort(() => Math.random() - 0.5).slice(0, 6);
+        }
+
+        function handleIncomingRoomMessage(msg, replyFn) {
+            if (!msg || typeof msg !== "object") return;
+            if (msg.type === "join") {
+                const existing = latestRoomTeams.find(t => t.teamId === msg.teamId);
+                if (!existing) {
+                    latestRoomTeams.push({
+                        teamId: msg.teamId,
+                        teamName: msg.teamName || "Squadra",
+                        members: Array.isArray(msg.members) ? msg.members : [],
+                        score: 0,
+                        currentCase: 0,
+                        completed: false,
+                        finishedAt: null,
+                        history: [{ step: 0, score: 0, ok: true }]
+                    });
+                }
+                sortAndRenderHostLeaderboard();
+                if (typeof replyFn === "function") {
+                    replyFn({
+                        type: "welcome",
+                        teamId: msg.teamId,
+                        caseIndices: hostSharedCaseIndices
+                    });
+                }
+            } else if (msg.type === "progress") {
+                const team = latestRoomTeams.find(t => t.teamId === msg.teamId);
+                if (team) {
+                    const prevScore = team.score;
+                    const newScore = Number(msg.score) || 0;
+                    const newCase = Number(msg.currentCase) || 0;
+                    if (newScore !== prevScore || newCase !== team.currentCase || msg.completed) {
+                        const stepNum = msg.completed ? (hostSharedCaseIndices.length || 6) : Math.max(team.history.length, newCase + (newScore > prevScore ? 0.5 : 0));
+                        team.history.push({
+                            step: stepNum,
+                            score: newScore,
+                            ok: newScore > prevScore
+                        });
+                    }
+                    team.score = newScore;
+                    team.currentCase = newCase;
+                    if (msg.completed && !team.completed) {
+                        team.completed = true;
+                        team.finishedAt = Date.now();
+                    }
+                    sortAndRenderHostLeaderboard();
+                }
+            }
+        }
+
+        function setupLocalRoomChannel(pin, isHost) {
+            if (localRoomChannel) {
+                try { localRoomChannel.close(); } catch (e) {}
+                localRoomChannel = null;
+            }
+            if (typeof BroadcastChannel === "undefined") return;
+            try {
+                localRoomChannel = new BroadcastChannel(PEER_PREFIX + pin);
+                localRoomChannel.onmessage = (ev) => {
+                    const msg = ev.data;
+                    if (!msg) return;
+                    if (isHost) {
+                        handleIncomingRoomMessage(msg, (reply) => {
+                            try { localRoomChannel.postMessage(reply); } catch (e) {}
+                        });
+                    } else if (msg.type === "welcome") {
+                        window.dispatchEvent(new CustomEvent("cpia-local-welcome", { detail: msg }));
+                    }
+                };
+            } catch (e) {}
         }
 
         function openHostRoomScreen() {
@@ -2952,6 +3127,7 @@
 
         function renderHostDashboard() {
             const totalCases = hostSharedCaseIndices.length || 6;
+            const maxScore = totalCases * 4;
             renderMedicalClipboard(`
                 <div class="team-lobby-box">
                     <div class="pin-display-banner">
@@ -2988,7 +3164,7 @@
                                             <div style="font-size:0.78rem; font-weight:700; color:#0369a1; margin-top:0.15rem;">${statusLabel}</div>
                                         </div>
                                         <div style="text-align:right;">
-                                            <div style="font-size:1.25rem; font-weight:800; color:#0f172a;">${t.score} / ${totalCases}</div>
+                                            <div style="font-size:1.25rem; font-weight:800; color:#0f172a;">${t.score} / ${maxScore}</div>
                                             <div style="font-size:0.75rem; color:var(--muted); font-weight:600;">punti</div>
                                         </div>
                                     </div>
@@ -3168,6 +3344,7 @@
             erScore = 0;
             erStreak = 0;
             erMissedCases = [];
+            prefetchErQueueVoices(erQueue, 0);
             setXrayVisual(true);
             loadErCase();
         }
@@ -3184,13 +3361,14 @@
             if (erIndex >= erQueue.length) {
                 playTone("ok");
                 syncTeamProgress(true);
-                const grade = getErFinalGrade(erScore, erQueue.length);
+                const maxScore = erQueue.length * 4;
+                const grade = getErFinalGrade(erScore, maxScore);
                 renderMedicalClipboard(`
                     <div class="grade-badge-card">
                         ${roomMode === "player" ? `<div style="font-size:0.85rem; font-weight:800; color:#fde047; margin-bottom:0.25rem;">👥 Équipe: ${escapeHtml(currentTeamName)} (PIN ${escapeHtml(currentRoomPin)})</div>` : ""}
                         <div style="font-size:0.82rem; text-transform:uppercase; letter-spacing:0.6px; color:#93c5fd; font-weight:700;">Referto Finale & Qualifica</div>
                         <h2 style="font-size:1.45rem; font-weight:800; margin:0.35rem 0;">${grade.title}</h2>
-                        <p style="font-size:1.05rem; font-weight:700; color:#facc15;">Esito turno: ${erScore} / ${erQueue.length} pazienti gestiti</p>
+                        <p style="font-size:1.05rem; font-weight:700; color:#facc15;">Punteggio turno: ${erScore} / ${maxScore} punti</p>
                         <p style="font-size:0.9rem; color:#e2e8f0; margin-top:0.35rem;">${grade.msg}</p>
                     </div>
                     <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.5rem; padding:0.25rem 0;">
@@ -3214,16 +3392,20 @@
             }
             const c = erQueue[erIndex];
             erStep = "triage";
+            erCasePerfect = true;
+            erLocationFirstTry = true;
             resetHotspotStates();
             setXrayVisual(true);
             playTone("beep");
             syncTeamProgress(false);
 
+            const maxScore = erQueue.length * 4;
             const verbaleNum = `PS-${2026}-${104 + erIndex}`;
+            prefetchErQueueVoices(erQueue, erIndex);
             renderMedicalClipboard(`
                 <div class="er-status-bar">
                     <span>Verbale ${verbaleNum} • Paziente ${erIndex + 1}/${erQueue.length}</span>
-                    <span>Punti: ${erScore} • Serie: ${erStreak} 🔥</span>
+                    <span id="er-score-display">Punti: ${erScore}/${maxScore} • Serie: ${erStreak} 🔥</span>
                 </div>
                 <div class="record-section">
                     <div class="record-section-title">
@@ -3238,7 +3420,7 @@
                                     <span class="urgency-tag" style="background:#334155; color:#fff;">⏳ In attesa di Triage</span>
                                     <h3 style="font-size:1.08rem; font-weight:800;">${c.patient}</h3>
                                 </div>
-                                <button type="button" class="speak-btn" onclick="speakItalian(erQueue[erIndex].story, erQueue[erIndex].gender || 'neutral')">🔊 Ascolta</button>
+                                <button type="button" class="speak-btn" onclick="speakItalian(erQueue[erIndex].story, erQueue[erIndex].gender || 'neutral', this)">🔊 Ascolta</button>
                             </div>
                             <p class="patient-symptom">"${c.story}"</p>
                         </div>
@@ -3246,10 +3428,10 @@
                 </div>
 
                 <div class="record-section">
-                    <div class="record-section-title"><span>2. Valutazione Clinica & Intervento</span></div>
+                    <div class="record-section-title"><span>2. Iter Diagnostico & Terapeutico</span></div>
                     <div class="record-section-body" id="er-clinical-body" style="display:flex; flex-direction:column; gap:0.75rem;">
                         <div id="er-step-box" class="feedback-box">
-                            <strong>Fase 1 • Assegnazione Codice Triage:</strong> quale priorità ha questo paziente?
+                            <strong>Fase 1 • Assegna il Codice Triage:</strong> quale priorità ha questo paziente?
                             <div class="triage-choice-grid">
                                 <button type="button" class="triage-pick-btn pick-rosso" onclick="chooseErTriage('rosso')">🔴 Codice Rosso<br><span style="font-weight:500; font-size:0.76rem;">Emergenza grave</span></button>
                                 <button type="button" class="triage-pick-btn pick-giallo" onclick="chooseErTriage('giallo')">🟡 Codice Giallo<br><span style="font-weight:500; font-size:0.76rem;">Sospetta frattura</span></button>
@@ -3258,7 +3440,15 @@
                         </div>
                     </div>
                 </div>
-            `, `Verbale N° ${verbaleNum}`);
+            `, `Verbale ${verbaleNum}`);
+        }
+
+        function updateErScoreDisplay() {
+            const el = document.getElementById("er-score-display");
+            if (el) {
+                const maxScore = erQueue.length * 4;
+                el.textContent = `Punti: ${erScore}/${maxScore} • Serie: ${erStreak} 🔥`;
+            }
         }
 
         function chooseErTriage(chosen) {
@@ -3266,6 +3456,13 @@
             const c = erQueue[erIndex];
             const tr = TRIAGE_INFO[c.triage];
             const ok = chosen === c.triage;
+            if (ok) {
+                erScore++;
+            } else {
+                erCasePerfect = false;
+            }
+            updateErScoreDisplay();
+            syncTeamProgress(false);
             playTone(ok ? "ok" : "err");
 
             if (currentLayer !== c.layer) switchAnatomyLayer(c.layer);
@@ -3285,7 +3482,7 @@
             const clinicalBody = document.getElementById("er-clinical-body") || infoPanel;
             stepBox.className = ok ? "feedback-box success" : "feedback-box error";
             stepBox.innerHTML = `
-                ${ok ? "✅ Triage corretto!" : `ℹ️ Il codice corretto è <strong>${tr.label}</strong>.`} ${tr.explain}
+                ${ok ? "✅ Triage corretto! (+1 punto)" : `ℹ️ Il codice corretto è <strong>${tr.label}</strong> (0 punti).`} ${tr.explain}
                 <div style="margin-top:0.55rem; color:#0f172a;">
                     <strong>Fase 2 • Esame sullo scanner:</strong> clicca sull'immagine anatomica il punto interessato (Scheda <strong>${c.layer === "bones" ? "🦴 Ossa" : "💪 Muscoli"}</strong>).
                 </div>
@@ -3317,8 +3514,16 @@
                 playTone("ok");
                 erStep = "question";
                 if (el) el.classList.add("correct");
+                let locMsg = `✅ Esatto! Hai individuato: <strong>${item.name}</strong> (+1 punto).`;
+                if (erLocationFirstTry) {
+                    erScore++;
+                } else {
+                    locMsg = `✅ Individuato: <strong>${item.name}</strong> (0 punti perché non al primo tentativo).`;
+                }
+                updateErScoreDisplay();
+                syncTeamProgress(false);
                 fb.className = "feedback-box success";
-                fb.innerHTML = `✅ Esatto! Hai individuato: <strong>${item.name}</strong>. Ora rispondi alla domanda di anatomia:`;
+                fb.innerHTML = `${locMsg} Ora rispondi alla domanda di anatomia:`;
                 const shuffledQ = shuffleOptions(c.options, c.correctOpt);
                 erCurrentCorrectOpt = shuffledQ.correctIndex;
                 const qDiv = document.createElement("div");
@@ -3333,7 +3538,8 @@
                 clinicalBody.appendChild(qDiv);
             } else {
                 playTone("err");
-                erStreak = 0;
+                erLocationFirstTry = false;
+                erCasePerfect = false;
                 if (el) el.classList.add("wrong");
                 fb.className = "feedback-box error";
                 fb.innerHTML = `❌ Non è <strong>${item.name}</strong>. Riprova osservando bene la zona descritta dal paziente!`;
@@ -3354,6 +3560,13 @@
             });
 
             const anatOk = idx === erCurrentCorrectOpt;
+            if (anatOk) {
+                erScore++;
+            } else {
+                erCasePerfect = false;
+            }
+            updateErScoreDisplay();
+            syncTeamProgress(false);
             playTone(anatOk ? "ok" : "err");
             btn.dataset.anatOk = anatOk ? "1" : "0";
 
@@ -3388,8 +3601,13 @@
             const faOk = idx === erCurrentFirstAidCorrect;
             playTone(faOk ? "ok" : "err");
 
-            if (anatOk && faOk) {
+            if (faOk) {
                 erScore++;
+            } else {
+                erCasePerfect = false;
+            }
+
+            if (erCasePerfect) {
                 erStreak++;
             } else {
                 erStreak = 0;
@@ -3397,6 +3615,7 @@
                 if (itemObj && !erMissedCases.includes(itemObj.name)) erMissedCases.push(itemObj.name);
             }
 
+            updateErScoreDisplay();
             syncTeamProgress(false);
 
             const next = document.createElement("button");
@@ -3413,6 +3632,7 @@
             quizSessionQuestions = [...QUIZ_QUESTIONS].sort(() => Math.random() - 0.5).slice(0, 8);
             quizIndex = 0;
             quizScore = 0;
+            quizSessionQuestions.slice(0, 3).forEach(item => prefetchItalianTts(item.q, "neutral"));
             renderQuizPanel();
         }
 
@@ -3438,6 +3658,7 @@
             const shuffledQuiz = shuffleOptions(q.opts, q.ans);
             quizCurrentAns = shuffledQuiz.correctIndex;
             quizAnswered = false;
+            prefetchItalianTts(q.q, "neutral");
             infoPanel.innerHTML = `
                 <div class="er-status-bar">
                     <span>Domanda ${quizIndex + 1} di ${quizSessionQuestions.length}</span>
@@ -3445,7 +3666,7 @@
                 </div>
                 <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:0.5rem;">
                     <h2 style="font-size:1.22rem; font-weight:800;">${q.q}</h2>
-                    <button type="button" class="speak-btn" onclick="speakItalian(quizSessionQuestions[quizIndex].q)">🔊</button>
+                    <button type="button" class="speak-btn" onclick="speakItalian(quizSessionQuestions[quizIndex].q, 'neutral', this)">🔊</button>
                 </div>
                 <div class="quiz-options">
                     ${shuffledQuiz.options.map((opt, idx) => `
