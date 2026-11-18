@@ -554,6 +554,147 @@
             gap: 1rem;
         }
 
+        /* ================= STILE CARTELLETTA CLINICA OSPEDALIERA (PRONTO SOCCORSO) ================= */
+        .info-panel.clipboard-mode {
+            position: relative;
+            background-color: #6f4222;
+            background-image:
+                radial-gradient(rgba(255, 235, 205, 0.08) 1px, transparent 1px),
+                radial-gradient(rgba(38, 19, 6, 0.18) 1px, transparent 1px),
+                repeating-linear-gradient(
+                    90deg,
+                    rgba(255, 255, 255, 0.025) 0px,
+                    rgba(255, 255, 255, 0.025) 1px,
+                    transparent 1px,
+                    transparent 4px
+                ),
+                linear-gradient(145deg, #8b5630 0%, #6d3f1f 48%, #542f15 100%);
+            background-size: 6px 6px, 6px 6px, 100% 100%, 100% 100%;
+            background-position: 0 0, 3px 3px, 0 0, 0 0;
+            border: 3px solid #42220d;
+            border-radius: 22px;
+            padding: 3.35rem 1.05rem 1.15rem;
+            box-shadow:
+                inset 0 2px 3px rgba(255, 224, 185, 0.25),
+                inset 0 -4px 10px rgba(28, 13, 4, 0.55),
+                0 14px 28px rgba(15, 23, 42, 0.24);
+        }
+
+        .info-panel.clipboard-mode::before {
+            content: "";
+            position: absolute;
+            inset: 7px;
+            border: 1.5px dashed rgba(245, 208, 169, 0.35);
+            border-radius: 16px;
+            pointer-events: none;
+        }
+
+        .clipboard-metal-clip {
+            position: absolute;
+            top: -16px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 176px;
+            height: 68px;
+            z-index: 6;
+            pointer-events: none;
+            filter: drop-shadow(0 6px 7px rgba(0, 0, 0, 0.42));
+        }
+
+        .medical-sheet {
+            position: relative;
+            background: #fffdf9;
+            border: 1px solid #cbd5e1;
+            border-top: 5px solid #0f172a;
+            border-radius: 4px 4px 10px 10px;
+            padding: 1.25rem 1.15rem 1.15rem;
+            box-shadow:
+                0 1px 0 #e2e8f0,
+                0 5px 0 -2px #f8fafc,
+                0 6px 0 -2px #cbd5e1,
+                0 10px 18px rgba(15, 23, 42, 0.24);
+            display: flex;
+            flex-direction: column;
+            gap: 0.9rem;
+        }
+
+        .medical-sheet-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 0.65rem;
+            padding-bottom: 0.65rem;
+            border-bottom: 2px solid #0f172a;
+            flex-wrap: wrap;
+        }
+
+        .hospital-emblem {
+            display: flex;
+            align-items: center;
+            gap: 0.55rem;
+        }
+
+        .hospital-cross {
+            width: 30px;
+            height: 30px;
+            border-radius: 7px;
+            background: #dc2626;
+            color: #ffffff;
+            font-weight: 900;
+            font-size: 1.15rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .sheet-meta-box {
+            text-align: right;
+            font-size: 0.74rem;
+            color: #475569;
+            font-weight: 700;
+            line-height: 1.35;
+        }
+
+        .record-section {
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            background: #ffffff;
+            overflow: hidden;
+        }
+
+        .record-section-title {
+            background: #f1f5f9;
+            border-bottom: 1px solid #cbd5e1;
+            padding: 0.35rem 0.75rem;
+            font-size: 0.74rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #334155;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .record-section-body {
+            padding: 0.75rem;
+        }
+
+        .clinical-stamp {
+            display: inline-block;
+            border: 2.5px solid #16a34a;
+            color: #15803d;
+            font-weight: 900;
+            font-size: 0.78rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            padding: 0.25rem 0.65rem;
+            border-radius: 6px;
+            transform: rotate(-3deg);
+            background: rgba(220, 252, 231, 0.55);
+        }
+
         .bone-header {
             display: flex;
             justify-content: space-between;
@@ -697,9 +838,9 @@
         }
 
         .patient-card {
-            border-radius: 14px;
-            padding: 1rem;
-            border: 2px solid var(--border);
+            border-radius: 10px;
+            padding: 0.9rem;
+            border: 1.5px solid var(--border);
             background: #ffffff;
         }
 
@@ -877,12 +1018,12 @@
 
         .team-lobby-box {
             background: #ffffff;
-            border: 2px solid var(--border);
-            border-radius: 14px;
-            padding: 1.15rem;
+            border: 1.5px solid var(--border);
+            border-radius: 12px;
+            padding: 1rem;
             display: flex;
             flex-direction: column;
-            gap: 0.85rem;
+            gap: 0.8rem;
         }
 
         .pin-display-banner {
@@ -1824,6 +1965,7 @@
         let erMissedCases = [];
         let erCurrentCorrectOpt = 0;
         let erCurrentFirstAidCorrect = 0;
+
         /* ================= STATO STANZE MULTIGIOCATORE A SQUADRE (PEERJS + FALLBACK LOCALE) ================= */
         const PEER_PREFIX = "cpia-ps-ortopedia-";
         let peerInstance = null;
@@ -1831,7 +1973,7 @@
         let playerHostConn = null;
         let localRoomChannel = null;
 
-        let roomMode = "none"; // "none" | "host" | "player"
+        let roomMode = "none";
         let currentRoomPin = "";
         let currentTeamDocId = "";
         let currentTeamName = "";
@@ -1918,6 +2060,72 @@
         const infoPanel = document.getElementById("info-panel");
         const toggleNames = document.getElementById("toggle-names");
         const toolbarHint = document.getElementById("toolbar-hint");
+
+        /* ================= HELPER GRAFICO CLIP METALLICA & CARTELLA CLINICA ================= */
+        function getMetalClipSvg() {
+            return `
+                <svg class="clipboard-metal-clip" viewBox="0 0 180 72" aria-hidden="true">
+                    <defs>
+                        <linearGradient id="steelBody" x1="0%" y1="0%" x2="0%" y2="100%">
+                            <stop offset="0%" stop-color="#f8fafc"/>
+                            <stop offset="22%" stop-color="#cbd5e1"/>
+                            <stop offset="50%" stop-color="#64748b"/>
+                            <stop offset="78%" stop-color="#e2e8f0"/>
+                            <stop offset="100%" stop-color="#475569"/>
+                        </linearGradient>
+                        <linearGradient id="steelClamp" x1="0%" y1="0%" x2="100%" y2="0%">
+                            <stop offset="0%" stop-color="#94a3b8"/>
+                            <stop offset="18%" stop-color="#f8fafc"/>
+                            <stop offset="50%" stop-color="#cbd5e1"/>
+                            <stop offset="82%" stop-color="#ffffff"/>
+                            <stop offset="100%" stop-color="#64748b"/>
+                        </linearGradient>
+                        <linearGradient id="steelWire" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stop-color="#f1f5f9"/>
+                            <stop offset="50%" stop-color="#64748b"/>
+                            <stop offset="100%" stop-color="#cbd5e1"/>
+                        </linearGradient>
+                    </defs>
+                    <path d="M 62 24 L 62 15 Q 62 5 90 5 Q 118 5 118 15 L 118 24" fill="none" stroke="#334155" stroke-width="6.5" stroke-linecap="round"/>
+                    <path d="M 62 24 L 62 15 Q 62 5 90 5 Q 118 5 118 15 L 118 24" fill="none" stroke="url(#steelWire)" stroke-width="4" stroke-linecap="round"/>
+                    <circle cx="90" cy="11.5" r="3.6" fill="#42220d" stroke="#94a3b8" stroke-width="1.2"/>
+                    <rect x="48" y="21" width="84" height="17" rx="5" fill="url(#steelBody)" stroke="#334155" stroke-width="1.2"/>
+                    <rect x="56" y="25" width="68" height="4" rx="2" fill="#334155" opacity="0.55"/>
+                    <rect x="16" y="34" width="148" height="27" rx="6" fill="url(#steelClamp)" stroke="#334155" stroke-width="1.3"/>
+                    <line x1="22" y1="39.5" x2="158" y2="39.5" stroke="#ffffff" stroke-width="1.5" opacity="0.85"/>
+                    <line x1="22" y1="44" x2="158" y2="44" stroke="#64748b" stroke-width="1" opacity="0.5"/>
+                    <rect x="20" y="57" width="140" height="4.5" rx="2" fill="#1e293b"/>
+                    <circle cx="30" cy="48" r="3.4" fill="#94a3b8" stroke="#334155" stroke-width="1"/>
+                    <circle cx="29.2" cy="47.2" r="1.1" fill="#ffffff"/>
+                    <circle cx="150" cy="48" r="3.4" fill="#94a3b8" stroke="#334155" stroke-width="1"/>
+                    <circle cx="149.2" cy="47.2" r="1.1" fill="#ffffff"/>
+                </svg>
+            `;
+        }
+
+        function renderMedicalClipboard(innerHtml, recordMeta = "Reparto: Ortopedia e Traumatologia") {
+            infoPanel.classList.add("clipboard-mode");
+            const todayStr = new Date().toLocaleDateString("it-IT");
+            infoPanel.innerHTML = `
+                ${getMetalClipSvg()}
+                <div class="medical-sheet">
+                    <div class="medical-sheet-header">
+                        <div class="hospital-emblem">
+                            <div class="hospital-cross">+</div>
+                            <div>
+                                <div style="font-size:0.7rem; font-weight:800; color:#dc2626; text-transform:uppercase; letter-spacing:0.6px;">Azienda Ospedaliera CPIA</div>
+                                <div style="font-size:1rem; font-weight:800; color:#0f172a; line-height:1.15;">Cartella Clinica • Pronto Soccorso</div>
+                            </div>
+                        </div>
+                        <div class="sheet-meta-box">
+                            <div>Data: ${todayStr}</div>
+                            <div>${recordMeta}</div>
+                        </div>
+                    </div>
+                    ${innerHtml}
+                </div>
+            `;
+        }
 
         const plateCache = {};
         const detectedPlatesData = {};
@@ -2345,6 +2553,7 @@
 
         /* ================= PANNELLO ESPLORAZIONE ================= */
         function renderExplorePanel() {
+            infoPanel.classList.remove("clipboard-mode");
             const isBones = currentLayer === "bones";
             const list = isBones ? BONES : MUSCLES;
             const current = isBones ? selectedBone : selectedMuscle;
@@ -2476,12 +2685,12 @@
             currentRoomPin = "";
             currentTeamDocId = "";
 
-            infoPanel.innerHTML = `
+            renderMedicalClipboard(`
                 <div class="team-lobby-box">
                     <div style="text-align:center;">
-                        <span class="region-tag muscle-tag">🚑 Simulazione Clinica CPIA</span>
-                        <h2 style="font-size:1.4rem; font-weight:800; margin:0.35rem 0;">Pronto Soccorso Ortopedico</h2>
-                        <p style="color:var(--muted); font-size:0.92rem;">Scegli se giocare in classe a squadre con codice PIN oppure avviare un turno individuale.</p>
+                        <span class="region-tag muscle-tag">🚑 Accettazione & Triage</span>
+                        <h2 style="font-size:1.35rem; font-weight:800; margin:0.35rem 0;">Pronto Soccorso Ortopedico</h2>
+                        <p style="color:var(--muted); font-size:0.9rem;">Scegli se giocare in classe a squadre con codice PIN oppure avviare un turno individuale.</p>
                     </div>
 
                     <div style="display:grid; grid-template-columns: 1fr 1fr; gap:0.65rem;">
@@ -2499,7 +2708,7 @@
                         </button>
                     </div>
                 </div>
-            `;
+            `, "Accettazione • Turno Aperto");
         }
 
         function startSingleErShift() {
@@ -2520,12 +2729,12 @@
 
         function openHostRoomScreen() {
             destroyActivePeer();
-            infoPanel.innerHTML = `
+            renderMedicalClipboard(`
                 <div class="team-lobby-box" style="text-align:center;">
                     <div style="font-size:1.8rem;">⏳</div>
                     <p style="font-weight:700;">Apertura stanza alla LIM in corso...</p>
                 </div>
-            `;
+            `, "Postazione Docente • LIM");
 
             const pin = generateRoomPin();
             const sharedCases = generateSharedCaseOrder();
@@ -2596,7 +2805,7 @@
 
         function renderHostDashboard() {
             const totalCases = hostSharedCaseIndices.length || 6;
-            infoPanel.innerHTML = `
+            renderMedicalClipboard(`
                 <div class="team-lobby-box">
                     <div class="pin-display-banner">
                         <div style="font-size:0.82rem; text-transform:uppercase; letter-spacing:0.6px; color:#93c5fd; font-weight:700;">Codice PIN Stanza (LIM / Docente)</div>
@@ -2639,17 +2848,17 @@
                         </div>
                     `}
                 </div>
-            `;
+            `, `Stanza PIN: ${escapeHtml(currentRoomPin)}`);
         }
 
         function openJoinRoomScreen(errorMsg = "") {
             destroyActivePeer();
-            infoPanel.innerHTML = `
+            renderMedicalClipboard(`
                 <div class="team-lobby-box">
                     <div style="display:flex; justify-content:space-between; align-items:center; gap:0.5rem;">
                         <div>
-                            <span class="region-tag">👥 Accesso Squadra</span>
-                            <h2 style="font-size:1.3rem; font-weight:800;">Entra nella Stanza</h2>
+                            <span class="region-tag">👥 Registrazione Équipe</span>
+                            <h2 style="font-size:1.25rem; font-weight:800;">Entra nella Stanza</h2>
                         </div>
                         <button type="button" class="secondary-btn" onclick="renderErIntroScreen()">⬅ Indietro</button>
                     </div>
@@ -2680,7 +2889,7 @@
 
                     <button type="button" class="er-start-btn" style="margin-top:0.25rem;" onclick="submitJoinRoom()">Conferma ed entra in corsia 🚑</button>
                 </div>
-            `;
+            `, "Registrazione Squadra");
         }
 
         function submitJoinRoom() {
@@ -2700,12 +2909,12 @@
                 return;
             }
 
-            infoPanel.innerHTML = `
+            renderMedicalClipboard(`
                 <div class="team-lobby-box" style="text-align:center;">
                     <div style="font-size:1.8rem;">📡</div>
                     <p style="font-weight:700;">Connessione alla stanza <strong>${escapeHtml(pinInput)}</strong> in corso...</p>
                 </div>
-            `;
+            `, `Connessione PIN ${escapeHtml(pinInput)}`);
 
             const teamId = "team_" + Date.now() + "_" + Math.random().toString(36).slice(2, 6);
             currentTeamDocId = teamId;
@@ -2827,25 +3036,31 @@
                 playTone("ok");
                 syncTeamProgress(true);
                 const grade = getErFinalGrade(erScore, erQueue.length);
-                infoPanel.innerHTML = `
+                renderMedicalClipboard(`
                     <div class="grade-badge-card">
-                        ${roomMode === "player" ? `<div style="font-size:0.85rem; font-weight:800; color:#fde047; margin-bottom:0.25rem;">👥 Squadra: ${escapeHtml(currentTeamName)} (PIN ${escapeHtml(currentRoomPin)})</div>` : ""}
-                        <div style="font-size:0.82rem; text-transform:uppercase; letter-spacing:0.6px; color:#93c5fd; font-weight:700;">Grado raggiunto</div>
+                        ${roomMode === "player" ? `<div style="font-size:0.85rem; font-weight:800; color:#fde047; margin-bottom:0.25rem;">👥 Équipe: ${escapeHtml(currentTeamName)} (PIN ${escapeHtml(currentRoomPin)})</div>` : ""}
+                        <div style="font-size:0.82rem; text-transform:uppercase; letter-spacing:0.6px; color:#93c5fd; font-weight:700;">Referto Finale & Qualifica</div>
                         <h2 style="font-size:1.45rem; font-weight:800; margin:0.35rem 0;">${grade.title}</h2>
-                        <p style="font-size:1.05rem; font-weight:700; color:#facc15;">Punteggio finale: ${erScore} / ${erQueue.length}</p>
+                        <p style="font-size:1.05rem; font-weight:700; color:#facc15;">Esito turno: ${erScore} / ${erQueue.length} pazienti gestiti</p>
                         <p style="font-size:0.9rem; color:#e2e8f0; margin-top:0.35rem;">${grade.msg}</p>
                     </div>
+                    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.5rem; padding:0.25rem 0;">
+                        <span style="font-size:0.82rem; color:var(--muted); font-weight:600;">Firma Direzione Sanitaria CPIA</span>
+                        <span class="clinical-stamp">✔ TURNO VALIDATO</span>
+                    </div>
                     ${erMissedCases.length > 0 ? `
-                        <div class="info-box">
-                            <h3>📌 Argomenti da ripassare</h3>
-                            <p>${erMissedCases.join(", ")}</p>
+                        <div class="record-section">
+                            <div class="record-section-title"><span>📌 Note di Revisione Clinica</span></div>
+                            <div class="record-section-body">
+                                <p style="font-size:0.95rem;">Argomenti da ripassare: <strong>${erMissedCases.join(", ")}</strong></p>
+                            </div>
                         </div>
                     ` : ""}
                     ${roomMode === "player"
                         ? `<button type="button" class="next-btn" onclick="renderErIntroScreen()">Torna alla schermata Pronto Soccorso 🏥</button>`
                         : `<button type="button" class="next-btn" onclick="startErShift()">Nuovo turno con altri pazienti 🔄</button>`
                     }
-                `;
+                `, "Referto di Dimissione");
                 return;
             }
             const c = erQueue[erIndex];
@@ -2855,37 +3070,46 @@
             playTone("beep");
             syncTeamProgress(false);
 
-            infoPanel.innerHTML = `
-                ${roomMode === "player" ? `
-                    <div style="background:#eff6ff; border:1px solid #93c5fd; color:#1e3a8a; padding:0.45rem 0.75rem; border-radius:9px; font-size:0.83rem; font-weight:700;">
-                        👥 Squadra: <strong>${escapeHtml(currentTeamName)}</strong> • Stanza PIN: <strong>${escapeHtml(currentRoomPin)}</strong>
-                    </div>
-                ` : ""}
+            const verbaleNum = `PS-${2026}-${104 + erIndex}`;
+            renderMedicalClipboard(`
                 <div class="er-status-bar">
-                    <span>Paziente ${erIndex + 1} di ${erQueue.length}</span>
+                    <span>Verbale ${verbaleNum} • Paziente ${erIndex + 1}/${erQueue.length}</span>
                     <span>Punti: ${erScore} • Serie: ${erStreak} 🔥</span>
                 </div>
-                <div class="patient-card">
-                    <div class="patient-header">
-                        <div class="patient-avatar">${c.avatar}</div>
-                        <div style="flex:1;">
-                            <span class="urgency-tag" style="background:#334155; color:#fff;">⏳ In attesa di Triage</span>
-                            <h3 style="font-size:1.1rem; font-weight:800;">${c.patient}</h3>
-                        </div>
-                        <button type="button" class="speak-btn" onclick="speakItalian(erQueue[erIndex].story)">🔊 Ascolta</button>
+                <div class="record-section">
+                    <div class="record-section-title">
+                        <span>1. Anagrafica & Anamnesi</span>
+                        <span>${roomMode === "player" ? `Équipe: ${escapeHtml(currentTeamName)}` : "Turno Singolo"}</span>
                     </div>
-                    <p class="patient-symptom">"${c.story}"</p>
+                    <div class="record-section-body" style="padding:0.65rem;">
+                        <div class="patient-card" style="border:none; padding:0.35rem;">
+                            <div class="patient-header">
+                                <div class="patient-avatar">${c.avatar}</div>
+                                <div style="flex:1;">
+                                    <span class="urgency-tag" style="background:#334155; color:#fff;">⏳ In attesa di Triage</span>
+                                    <h3 style="font-size:1.08rem; font-weight:800;">${c.patient}</h3>
+                                </div>
+                                <button type="button" class="speak-btn" onclick="speakItalian(erQueue[erIndex].story)">🔊 Ascolta</button>
+                            </div>
+                            <p class="patient-symptom">"${c.story}"</p>
+                        </div>
+                    </div>
                 </div>
 
-                <div id="er-step-box" class="feedback-box">
-                    <strong>Fase 1 • Assegna il Codice Triage:</strong> quale priorità ha questo paziente?
-                    <div class="triage-choice-grid">
-                        <button type="button" class="triage-pick-btn pick-rosso" onclick="chooseErTriage('rosso')">🔴 Codice Rosso<br><span style="font-weight:500; font-size:0.76rem;">Emergenza grave</span></button>
-                        <button type="button" class="triage-pick-btn pick-giallo" onclick="chooseErTriage('giallo')">🟡 Codice Giallo<br><span style="font-weight:500; font-size:0.76rem;">Sospetta frattura</span></button>
-                        <button type="button" class="triage-pick-btn pick-verde" onclick="chooseErTriage('verde')">🟢 Codice Verde<br><span style="font-weight:500; font-size:0.76rem;">Trauma muscolare lieve</span></button>
+                <div class="record-section">
+                    <div class="record-section-title"><span>2. Valutazione Clinica & Intervento</span></div>
+                    <div class="record-section-body" id="er-clinical-body" style="display:flex; flex-direction:column; gap:0.75rem;">
+                        <div id="er-step-box" class="feedback-box">
+                            <strong>Fase 1 • Assegnazione Codice Triage:</strong> quale priorità ha questo paziente?
+                            <div class="triage-choice-grid">
+                                <button type="button" class="triage-pick-btn pick-rosso" onclick="chooseErTriage('rosso')">🔴 Codice Rosso<br><span style="font-weight:500; font-size:0.76rem;">Emergenza grave</span></button>
+                                <button type="button" class="triage-pick-btn pick-giallo" onclick="chooseErTriage('giallo')">🟡 Codice Giallo<br><span style="font-weight:500; font-size:0.76rem;">Sospetta frattura</span></button>
+                                <button type="button" class="triage-pick-btn pick-verde" onclick="chooseErTriage('verde')">🟢 Codice Verde<br><span style="font-weight:500; font-size:0.76rem;">Trauma muscolare lieve</span></button>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            `;
+            `, `Verbale N° ${verbaleNum}`);
         }
 
         function chooseErTriage(chosen) {
@@ -2909,6 +3133,7 @@
             }
 
             const stepBox = document.getElementById("er-step-box");
+            const clinicalBody = document.getElementById("er-clinical-body") || infoPanel;
             stepBox.className = ok ? "feedback-box success" : "feedback-box error";
             stepBox.innerHTML = `
                 ${ok ? "✅ Triage corretto!" : `ℹ️ Il codice corretto è <strong>${tr.label}</strong>.`} ${tr.explain}
@@ -2931,12 +3156,13 @@
                 helpBtn.disabled = true;
             };
             helpWrap.appendChild(helpBtn);
-            infoPanel.appendChild(helpWrap);
+            clinicalBody.appendChild(helpWrap);
         }
 
         function checkErLocation(item) {
             const c = erQueue[erIndex];
             const fb = document.getElementById("er-step-box");
+            const clinicalBody = document.getElementById("er-clinical-body") || infoPanel;
             const el = document.querySelector(`.hotspot[data-id="${item.id}"]`);
             if (item.id === c.targetId) {
                 playTone("ok");
@@ -2955,7 +3181,7 @@
                         <button type="button" class="option-btn" onclick="answerErQuestion(${idx}, this)">${opt}</button>
                     `).join("")}
                 `;
-                infoPanel.appendChild(qDiv);
+                clinicalBody.appendChild(qDiv);
             } else {
                 playTone("err");
                 erStreak = 0;
@@ -2969,6 +3195,7 @@
             if (erStep !== "question") return;
             erStep = "firstaid";
             const c = erQueue[erIndex];
+            const clinicalBody = document.getElementById("er-clinical-body") || infoPanel;
             const qBox = document.getElementById("er-anatomy-q");
             const buttons = qBox.querySelectorAll(".option-btn");
             buttons.forEach((b, i) => {
@@ -2988,18 +3215,19 @@
             faDiv.className = "quiz-options";
             faDiv.id = "er-firstaid-q";
             faDiv.innerHTML = `
-                <p style="font-weight:700; margin-top:0.45rem; color:#0369a1;">Fase 4 • Primo Soccorso: ${c.firstAidQuestion}</p>
+                <p style="font-weight:700; margin-top:0.45rem; color:#0369a1;">Fase 4 • Protocollo Primo Soccorso: ${c.firstAidQuestion}</p>
                 ${shuffledFa.options.map((opt, i) => `
                     <button type="button" class="option-btn" onclick="answerErFirstAid(${i}, ${anatOk})">${opt}</button>
                 `).join("")}
             `;
-            infoPanel.appendChild(faDiv);
+            clinicalBody.appendChild(faDiv);
         }
 
         function answerErFirstAid(idx, anatOk) {
             if (erStep !== "firstaid") return;
             erStep = "done";
             const c = erQueue[erIndex];
+            const clinicalBody = document.getElementById("er-clinical-body") || infoPanel;
             const faBox = document.getElementById("er-firstaid-q");
             const buttons = faBox.querySelectorAll(".option-btn");
             buttons.forEach((b, i) => {
@@ -3025,13 +3253,14 @@
             const next = document.createElement("button");
             next.type = "button";
             next.className = "next-btn";
-            next.textContent = erIndex + 1 < erQueue.length ? "Prossimo paziente ➡️" : "Vedi Grado Finale 🏆";
+            next.textContent = erIndex + 1 < erQueue.length ? "Prossimo paziente ➡️" : "Chiudi Cartella & Vedi Referto 🏆";
             next.onclick = () => { erIndex++; loadErCase(); };
-            infoPanel.appendChild(next);
+            clinicalBody.appendChild(next);
         }
 
         /* ================= MODALITÀ QUIZ ================= */
         function startQuizSession() {
+            infoPanel.classList.remove("clipboard-mode");
             quizSessionQuestions = [...QUIZ_QUESTIONS].sort(() => Math.random() - 0.5).slice(0, 8);
             quizIndex = 0;
             quizScore = 0;
@@ -3039,6 +3268,7 @@
         }
 
         function renderQuizPanel() {
+            infoPanel.classList.remove("clipboard-mode");
             if (quizSessionQuestions.length === 0) {
                 startQuizSession();
                 return;
