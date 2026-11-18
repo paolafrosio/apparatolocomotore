@@ -3086,8 +3086,18 @@
             const u = new SpeechSynthesisUtterance(cleanText);
             u.lang = "it-IT";
             if (chosenVoice) u.voice = chosenVoice;
-            u.rate = 0.96;
-            u.pitch = 1.0;
+            const voiceNameLower = (chosenVoice?.name || "").toLowerCase();
+            const isFemaleFallback = voiceNameLower.includes("elsa") || voiceNameLower.includes("isabella") || voiceNameLower.includes("alice") || voiceNameLower.includes("google italiano");
+            if (gender === "male") {
+                u.rate = 0.94;
+                u.pitch = isFemaleFallback ? 0.82 : 0.96;
+            } else if (gender === "female") {
+                u.rate = 0.98;
+                u.pitch = 1.04;
+            } else {
+                u.rate = 0.96;
+                u.pitch = 1.0;
+            }
             u.volume = 1.0;
             window.speechSynthesis.speak(u);
         }
