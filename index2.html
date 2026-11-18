@@ -6,6 +6,7 @@
     <title>Pronto Soccorso Ortopedico & Apparato Locomotore - CPIA</title>
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%230f172a'/%3E%3Crect x='26' y='10' width='12' height='44' rx='3' fill='%23dc2626'/%3E%3Crect x='10' y='26' width='44' height='12' rx='3' fill='%23dc2626'/%3E%3Cpath d='M21 21c-2.5-2.5-6.5-1.5-6.5 2 0 1.8 1.2 3.2 2.8 3.5L37.5 46.7c.3 1.6 1.7 2.8 3.5 2.8 3.5 0 4.5-4 2-6.5 2.5 2.5 6.5 1.5 6.5-2 0-1.8-1.2-3.2-2.8-3.5L26.5 17.3c-.3-1.6-1.7-2.8-3.5-2.8-3.5 0-4.5 4-2 6.5z' fill='%23f8fafc'/%3E%3C/svg%3E">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
     <style>
         :root {
             --primary: #0284c7;
@@ -481,10 +482,6 @@
             touch-action: none;
         }
 
-        .anatomy-stage.calibrating-mode .hotspot {
-            cursor: move;
-        }
-
         .hotspot-dot {
             width: 16px;
             height: 16px;
@@ -765,31 +762,10 @@
             color: #ffffff;
         }
 
-        .triage-explain {
-            font-size: 0.84rem;
-            padding: 0.45rem 0.7rem;
-            border-radius: 8px;
-            background: rgba(255, 255, 255, 0.8);
-            margin-bottom: 0.6rem;
-            color: #1e293b;
-            font-weight: 600;
-        }
-
         .patient-symptom {
             font-size: 1.02rem;
             font-weight: 600;
             color: #0f172a;
-        }
-
-        .triage-legend {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.45rem;
-            font-size: 0.78rem;
-            padding: 0.55rem 0.75rem;
-            background: #f8fafc;
-            border-radius: 10px;
-            border: 1px solid #e2e8f0;
         }
 
         .quiz-options {
@@ -878,43 +854,6 @@
 
         .secondary-btn:hover {
             background: #cbd5e1;
-        }
-
-        .er-start-wrapper {
-            position: relative;
-            border-radius: 14px;
-            overflow: hidden;
-            min-height: 360px;
-        }
-
-        .er-blurred-preview {
-            filter: blur(7px);
-            opacity: 0.45;
-            pointer-events: none;
-            user-select: none;
-        }
-
-        .er-start-overlay {
-            position: absolute;
-            inset: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            padding: 1.5rem;
-            background: rgba(255, 255, 255, 0.72);
-            backdrop-filter: blur(4px);
-            z-index: 10;
-        }
-
-        .er-start-card {
-            background: #ffffff;
-            border: 2px solid #cbd5e1;
-            border-radius: 16px;
-            padding: 1.5rem;
-            max-width: 440px;
-            box-shadow: 0 12px 28px rgba(15, 23, 42, 0.16);
         }
 
         .er-start-btn {
@@ -1067,9 +1006,9 @@
             </div>
 
             <div class="anatomy-stage" id="anatomy-stage">
-                <div class="loading-xray active" id="loading-xray">
+                <div class="loading-xray" id="loading-xray">
                     <div style="font-size: 1.8rem;">🔬</div>
-                    <div id="loading-text">Generazione tavola anatomica ad alta definizione...</div>
+                    <div id="loading-text">Caricamento tavola anatomica...</div>
                 </div>
 
                 <div class="zoom-controls">
@@ -1092,7 +1031,7 @@
     </main>
 
     <script>
-        /* ================= DATABASE OSSA (16 OSSA PRINCIPALI - COORDINATE CALIBRATE SULLE 4 VISTE) ================= */
+        /* ================= DATABASE OSSA (16 OSSA PRINCIPALI) ================= */
         const BONES = [
             {
                 id: "cranio", name: "Cranio", region: "Testa",
@@ -1304,7 +1243,7 @@
             }
         ];
 
-        /* ================= DATABASE MUSCOLI (12 GRUPPI MUSCOLARI RICHIESTI) ================= */
+        /* ================= DATABASE MUSCOLI (12 GRUPPI MUSCOLARI) ================= */
         const MUSCLES = [
             {
                 id: "trapezio", name: "Trapezio", region: "Tronco",
@@ -1882,24 +1821,21 @@
         let erScore = 0;
         let erStreak = 0;
         let erStep = "idle";
-        let erHintUsed = false;
         let erMissedCases = [];
         let erCurrentCorrectOpt = 0;
         let erCurrentFirstAidCorrect = 0;
 
-        /* ================= STATO STANZE MULTIGIOCATORE A SQUADRE ================= */
-        let fbDb = null;
-        let fbAuth = null;
-        let fbUser = null;
-        let fbReady = false;
-        let fbModules = null;
+        /* ================= STATO STANZE MULTIGIOCATORE A SQUADRE (PEERJS) ================= */
+        const PEER_PREFIX = "cpia-ps-ortopedia-";
+        let peerInstance = null;
+        let hostSharedCaseIndices = [];
+        let playerHostConn = null;
 
         let roomMode = "none"; // "none" | "host" | "player"
         let currentRoomPin = "";
         let currentTeamDocId = "";
         let currentTeamName = "";
         let currentTeamMembers = [];
-        let roomTeamsUnsub = null;
         let latestRoomTeams = [];
 
         let quizSessionQuestions = [];
@@ -1977,7 +1913,6 @@
         const plateImg = document.getElementById("plate-img");
         const fallbackSvg = document.getElementById("fallback-svg");
         const loadingXray = document.getElementById("loading-xray");
-        const loadingText = document.getElementById("loading-text");
         const highlightSvg = document.getElementById("highlight-svg");
         const hotspotsLayer = document.getElementById("hotspots-layer");
         const infoPanel = document.getElementById("info-panel");
@@ -1994,7 +1929,6 @@
 
             loadingXray.classList.remove("active");
 
-            // Prova prima i file locali e, se non presenti (es. in anteprima), quelli pubblicati su GitHub Pages
             const ghBase = "https://paolafrosio.github.io/apparatolocomotore/";
             const candidates = [
                 `${key}.png`, `${key}.jpg`, `${key}.jpeg`, `${key}.webp`,
@@ -2028,11 +1962,9 @@
             const isBones = layer === "bones";
             const isSide = view === "right" || view === "left";
 
-            // Palette anatomica ad alto contrasto
             const boneMain = "#f1ebd9";
             const boneShade = "#d6ccb4";
             const boneStroke = "#8c7f65";
-            const cartilage = "#93c5fd";
 
             const muscMain = "#dc2626";
             const muscDark = "#991b1b";
@@ -2041,43 +1973,19 @@
 
             if (isBones) {
                 if (isSide) {
-                    // Vista laterale pura: dir = 1 guarda a destra (Lato Dx), dir = -1 guarda a sinistra (Lato Sx)
                     const dir = view === "right" ? 1 : -1;
                     fallbackSvg.innerHTML = `
                         <g transform="translate(50,0) scale(${dir},1) translate(-50,0)" stroke="${boneStroke}" stroke-width="0.28" stroke-linejoin="round" stroke-linecap="round">
-                            <!-- Cranio in profilo puro (guarda verso destra +X) -->
                             <path d="M 45.2 6.8 C 45.2 3.4, 53.5 3.0, 54.4 6.6 C 54.8 8.0, 54.2 9.4, 53.5 10.2 L 50.8 10.4 L 49.5 9.8 C 47.2 10.2, 45.2 8.8, 45.2 6.8 Z" fill="${boneMain}" />
-                            <!-- Orbita oculare, zigomo e mascella -->
                             <ellipse cx="52.9" cy="7.2" rx="0.9" ry="1.2" fill="#1e293b" />
                             <path d="M 51.0 8.2 L 54.2 8.4 L 53.8 10.3 L 51.2 10.2 Z" fill="${boneShade}" />
-                            <!-- Denti superiori e inferiori -->
                             <rect x="52.4" y="10.2" width="1.4" height="0.6" fill="#ffffff" stroke="none" />
                             <rect x="52.2" y="10.9" width="1.4" height="0.6" fill="#ffffff" stroke="none" />
-                            <!-- Mandibola -->
                             <path d="M 49.4 9.6 L 50.4 12.2 L 53.6 12.8 L 53.8 11.4 L 51.0 11.2 L 50.3 9.5 Z" fill="${boneMain}" />
-
-                            <!-- Colonna vertebrale con curve fisiologiche (cervicale, dorsale, lombare, sacro) -->
                             <path d="M 47.6 10.4 Q 48.4 14.0 47.4 17.5 Q 45.4 24.5 47.6 32.0 Q 48.6 36.5 47.4 41.0 L 46.2 45.5 L 48.0 45.8 L 49.4 41.2 Q 50.4 36.5 49.4 32.0 Q 47.4 24.5 49.2 17.5 Q 50.0 14.0 49.2 10.4 Z" fill="${boneShade}" />
-                            <!-- Processi spinosi posteriori delle vertebre -->
-                            <g fill="${boneMain}">
-                                <rect x="46.2" y="14.5" width="1.4" height="0.8" rx="0.3" />
-                                <rect x="45.6" y="18.0" width="1.5" height="0.9" rx="0.3" />
-                                <rect x="45.0" y="21.5" width="1.5" height="0.9" rx="0.3" />
-                                <rect x="44.8" y="25.0" width="1.5" height="0.9" rx="0.3" />
-                                <rect x="45.2" y="28.5" width="1.5" height="0.9" rx="0.3" />
-                                <rect x="46.0" y="32.0" width="1.5" height="0.9" rx="0.3" />
-                                <rect x="46.6" y="35.5" width="1.5" height="1.0" rx="0.3" />
-                                <rect x="46.2" y="39.0" width="1.5" height="1.0" rx="0.3" />
-                            </g>
-
-                            <!-- Scapola (posteriore) e Clavicola (anteriore) -->
                             <path d="M 46.0 18.2 L 49.2 18.6 L 47.2 25.0 Z" fill="${boneMain}" />
                             <path d="M 49.2 17.6 Q 51.5 17.0 53.8 18.0" fill="none" stroke="${boneMain}" stroke-width="1.0" />
-
-                            <!-- Sterno anteriore -->
                             <path d="M 53.6 18.2 L 54.6 18.4 L 54.2 26.8 L 53.2 26.6 Z" fill="${boneMain}" />
-
-                            <!-- Gabbia toracica (costole curve da dietro a davanti) -->
                             <g fill="none" stroke="${boneMain}" stroke-width="0.95">
                                 <path d="M 47.5 18.8 Q 51.2 19.2 53.8 19.0" />
                                 <path d="M 47.0 20.6 Q 51.5 21.2 54.0 20.8" />
@@ -2087,26 +1995,14 @@
                                 <path d="M 47.2 27.8 Q 51.2 28.8 52.6 27.8" />
                                 <path d="M 47.6 29.6 Q 50.4 30.4 51.4 29.5" />
                             </g>
-
-                            <!-- Bacino in profilo (cresta iliaca, acetabolo, ischio, pube) -->
                             <path d="M 46.8 40.5 C 48.5 39.2, 53.2 40.2, 53.6 43.2 C 53.8 45.5, 52.4 48.6, 50.2 48.8 C 48.0 49.0, 46.4 46.5, 46.8 40.5 Z" fill="${boneMain}" />
                             <circle cx="50.0" cy="45.6" r="1.4" fill="${boneShade}" />
-
-                            <!-- Femore -->
                             <path d="M 49.0 46.2 L 51.2 46.2 L 51.4 68.2 L 48.8 68.2 Z" fill="${boneMain}" />
                             <ellipse cx="50.2" cy="68.4" rx="2.0" ry="1.4" fill="${boneShade}" />
-
-                            <!-- Rotula anteriore -->
                             <ellipse cx="52.3" cy="69.2" rx="0.9" ry="1.4" fill="#ffffff" />
-
-                            <!-- Tibia (anteriore) e Perone (posteriore) -->
                             <path d="M 49.8 70.2 L 51.8 70.2 L 51.4 91.2 L 49.8 91.2 Z" fill="${boneMain}" />
                             <path d="M 48.2 71.2 L 49.1 71.2 L 48.9 91.4 L 48.1 91.4 Z" fill="${boneShade}" />
-
-                            <!-- Piede in profilo (calcagno indietro, dita avanti) -->
                             <path d="M 47.4 91.5 L 51.5 91.5 L 56.4 94.6 L 56.4 95.8 L 47.2 95.8 Z" fill="${boneMain}" />
-
-                            <!-- Arto superiore: Omero, Radio (anteriore), Ulna (posteriore) e Mano -->
                             <path d="M 48.6 18.8 L 50.6 18.8 L 50.4 33.0 L 48.6 33.0 Z" fill="${boneMain}" />
                             <path d="M 49.8 33.4 L 51.0 33.4 L 52.2 45.6 L 51.1 45.6 Z" fill="${boneMain}" />
                             <path d="M 48.6 33.2 L 49.6 33.2 L 50.6 45.6 L 49.7 45.6 Z" fill="${boneShade}" />
@@ -2117,46 +2013,30 @@
                     const isBack = view === "back";
                     fallbackSvg.innerHTML = `
                         <g stroke="${boneStroke}" stroke-width="0.28" stroke-linejoin="round" stroke-linecap="round">
-                            <!-- Cranio -->
                             <path d="M 45.4 6.5 C 45.4 3.0, 54.6 3.0, 54.6 6.5 C 54.6 8.6, 53.4 10.2, 52.4 10.8 L 47.6 10.8 C 46.6 10.2, 45.4 8.6, 45.4 6.5 Z" fill="${boneMain}" />
                             ${isBack ? `
-                                <!-- Suture craniche posteriori -->
                                 <path d="M 50.0 3.3 L 50.0 7.2 M 46.6 8.8 L 50.0 7.2 L 53.4 8.8" fill="none" stroke="${boneStroke}" stroke-width="0.25" />
                             ` : `
-                                <!-- Orbite oculari, cavità nasale, zigomi e denti -->
                                 <ellipse cx="48.1" cy="7.2" rx="1.2" ry="1.1" fill="#1e293b" />
                                 <ellipse cx="51.9" cy="7.2" rx="1.2" ry="1.1" fill="#1e293b" />
                                 <path d="M 50.0 7.8 L 49.3 9.5 L 50.7 9.5 Z" fill="#1e293b" />
                                 <rect x="48.3" y="10.2" width="3.4" height="0.7" rx="0.2" fill="#ffffff" stroke="none" />
-                                <!-- Mandibola -->
                                 <path d="M 47.2 9.6 L 47.7 12.6 Q 50.0 13.8 52.3 12.6 L 52.8 9.6 L 51.8 11.2 L 48.2 11.2 Z" fill="${boneMain}" />
                                 <rect x="48.5" y="11.0" width="3.0" height="0.6" rx="0.2" fill="#ffffff" stroke="none" />
                             `}
-
-                            <!-- Colonna vertebrale completa -->
-                            <g fill="${boneShade}">
-                                <rect x="48.7" y="13.6" width="2.6" height="27.8" rx="0.8" />
-                            </g>
-                            <!-- Singole vertebre -->
+                            <rect x="48.7" y="13.6" width="2.6" height="27.8" rx="0.8" fill="${boneShade}" />
                             <g fill="${boneMain}">
                                 ${[14.2,15.6,17.0,18.5,20.0,21.5,23.0,24.5,26.0,27.5,29.0,30.5,32.2,34.0,35.8,37.6,39.4].map(vy => `
                                     <rect x="48.3" y="${vy}" width="3.4" height="1.1" rx="0.35" />
                                 `).join("")}
                             </g>
-
                             ${isBack ? `
-                                <!-- Scapole posteriori ben visibili -->
                                 <path d="M 45.6 18.2 L 39.2 18.8 L 44.6 25.4 Z" fill="${boneMain}" />
                                 <path d="M 54.4 18.2 L 60.8 18.8 L 55.4 25.4 Z" fill="${boneMain}" />
-                                <line x1="39.4" y1="19.4" x2="45.4" y2="20.2" stroke="${boneShade}" stroke-width="0.6" />
-                                <line x1="60.6" y1="19.4" x2="54.6" y2="20.2" stroke="${boneShade}" stroke-width="0.6" />
                             ` : `
-                                <!-- Clavicole a S -->
                                 <path d="M 49.0 17.6 Q 43.5 16.6 37.2 18.0" fill="none" stroke="${boneMain}" stroke-width="1.15" />
                                 <path d="M 51.0 17.6 Q 56.5 16.6 62.8 18.0" fill="none" stroke="${boneMain}" stroke-width="1.15" />
                             `}
-
-                            <!-- Gabbia toracica (12 paia di costole) -->
                             <g fill="none" stroke="${boneMain}" stroke-width="0.9">
                                 <path d="M 48.5 18.6 C 43.2 18.4, 42.4 20.6, 48.6 20.4" />
                                 <path d="M 51.5 18.6 C 56.8 18.4, 57.6 20.6, 51.4 20.4" />
@@ -2170,90 +2050,51 @@
                                 <path d="M 51.5 25.8 C 58.2 26.4, 57.4 29.8, 51.0 28.0" />
                                 <path d="M 48.5 27.6 C 42.8 28.4, 44.0 31.2, 49.2 29.4" />
                                 <path d="M 51.5 27.6 C 57.2 28.4, 56.0 31.2, 50.8 29.4" />
-                                <path d="M 48.5 29.4 C 44.4 30.2, 45.2 32.0, 47.2 31.6" />
-                                <path d="M 51.5 29.4 C 55.6 30.2, 54.8 32.0, 52.8 31.6" />
                             </g>
-
                             ${!isBack ? `
-                                <!-- Cartilagini costali e Sterno -->
                                 <path d="M 48.9 17.8 L 51.1 17.8 L 50.8 27.6 L 50.0 29.0 L 49.2 27.6 Z" fill="${boneMain}" />
-                                <line x1="48.9" y1="19.6" x2="51.1" y2="19.6" stroke="${boneStroke}" stroke-width="0.25" />
                             ` : ""}
-
-                            <!-- Bacino (Ileo, Sacro, Ischio, Pube) -->
                             <path d="M 48.2 41.0 L 51.8 41.0 L 51.0 46.2 L 50.0 47.4 L 49.0 46.2 Z" fill="${boneShade}" />
                             <path d="M 48.2 41.4 C 44.2 39.6, 40.4 41.2, 41.0 44.8 C 41.4 47.2, 43.2 49.4, 45.6 49.2 C 47.4 49.0, 48.4 47.2, 48.8 45.8 Z" fill="${boneMain}" />
                             <path d="M 51.8 41.4 C 55.8 39.6, 59.6 41.2, 59.0 44.8 C 58.6 47.2, 56.8 49.4, 54.4 49.2 C 52.6 49.0, 51.6 47.2, 51.2 45.8 Z" fill="${boneMain}" />
-                            <ellipse cx="45.8" cy="47.2" rx="1.2" ry="1.0" fill="#0f172a" />
-                            <ellipse cx="54.2" cy="47.2" rx="1.2" ry="1.0" fill="#0f172a" />
-
-                            <!-- Arti superiori: Omero (dx e sx) -->
                             <path d="M 36.2 18.6 L 38.0 18.8 L 35.4 33.0 L 33.8 32.8 Z" fill="${boneMain}" />
                             <path d="M 63.8 18.6 L 62.0 18.8 L 64.6 33.0 L 66.2 32.8 Z" fill="${boneMain}" />
-
-                            <!-- Avambracci: Radio (esterno) e Ulna (interno) -->
                             <path d="M 33.6 33.4 L 34.4 33.5 L 31.6 45.6 L 30.7 45.5 Z" fill="${boneMain}" />
                             <path d="M 34.8 33.4 L 35.6 33.5 L 33.4 45.6 L 32.6 45.5 Z" fill="${boneShade}" />
-
                             <path d="M 66.4 33.4 L 65.6 33.5 L 68.4 45.6 L 69.3 45.5 Z" fill="${boneMain}" />
                             <path d="M 65.2 33.4 L 64.4 33.5 L 66.6 45.6 L 67.4 45.5 Z" fill="${boneShade}" />
-
-                            <!-- Mani (carpo, metacarpo, falangi) -->
                             <path d="M 30.6 45.8 L 33.4 46.0 L 32.6 51.6 L 29.6 51.0 Z" fill="${boneMain}" />
                             <path d="M 69.4 45.8 L 66.6 46.0 L 67.4 51.6 L 70.4 51.0 Z" fill="${boneMain}" />
-
-                            <!-- Femori (dx e sx) -->
                             <path d="M 41.6 47.6 L 44.0 47.8 L 45.2 68.2 L 43.2 68.2 Z" fill="${boneMain}" />
                             <path d="M 58.4 47.6 L 56.0 47.8 L 54.8 68.2 L 56.8 68.2 Z" fill="${boneMain}" />
-
-                            <!-- Condili femorali -->
-                            <ellipse cx="44.2" cy="68.5" rx="1.8" ry="1.2" fill="${boneShade}" />
-                            <ellipse cx="55.8" cy="68.5" rx="1.8" ry="1.2" fill="${boneShade}" />
-
                             ${!isBack ? `
-                                <!-- Rotule -->
                                 <ellipse cx="44.3" cy="69.2" rx="1.1" ry="1.3" fill="#ffffff" />
                                 <ellipse cx="55.7" cy="69.2" rx="1.1" ry="1.3" fill="#ffffff" />
                             ` : ""}
-
-                            <!-- Tibia (interna, più spessa) e Perone (esterno, più sottile) -->
                             <path d="M 44.4 70.2 L 46.2 70.2 L 45.8 91.2 L 44.4 91.2 Z" fill="${boneMain}" />
                             <path d="M 42.6 70.8 L 43.4 70.8 L 43.1 91.4 L 42.3 91.4 Z" fill="${boneShade}" />
-
                             <path d="M 55.6 70.2 L 53.8 70.2 L 54.2 91.2 L 55.6 91.2 Z" fill="${boneMain}" />
                             <path d="M 57.4 70.8 L 56.6 70.8 L 56.9 91.4 L 57.7 91.4 Z" fill="${boneShade}" />
-
-                            <!-- Piedi -->
                             <path d="M 42.4 91.6 L 45.8 91.6 L 46.2 95.6 L 41.4 95.6 Z" fill="${boneMain}" />
                             <path d="M 57.6 91.6 L 54.2 91.6 L 53.8 95.6 L 58.6 95.6 Z" fill="${boneMain}" />
                         </g>
                     `;
                 }
             } else {
-                // SISTEMA MUSCOLARE (4 VISTE PROPORZIONATE ALLO SCHELETRO)
                 if (isSide) {
                     const dir = view === "right" ? 1 : -1;
                     fallbackSvg.innerHTML = `
                         <g transform="translate(50,0) scale(${dir},1) translate(-50,0)" stroke="${muscDark}" stroke-width="0.28">
-                            <!-- Testa e muscoli del collo (sternocleidomastoideo) -->
                             <ellipse cx="49.8" cy="7.2" rx="4.4" ry="4.8" fill="#fca5a5" opacity="0.35" stroke="#f87171" />
                             <path d="M 47.2 11.2 L 51.8 11.4 L 52.4 17.5 L 46.4 17.5 Z" fill="${muscMain}" />
-                            <!-- Pettorale e torace laterale -->
                             <path d="M 46.2 17.5 L 54.2 18.0 C 55.2 21.5, 54.8 25.5, 53.4 27.5 L 46.0 27.5 Z" fill="${muscMain}" />
-                            <!-- Addominali e obliqui -->
                             <path d="M 46.4 27.5 L 53.6 27.5 L 53.2 41.0 L 46.8 41.0 Z" fill="${muscLight}" />
-                            <!-- Grande Gluteo -->
                             <path d="M 45.0 40.5 C 43.2 43.5, 43.5 49.0, 46.8 50.5 L 52.5 49.5 L 52.5 41.0 Z" fill="${muscDark}" />
-                            <!-- Quadricipite (anteriore) e Bicipite femorale (posteriore) -->
                             <path d="M 50.0 49.0 L 53.6 49.5 C 54.2 56.0, 53.6 63.0, 52.2 68.0 L 50.0 68.0 Z" fill="${muscMain}" />
                             <path d="M 46.6 49.5 L 50.0 49.0 L 50.0 68.0 L 47.2 68.0 C 46.2 62.0, 46.0 55.0, 46.6 49.5 Z" fill="${muscDark}" />
-                            <!-- Ginocchio tendineo -->
                             <rect x="47.8" y="68.0" width="4.4" height="3.2" rx="1.2" fill="${tendon}" />
-                            <!-- Polpaccio (gastrocnemio) e Tibiale anteriore -->
                             <path d="M 47.4 71.2 C 45.4 75.5, 45.8 81.5, 48.0 85.0 L 49.2 91.5 L 51.6 91.5 L 52.0 71.2 Z" fill="${muscMain}" />
-                            <!-- Piede -->
                             <path d="M 47.4 91.5 L 51.6 91.5 L 56.4 94.6 L 56.4 95.8 L 47.2 95.8 Z" fill="${tendon}" />
-                            <!-- Deltoide, Bicipite (avanti) e Tricipite (dietro) -->
                             <path d="M 47.6 17.5 C 50.2 17.0, 52.4 18.8, 52.0 22.8 L 47.4 22.8 Z" fill="${muscLight}" />
                             <path d="M 50.0 22.8 L 52.2 22.8 L 51.6 32.5 L 50.0 32.5 Z" fill="${muscMain}" />
                             <path d="M 47.4 22.8 L 50.0 22.8 L 50.0 32.5 L 47.6 32.5 Z" fill="${muscDark}" />
@@ -2264,53 +2105,30 @@
                     const isBack = view === "back";
                     fallbackSvg.innerHTML = `
                         <g stroke="${muscDark}" stroke-width="0.28">
-                            <!-- Testa e collo -->
                             <ellipse cx="50.0" cy="7.2" rx="4.5" ry="4.8" fill="#fca5a5" opacity="0.35" stroke="#f87171" />
                             <path d="M 47.4 11.5 L 52.6 11.5 L 54.5 17.5 L 45.5 17.5 Z" fill="${muscMain}" />
-
                             ${isBack ? `
-                                <!-- Trapezio e Gran Dorsale -->
                                 <path d="M 45.5 17.5 L 54.5 17.5 L 50.0 28.5 Z" fill="${muscLight}" />
                                 <path d="M 41.2 18.5 L 58.8 18.5 L 55.6 35.5 L 44.4 35.5 Z" fill="${muscMain}" />
-                                <!-- Glutei -->
                                 <ellipse cx="45.6" cy="45.0" rx="4.2" ry="4.8" fill="${muscDark}" />
                                 <ellipse cx="54.4" cy="45.0" rx="4.2" ry="4.8" fill="${muscDark}" />
                             ` : `
-                                <!-- Grandi Pettorali -->
                                 <path d="M 41.2 18.0 L 49.8 18.2 L 49.8 26.2 C 46.0 26.8, 42.2 25.6, 41.2 22.5 Z" fill="${muscMain}" />
                                 <path d="M 58.8 18.0 L 50.2 18.2 L 50.2 26.2 C 54.0 26.8, 57.8 25.6, 58.8 22.5 Z" fill="${muscMain}" />
-                                <!-- Diaframma (arco sottocostale) -->
-                                <path d="M 43.2 28.8 Q 50.0 25.8 56.8 28.8" fill="none" stroke="#facc15" stroke-width="1.1" />
-                                <!-- Retto dell'Addome -->
                                 <rect x="45.6" y="27.2" width="8.8" height="13.8" rx="2.0" fill="${muscLight}" />
-                                <line x1="50.0" y1="27.2" x2="50.0" y2="41.0" stroke="${tendon}" stroke-width="0.4" />
-                                <line x1="45.6" y1="31.5" x2="54.4" y2="31.5" stroke="${tendon}" stroke-width="0.35" />
-                                <line x1="45.6" y1="35.8" x2="54.4" y2="35.8" stroke="${tendon}" stroke-width="0.35" />
                             `}
-
-                            <!-- Deltoidi e Braccia (Bicipiti / Tricipiti) -->
                             <ellipse cx="38.2" cy="19.5" rx="2.6" ry="2.4" fill="${muscLight}" />
                             <ellipse cx="61.8" cy="19.5" rx="2.6" ry="2.4" fill="${muscLight}" />
                             <path d="M 35.6 21.2 L 38.6 21.5 L 36.2 32.5 L 33.4 32.2 Z" fill="${isBack ? muscDark : muscMain}" />
                             <path d="M 64.4 21.2 L 61.4 21.5 L 63.8 32.5 L 66.6 32.2 Z" fill="${isBack ? muscDark : muscMain}" />
                             <path d="M 33.2 33.0 L 35.8 33.2 L 33.2 45.6 L 30.8 45.4 Z" fill="${muscMain}" />
                             <path d="M 66.8 33.0 L 64.2 33.2 L 66.8 45.6 L 69.2 45.4 Z" fill="${muscMain}" />
-
-                            <!-- Cosce (Quadricipiti / Bicipiti femorali) -->
                             <path d="M 40.8 48.0 L 48.2 48.5 L 46.6 67.8 L 42.2 67.8 Z" fill="${isBack ? muscDark : muscMain}" />
                             <path d="M 59.2 48.0 L 51.8 48.5 L 53.4 67.8 L 57.8 67.8 Z" fill="${isBack ? muscDark : muscMain}" />
-
-                            <!-- Ginocchia tendinee -->
                             <rect x="42.4" y="67.8" width="4.0" height="3.0" rx="1.0" fill="${tendon}" />
                             <rect x="53.6" y="67.8" width="4.0" height="3.0" rx="1.0" fill="${tendon}" />
-
-                            <!-- Gambe e Polpacci -->
                             <path d="M 42.0 70.8 L 46.6 70.8 L 45.8 85.5 L 42.4 85.5 Z" fill="${muscMain}" />
                             <path d="M 58.0 70.8 L 53.4 70.8 L 54.2 85.5 L 57.6 85.5 Z" fill="${muscMain}" />
-                            <rect x="43.2" y="85.5" width="2.2" height="6.0" fill="${tendon}" />
-                            <rect x="54.6" y="85.5" width="2.2" height="6.0" fill="${tendon}" />
-
-                            <!-- Piedi -->
                             <path d="M 42.2 91.6 L 46.0 91.6 L 46.4 95.6 L 41.4 95.6 Z" fill="${tendon}" />
                             <path d="M 57.8 91.6 L 54.0 91.6 L 53.6 95.6 L 58.6 95.6 Z" fill="${tendon}" />
                         </g>
@@ -2577,14 +2395,22 @@
             `;
         }
 
-        /* ================= MODALITÀ PRONTO SOCCORSO ================= */
+        /* ================= MODALITÀ PRONTO SOCCORSO A SQUADRE (PEERJS - ZERO CONFIG) ================= */
+        function destroyActivePeer() {
+            if (playerHostConn) {
+                try { playerHostConn.close(); } catch (e) {}
+                playerHostConn = null;
+            }
+            if (peerInstance) {
+                try { peerInstance.destroy(); } catch (e) {}
+                peerInstance = null;
+            }
+        }
+
         function renderErIntroScreen() {
             resetHotspotStates();
             setXrayVisual(true);
-            if (roomTeamsUnsub) {
-                roomTeamsUnsub();
-                roomTeamsUnsub = null;
-            }
+            destroyActivePeer();
             roomMode = "none";
             currentRoomPin = "";
             currentTeamDocId = "";
@@ -2616,6 +2442,7 @@
         }
 
         function startSingleErShift() {
+            destroyActivePeer();
             roomMode = "none";
             currentRoomPin = "";
             currentTeamDocId = "";
@@ -2630,54 +2457,97 @@
             return [...ER_CASES].sort(() => Math.random() - 0.5).slice(0, 6);
         }
 
-        async function openHostRoomScreen() {
-            infoPanel.innerHTML = `
-                <div class="team-lobby-box" style="text-align:center;">
-                    <div style="font-size:1.8rem;">⏳</div>
-                    <p style="font-weight:700;">Creazione stanza in corso...</p>
-                </div>
-            `;
-            const ok = await ensureFirebaseReady();
-            if (!ok || !fbUser) {
+        function openHostRoomScreen() {
+            if (typeof Peer === "undefined") {
                 infoPanel.innerHTML = `
                     <div class="feedback-box error">
-                        ⚠️ Connessione al servizio stanze non disponibile in questo momento. Puoi comunque usare il <strong>Turno Singolo</strong>!
+                        ⚠️ Libreria di connessione non caricata. Verifica la connessione Internet o usa il <strong>Turno Singolo</strong>.
                     </div>
                     <button type="button" class="secondary-btn" onclick="renderErIntroScreen()">⬅️ Torna indietro</button>
                 `;
                 return;
             }
 
-            const { doc, setDoc, collection, onSnapshot } = fbModules;
-            const appId = typeof __app_id !== "undefined" ? __app_id : "default-app-id";
+            destroyActivePeer();
+            infoPanel.innerHTML = `
+                <div class="team-lobby-box" style="text-align:center;">
+                    <div style="font-size:1.8rem;">⏳</div>
+                    <p style="font-weight:700;">Apertura stanza alla LIM in corso...</p>
+                </div>
+            `;
+
             const pin = generateRoomPin();
             const sharedCases = generateSharedCaseOrder();
-
-            const roomRef = doc(fbDb, "artifacts", appId, "public", "data", "er_rooms", pin);
-            await setDoc(roomRef, {
-                pin,
-                status: "active",
-                createdAt: Date.now(),
-                hostUid: fbUser.uid,
-                caseIndices: sharedCases.map(c => ER_CASES.indexOf(c))
-            });
-
-            roomMode = "host";
-            currentRoomPin = pin;
+            hostSharedCaseIndices = sharedCases.map(c => ER_CASES.indexOf(c));
             latestRoomTeams = [];
 
-            const teamsCol = collection(fbDb, "artifacts", appId, "public", "data", `er_room_${pin}_teams`);
-            if (roomTeamsUnsub) roomTeamsUnsub();
-            roomTeamsUnsub = onSnapshot(teamsCol, (snap) => {
-                const list = [];
-                snap.forEach(d => list.push({ id: d.id, ...d.data() }));
-                list.sort((a, b) => (b.score || 0) - (a.score || 0) || (a.finishedAt || 9999999999999) - (b.finishedAt || 9999999999999));
-                latestRoomTeams = list;
+            const peer = new Peer(PEER_PREFIX + pin, { debug: 0 });
+            peerInstance = peer;
+
+            peer.on("open", () => {
+                roomMode = "host";
+                currentRoomPin = pin;
                 renderHostDashboard();
-            }, (err) => {
-                console.error("Errore ascolto squadre:", err);
             });
 
+            peer.on("connection", (conn) => {
+                conn.on("data", (msg) => {
+                    if (!msg || typeof msg !== "object") return;
+                    if (msg.type === "join") {
+                        const teamId = msg.teamId || ("team_" + Date.now() + "_" + Math.random().toString(36).slice(2, 6));
+                        const existing = latestRoomTeams.find(t => t.id === teamId);
+                        if (existing) {
+                            existing.teamName = msg.teamName;
+                            existing.members = msg.members;
+                        } else {
+                            latestRoomTeams.push({
+                                id: teamId,
+                                teamName: msg.teamName,
+                                members: msg.members || [],
+                                score: 0,
+                                currentCase: 0,
+                                completed: false,
+                                finishedAt: null
+                            });
+                        }
+                        conn.send({
+                            type: "welcome",
+                            teamId,
+                            caseIndices: hostSharedCaseIndices
+                        });
+                        sortAndRenderHostLeaderboard();
+                    } else if (msg.type === "progress") {
+                        const t = latestRoomTeams.find(x => x.id === msg.teamId);
+                        if (t) {
+                            t.score = Number(msg.score) || 0;
+                            t.currentCase = Number(msg.currentCase) || 0;
+                            t.completed = Boolean(msg.completed);
+                            if (t.completed && !t.finishedAt) t.finishedAt = Date.now();
+                            sortAndRenderHostLeaderboard();
+                        }
+                    }
+                });
+            });
+
+            peer.on("error", (err) => {
+                if (err && err.type === "unavailable-id") {
+                    openHostRoomScreen();
+                    return;
+                }
+                infoPanel.innerHTML = `
+                    <div class="feedback-box error">
+                        ⚠️ Impossibile creare la stanza (${escapeHtml(err?.type || "errore di rete")}). Riprova o usa il <strong>Turno Singolo</strong>!
+                    </div>
+                    <button type="button" class="secondary-btn" onclick="renderErIntroScreen()">⬅️ Torna indietro</button>
+                `;
+            });
+        }
+
+        function sortAndRenderHostLeaderboard() {
+            latestRoomTeams.sort((a, b) =>
+                (b.score || 0) - (a.score || 0) ||
+                (a.finishedAt || 9999999999999) - (b.finishedAt || 9999999999999)
+            );
             renderHostDashboard();
         }
 
@@ -2687,7 +2557,7 @@
                 <div class="pin-display-banner">
                     <div style="font-size:0.8rem; text-transform:uppercase; letter-spacing:0.8px; color:#93c5fd; font-weight:700;">PIN della Stanza Pronto Soccorso</div>
                     <div class="pin-code-text">${currentRoomPin}</div>
-                    <div style="font-size:0.85rem; color:#e2e8f0;">Comunica questo PIN alle squadre (max 6 componenti per squadra)</div>
+                    <div style="font-size:0.85rem; color:#e2e8f0;">Comunica questo PIN alle squadre (tieni aperta questa pagina alla LIM)</div>
                 </div>
 
                 <div class="team-lobby-box">
@@ -2766,7 +2636,7 @@
             `;
         }
 
-        async function submitJoinRoom() {
+        function submitJoinRoom() {
             const pinInput = (document.getElementById("join-room-pin")?.value || "").trim();
             const teamNameInput = (document.getElementById("join-team-name")?.value || "").trim();
             const memberInputs = Array.from(document.querySelectorAll(".member-input"))
@@ -2786,71 +2656,91 @@
                 openJoinRoomScreen("⚠️ Inserisci almeno il nome di 1 componente della squadra.");
                 return;
             }
+            if (typeof Peer === "undefined") {
+                openJoinRoomScreen("⚠️ Servizio di connessione non disponibile. Usa il Turno Singolo!");
+                return;
+            }
 
+            destroyActivePeer();
             infoPanel.innerHTML = `
                 <div class="team-lobby-box" style="text-align:center;">
                     <div style="font-size:1.8rem;">🚑</div>
-                    <p style="font-weight:700;">Ingresso nella stanza ${pinInput}...</p>
+                    <p style="font-weight:700;">Ingresso nella stanza ${escapeHtml(pinInput)}...</p>
                 </div>
             `;
 
-            const ok = await ensureFirebaseReady();
-            if (!ok || !fbUser) {
-                openJoinRoomScreen("⚠️ Impossibile connettersi alla stanza. Verifica la rete o usa il Turno Singolo.");
-                return;
-            }
+            const teamId = "team_" + Date.now() + "_" + Math.random().toString(36).slice(2, 6);
+            const peer = new Peer({ debug: 0 });
+            peerInstance = peer;
+            let joined = false;
 
-            const { doc, getDoc, collection, addDoc } = fbModules;
-            const appId = typeof __app_id !== "undefined" ? __app_id : "default-app-id";
-            const roomRef = doc(fbDb, "artifacts", appId, "public", "data", "er_rooms", pinInput);
-            const roomSnap = await getDoc(roomRef);
+            const timeoutId = setTimeout(() => {
+                if (!joined) {
+                    destroyActivePeer();
+                    openJoinRoomScreen(`❌ Nessuna stanza attiva trovata con il PIN <strong>${escapeHtml(pinInput)}</strong>. Controlla che il docente abbia aperto la stanza!`);
+                }
+            }, 9000);
 
-            if (!roomSnap.exists()) {
-                openJoinRoomScreen(`❌ Nessuna stanza trovata con il PIN <strong>${escapeHtml(pinInput)}</strong>. Controlla il codice alla lavagna!`);
-                return;
-            }
+            peer.on("open", () => {
+                const conn = peer.connect(PEER_PREFIX + pinInput, { reliable: true });
+                playerHostConn = conn;
 
-            const roomData = roomSnap.data();
-            const teamsCol = collection(fbDb, "artifacts", appId, "public", "data", `er_room_${pinInput}_teams`);
-            const teamDoc = await addDoc(teamsCol, {
-                teamName: teamNameInput,
-                members: memberInputs,
-                score: 0,
-                currentCase: 0,
-                completed: false,
-                joinedAt: Date.now(),
-                uid: fbUser.uid
+                conn.on("open", () => {
+                    conn.send({
+                        type: "join",
+                        teamId,
+                        teamName: teamNameInput,
+                        members: memberInputs
+                    });
+                });
+
+                conn.on("data", (msg) => {
+                    if (msg && msg.type === "welcome" && !joined) {
+                        joined = true;
+                        clearTimeout(timeoutId);
+                        roomMode = "player";
+                        currentRoomPin = pinInput;
+                        currentTeamDocId = msg.teamId || teamId;
+                        currentTeamName = teamNameInput;
+                        currentTeamMembers = memberInputs;
+
+                        const indices = Array.isArray(msg.caseIndices) && msg.caseIndices.length > 0
+                            ? msg.caseIndices.map(i => ER_CASES[i]).filter(Boolean)
+                            : generateSharedCaseOrder();
+
+                        startErShift(indices);
+                    }
+                });
+
+                conn.on("error", () => {
+                    if (!joined) {
+                        clearTimeout(timeoutId);
+                        destroyActivePeer();
+                        openJoinRoomScreen(`❌ Impossibile raggiungere la stanza <strong>${escapeHtml(pinInput)}</strong>. Verifica il PIN e riprova!`);
+                    }
+                });
             });
 
-            roomMode = "player";
-            currentRoomPin = pinInput;
-            currentTeamDocId = teamDoc.id;
-            currentTeamName = teamNameInput;
-            currentTeamMembers = memberInputs;
-
-            const indices = Array.isArray(roomData.caseIndices) && roomData.caseIndices.length > 0
-                ? roomData.caseIndices.map(i => ER_CASES[i]).filter(Boolean)
-                : generateSharedCaseOrder();
-
-            startErShift(indices);
+            peer.on("error", () => {
+                if (!joined) {
+                    clearTimeout(timeoutId);
+                    destroyActivePeer();
+                    openJoinRoomScreen(`❌ Stanza <strong>${escapeHtml(pinInput)}</strong> non trovata. Controlla il codice alla lavagna!`);
+                }
+            });
         }
 
-        async function syncTeamProgress(isCompleted = false) {
-            if (roomMode !== "player" || !currentRoomPin || !currentTeamDocId || !fbReady || !fbUser) return;
+        function syncTeamProgress(isCompleted = false) {
+            if (roomMode !== "player" || !playerHostConn || !playerHostConn.open) return;
             try {
-                const { doc, updateDoc } = fbModules;
-                const appId = typeof __app_id !== "undefined" ? __app_id : "default-app-id";
-                const teamRef = doc(fbDb, "artifacts", appId, "public", "data", `er_room_${currentRoomPin}_teams`, currentTeamDocId);
-                const payload = {
+                playerHostConn.send({
+                    type: "progress",
+                    teamId: currentTeamDocId,
                     score: erScore,
                     currentCase: erIndex,
                     completed: isCompleted
-                };
-                if (isCompleted) payload.finishedAt = Date.now();
-                await updateDoc(teamRef, payload);
-            } catch (e) {
-                console.error("Errore sincronizzazione punteggio squadra:", e);
-            }
+                });
+            } catch (e) {}
         }
 
         function escapeHtml(str) {
@@ -2881,6 +2771,18 @@
             return { title: "🎓 Tirocinante in Formazione", msg: "Continua a esercitarti nella sezione Apparato Locomotore e riprova il turno!" };
         }
 
+        function revealErHint(btn) {
+            const c = erQueue[erIndex];
+            const box = document.getElementById("er-step-box");
+            if (box && c) {
+                const hintDiv = document.createElement("div");
+                hintDiv.style.marginTop = "0.4rem";
+                hintDiv.innerHTML = `💡 <strong>Suggerimento:</strong> ${escapeHtml(c.hint)}`;
+                box.appendChild(hintDiv);
+            }
+            if (btn) btn.disabled = true;
+        }
+
         function loadErCase() {
             if (erIndex >= erQueue.length) {
                 playTone("ok");
@@ -2888,7 +2790,7 @@
                 const grade = getErFinalGrade(erScore, erQueue.length);
                 const teamBanner = roomMode === "player" ? `
                     <div style="background:rgba(255,255,255,0.12); border-radius:10px; padding:0.55rem; margin-bottom:0.5rem; font-size:0.86rem;">
-                        👥 Squadra <strong>${escapeHtml(currentTeamName)}</strong> • Stanza <strong>${currentRoomPin}</strong><br>
+                        👥 Squadra <strong>${escapeHtml(currentTeamName)}</strong> • Stanza <strong>${escapeHtml(currentRoomPin)}</strong><br>
                         <span style="color:#cbd5e1; font-size:0.8rem;">${escapeHtml(currentTeamMembers.join(", "))}</span>
                     </div>
                 ` : "";
@@ -2914,7 +2816,6 @@
             }
             const c = erQueue[erIndex];
             erStep = "triage";
-            erHintUsed = false;
             resetHotspotStates();
             setXrayVisual(true);
             playTone("beep");
@@ -2922,7 +2823,7 @@
             const teamStatusLine = roomMode === "player"
                 ? `<div style="background:#1e3a8a; color:#e0f2fe; padding:0.45rem 0.85rem; border-radius:10px; font-size:0.82rem; font-weight:700; display:flex; justify-content:space-between; flex-wrap:wrap; gap:0.4rem;">
                     <span>👥 Squadra: <strong>${escapeHtml(currentTeamName)}</strong> (${currentTeamMembers.length}/6)</span>
-                    <span>Stanza PIN: <strong>${currentRoomPin}</strong></span>
+                    <span>Stanza PIN: <strong>${escapeHtml(currentRoomPin)}</strong></span>
                    </div>`
                 : "";
 
@@ -2939,7 +2840,7 @@
                             <span class="urgency-tag" style="background:#334155; color:#fff;">⏳ In attesa di Triage</span>
                             <h3 style="font-size:1.1rem; font-weight:800;">${c.patient}</h3>
                         </div>
-                        <button type="button" class="speak-btn" onclick="speakItalian('${c.story.replace(/'/g, "\\'")}')">🔊 Ascolta</button>
+                        <button type="button" class="speak-btn" onclick="speakItalian(erQueue[erIndex].story)">🔊 Ascolta</button>
                     </div>
                     <p class="patient-symptom">"${c.story}"</p>
                 </div>
@@ -2986,7 +2887,7 @@
 
             const helpWrap = document.createElement("div");
             helpWrap.style.cssText = "display:flex; gap:0.5rem; flex-wrap:wrap;";
-            helpWrap.innerHTML = `<button type="button" class="secondary-btn" onclick="document.getElementById('er-step-box').innerHTML += '<div style=margin-top:0.4rem>💡 <strong>Suggerimento:</strong> ${c.hint.replace(/'/g, "\\'")}</div>'; this.disabled=true;">💡 Suggerimento anatomico</button>`;
+            helpWrap.innerHTML = `<button type="button" class="secondary-btn" onclick="revealErHint(this)">💡 Suggerimento anatomico</button>`;
             infoPanel.appendChild(helpWrap);
         }
 
@@ -3122,7 +3023,7 @@
                 </div>
                 <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:0.5rem;">
                     <h2 style="font-size:1.22rem; font-weight:800;">${q.q}</h2>
-                    <button type="button" class="speak-btn" onclick="speakItalian('${q.q.replace(/'/g, "\\'")}')">🔊</button>
+                    <button type="button" class="speak-btn" onclick="speakItalian(quizSessionQuestions[quizIndex].q)">🔊</button>
                 </div>
                 <div class="quiz-options">
                     ${shuffledQuiz.options.map((opt, idx) => `
@@ -3190,37 +3091,6 @@
         renderHotspots();
         renderExplorePanel();
         loadAnatomyPlate("bones", "front");
-    </script>
-
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, setDoc, getDoc, addDoc, updateDoc, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-
-        window.ensureFirebaseReady = async function () {
-            if (fbReady && fbUser) return true;
-            try {
-                if (typeof __firebase_config === "undefined") return false;
-                const firebaseConfig = JSON.parse(__firebase_config);
-                const app = initializeApp(firebaseConfig);
-                fbAuth = getAuth(app);
-                fbDb = getFirestore(app);
-                fbModules = { doc, setDoc, getDoc, addDoc, updateDoc, collection, onSnapshot };
-
-                if (typeof __initial_auth_token !== "undefined" && __initial_auth_token) {
-                    const cred = await signInWithCustomToken(fbAuth, __initial_auth_token);
-                    fbUser = cred.user;
-                } else {
-                    const cred = await signInAnonymously(fbAuth);
-                    fbUser = cred.user;
-                }
-                fbReady = Boolean(fbUser);
-                return fbReady;
-            } catch (err) {
-                console.error("Errore inizializzazione stanze:", err);
-                return false;
-            }
-        };
     </script>
 </body>
 </html>
