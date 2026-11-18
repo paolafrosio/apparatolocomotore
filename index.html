@@ -6,6 +6,7 @@
     <title>Pronto Soccorso Ortopedico & Apparato Locomotore - CPIA</title>
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%230f172a'/%3E%3Crect x='26' y='10' width='12' height='44' rx='3' fill='%23dc2626'/%3E%3Crect x='10' y='26' width='44' height='12' rx='3' fill='%23dc2626'/%3E%3Cpath d='M21 21c-2.5-2.5-6.5-1.5-6.5 2 0 1.8 1.2 3.2 2.8 3.5L37.5 46.7c.3 1.6 1.7 2.8 3.5 2.8 3.5 0 4.5-4 2-6.5 2.5 2.5 6.5 1.5 6.5-2 0-1.8-1.2-3.2-2.8-3.5L26.5 17.3c-.3-1.6-1.7-2.8-3.5-2.8-3.5 0-4.5 4-2 6.5z' fill='%23f8fafc'/%3E%3C/svg%3E">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
     <style>
         :root {
             --primary: #0284c7;
@@ -481,10 +482,6 @@
             touch-action: none;
         }
 
-        .anatomy-stage.calibrating-mode .hotspot {
-            cursor: move;
-        }
-
         .hotspot-dot {
             width: 16px;
             height: 16px;
@@ -555,6 +552,188 @@
             display: flex;
             flex-direction: column;
             gap: 1rem;
+        }
+
+        /* ================= STILE CARTELLETTA CLINICA OSPEDALIERA (PRONTO SOCCORSO) ================= */
+        .info-panel.clipboard-mode {
+            position: relative;
+            background-color: #6f4222;
+            background-image:
+                radial-gradient(rgba(255, 235, 205, 0.08) 1px, transparent 1px),
+                radial-gradient(rgba(38, 19, 6, 0.18) 1px, transparent 1px),
+                repeating-linear-gradient(
+                    90deg,
+                    rgba(255, 255, 255, 0.025) 0px,
+                    rgba(255, 255, 255, 0.025) 1px,
+                    transparent 1px,
+                    transparent 4px
+                ),
+                linear-gradient(145deg, #8b5630 0%, #6d3f1f 48%, #542f15 100%);
+            background-size: 6px 6px, 6px 6px, 100% 100%, 100% 100%;
+            background-position: 0 0, 3px 3px, 0 0, 0 0;
+            border: 3px solid #42220d;
+            border-radius: 22px;
+            padding: 3.35rem 1.05rem 1.15rem;
+            box-shadow:
+                inset 0 2px 3px rgba(255, 224, 185, 0.25),
+                inset 0 -4px 10px rgba(28, 13, 4, 0.55),
+                0 14px 28px rgba(15, 23, 42, 0.24);
+        }
+
+        .info-panel.clipboard-mode::before {
+            content: "";
+            position: absolute;
+            inset: 7px;
+            border: 1.5px dashed rgba(245, 208, 169, 0.35);
+            border-radius: 16px;
+            pointer-events: none;
+        }
+
+        @keyframes redAlertPulse {
+            0%, 100% {
+                box-shadow:
+                    inset 0 2px 3px rgba(255, 224, 185, 0.25),
+                    inset 0 -4px 10px rgba(28, 13, 4, 0.55),
+                    0 0 0 4px rgba(220, 38, 38, 0.85),
+                    0 0 32px 10px rgba(239, 68, 68, 0.68);
+                border-color: #ef4444;
+            }
+            50% {
+                box-shadow:
+                    inset 0 2px 3px rgba(255, 224, 185, 0.25),
+                    inset 0 -4px 10px rgba(28, 13, 4, 0.55),
+                    0 0 0 2px rgba(220, 38, 38, 0.25),
+                    0 0 12px 2px rgba(239, 68, 68, 0.2);
+                border-color: #7f1d1d;
+            }
+        }
+
+        .info-panel.clipboard-mode.red-alert {
+            animation: redAlertPulse 1.15s ease-in-out infinite;
+        }
+
+        .red-siren-banner {
+            background: linear-gradient(90deg, #b91c1c, #ef4444, #b91c1c);
+            color: #ffffff;
+            text-align: center;
+            font-size: 0.8rem;
+            font-weight: 800;
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
+            padding: 0.35rem 0.6rem;
+            border-radius: 6px;
+            animation: sirenTextBlink 1.15s ease-in-out infinite;
+        }
+
+        @keyframes sirenTextBlink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.55; }
+        }
+
+        .clipboard-metal-clip {
+            position: absolute;
+            top: -16px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 176px;
+            height: 68px;
+            z-index: 6;
+            pointer-events: none;
+            filter: drop-shadow(0 6px 7px rgba(0, 0, 0, 0.42));
+        }
+
+        .medical-sheet {
+            position: relative;
+            background: #fffdf9;
+            border: 1px solid #cbd5e1;
+            border-top: 5px solid #0f172a;
+            border-radius: 4px 4px 10px 10px;
+            padding: 1.25rem 1.15rem 1.15rem;
+            box-shadow:
+                0 1px 0 #e2e8f0,
+                0 5px 0 -2px #f8fafc,
+                0 6px 0 -2px #cbd5e1,
+                0 10px 18px rgba(15, 23, 42, 0.24);
+            display: flex;
+            flex-direction: column;
+            gap: 0.9rem;
+        }
+
+        .medical-sheet-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 0.65rem;
+            padding-bottom: 0.65rem;
+            border-bottom: 2px solid #0f172a;
+            flex-wrap: wrap;
+        }
+
+        .hospital-emblem {
+            display: flex;
+            align-items: center;
+            gap: 0.55rem;
+        }
+
+        .hospital-cross {
+            width: 30px;
+            height: 30px;
+            border-radius: 7px;
+            background: #dc2626;
+            color: #ffffff;
+            font-weight: 900;
+            font-size: 1.15rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .sheet-meta-box {
+            text-align: right;
+            font-size: 0.74rem;
+            color: #475569;
+            font-weight: 700;
+            line-height: 1.35;
+        }
+
+        .record-section {
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            background: #ffffff;
+            overflow: hidden;
+        }
+
+        .record-section-title {
+            background: #f1f5f9;
+            border-bottom: 1px solid #cbd5e1;
+            padding: 0.35rem 0.75rem;
+            font-size: 0.74rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #334155;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .record-section-body {
+            padding: 0.75rem;
+        }
+
+        .clinical-stamp {
+            display: inline-block;
+            border: 2.5px solid #16a34a;
+            color: #15803d;
+            font-weight: 900;
+            font-size: 0.78rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            padding: 0.25rem 0.65rem;
+            border-radius: 6px;
+            transform: rotate(-3deg);
+            background: rgba(220, 252, 231, 0.55);
         }
 
         .bone-header {
@@ -700,9 +879,9 @@
         }
 
         .patient-card {
-            border-radius: 14px;
-            padding: 1rem;
-            border: 2px solid var(--border);
+            border-radius: 10px;
+            padding: 0.9rem;
+            border: 1.5px solid var(--border);
             background: #ffffff;
         }
 
@@ -765,31 +944,10 @@
             color: #ffffff;
         }
 
-        .triage-explain {
-            font-size: 0.84rem;
-            padding: 0.45rem 0.7rem;
-            border-radius: 8px;
-            background: rgba(255, 255, 255, 0.8);
-            margin-bottom: 0.6rem;
-            color: #1e293b;
-            font-weight: 600;
-        }
-
         .patient-symptom {
             font-size: 1.02rem;
             font-weight: 600;
             color: #0f172a;
-        }
-
-        .triage-legend {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.45rem;
-            font-size: 0.78rem;
-            padding: 0.55rem 0.75rem;
-            background: #f8fafc;
-            border-radius: 10px;
-            border: 1px solid #e2e8f0;
         }
 
         .quiz-options {
@@ -880,43 +1038,6 @@
             background: #cbd5e1;
         }
 
-        .er-start-wrapper {
-            position: relative;
-            border-radius: 14px;
-            overflow: hidden;
-            min-height: 360px;
-        }
-
-        .er-blurred-preview {
-            filter: blur(7px);
-            opacity: 0.45;
-            pointer-events: none;
-            user-select: none;
-        }
-
-        .er-start-overlay {
-            position: absolute;
-            inset: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            padding: 1.5rem;
-            background: rgba(255, 255, 255, 0.72);
-            backdrop-filter: blur(4px);
-            z-index: 10;
-        }
-
-        .er-start-card {
-            background: #ffffff;
-            border: 2px solid #cbd5e1;
-            border-radius: 16px;
-            padding: 1.5rem;
-            max-width: 440px;
-            box-shadow: 0 12px 28px rgba(15, 23, 42, 0.16);
-        }
-
         .er-start-btn {
             background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
             color: #ffffff;
@@ -936,16 +1057,174 @@
             box-shadow: 0 8px 20px rgba(220, 38, 38, 0.4);
         }
 
+        .team-lobby-box {
+            background: #ffffff;
+            border: 1.5px solid var(--border);
+            border-radius: 12px;
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+
+        .pin-display-banner {
+            background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%);
+            color: #ffffff;
+            border-radius: 12px;
+            padding: 1rem;
+            text-align: center;
+        }
+
+        .pin-code-text {
+            font-size: 2.2rem;
+            font-weight: 800;
+            letter-spacing: 8px;
+            color: #facc15;
+            margin: 0.25rem 0;
+        }
+
+        .team-input {
+            width: 100%;
+            padding: 0.65rem 0.85rem;
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            font-family: inherit;
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .team-input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .members-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.45rem;
+        }
+
+        @media (max-width: 540px) {
+            .members-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .leaderboard-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.7rem 0.85rem;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            background: #f8fafc;
+        }
+
+        .leaderboard-row.top-team {
+            background: #fefce8;
+            border-color: #eab308;
+        }
+
+        /* ================= MONITOR ECG LIVE (CLASSIFICA SQUADRE) ================= */
+        .ecg-monitor-card {
+            background: #020617;
+            border: 2px solid #1e293b;
+            border-radius: 12px;
+            padding: 0.75rem 0.85rem;
+            box-shadow: inset 0 0 24px rgba(16, 185, 129, 0.14);
+            color: #e2e8f0;
+        }
+
+        .ecg-monitor-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.45rem;
+            font-size: 0.78rem;
+            font-weight: 800;
+            letter-spacing: 0.4px;
+            text-transform: uppercase;
+            color: #34d399;
+        }
+
+        .ecg-live-dot {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #10b981;
+            box-shadow: 0 0 8px #10b981;
+            margin-right: 5px;
+            animation: ecgPulse 1.2s infinite;
+        }
+
+        @keyframes ecgPulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.35; transform: scale(0.8); }
+        }
+
+        .ecg-svg {
+            width: 100%;
+            height: 170px;
+            display: block;
+            border-radius: 8px;
+            background: #030712;
+            border: 1px solid rgba(52, 211, 153, 0.25);
+        }
+
+        .ecg-legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem 0.9rem;
+            margin-top: 0.55rem;
+            font-size: 0.78rem;
+            font-weight: 700;
+        }
+
+        .ecg-legend-item {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+        }
+
         @media print {
             header, .skeleton-panel, .mode-nav, .next-btn, .secondary-btn {
                 display: none !important;
             }
-            .container {
-                display: block;
+            body {
+                background: #ffffff !important;
             }
-            .info-panel {
-                border: none;
-                box-shadow: none;
+            .container {
+                display: block !important;
+                max-width: 100% !important;
+                margin: 0 !important;
+                padding: 0 !important;
+            }
+            .info-panel.clipboard-mode {
+                background: #ffffff !important;
+                border: none !important;
+                box-shadow: none !important;
+                padding: 0 !important;
+            }
+            .info-panel.clipboard-mode::before,
+            .clipboard-metal-clip {
+                display: none !important;
+            }
+            .medical-sheet {
+                box-shadow: none !important;
+                border: 2px solid #0f172a !important;
+            }
+            .grade-badge-card {
+                background: #0f172a !important;
+                color: #ffffff !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            .clinical-stamp {
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
             }
         }
     </style>
@@ -999,7 +1278,7 @@
             <div class="anatomy-stage" id="anatomy-stage">
                 <div class="loading-xray active" id="loading-xray">
                     <div style="font-size: 1.8rem;">🔬</div>
-                    <div id="loading-text">Generazione tavola anatomica ad alta definizione...</div>
+                    <div id="loading-text">Caricamento tavola anatomica...</div>
                 </div>
 
                 <div class="zoom-controls">
@@ -1022,7 +1301,7 @@
     </main>
 
     <script>
-        /* ================= DATABASE OSSA (15 OSSA PRINCIPALI - COORDINATE CALIBRATE SULLE 4 VISTE) ================= */
+        /* ================= DATABASE OSSA (16 OSSA PRINCIPALI) ================= */
         const BONES = [
             {
                 id: "cranio", name: "Cranio", region: "Testa",
@@ -1234,7 +1513,7 @@
             }
         ];
 
-        /* ================= DATABASE MUSCOLI (12 GRUPPI MUSCOLARI RICHIESTI) ================= */
+        /* ================= DATABASE MUSCOLI (12 GRUPPI MUSCOLARI) ================= */
         const MUSCLES = [
             {
                 id: "trapezio", name: "Trapezio", region: "Tronco",
@@ -1413,8 +1692,10 @@
         const ER_CASES = [
             {
                 patient: "Marco, 28 anni (Ciclista)",
+                gender: "male",
                 avatar: "🚴",
                 triage: "giallo",
+                vitals: { fc: "98 bpm", spo2: "98%", pa: "130/80 mmHg", alert: false },
                 layer: "bones",
                 targetId: "clavicola",
                 story: "Sono caduto dalla bicicletta appoggiando la mano a terra. Sento un forte dolore proprio tra il collo e la spalla destra!",
@@ -1436,8 +1717,10 @@
             },
             {
                 patient: "Elena, 67 anni",
+                gender: "female",
                 avatar: "👵",
                 triage: "rosso",
+                vitals: { fc: "122 bpm", spo2: "93%", pa: "95/60 mmHg", alert: true },
                 layer: "bones",
                 targetId: "femore",
                 story: "Sono scivolata sulle scale di casa e ho battuto violentemente la coscia. Non riesco più ad alzarmi né ad appoggiare la gamba.",
@@ -1459,8 +1742,10 @@
             },
             {
                 patient: "Ahmed, 34 anni (Muratore)",
+                gender: "male",
                 avatar: "👷",
                 triage: "rosso",
+                vitals: { fc: "118 bpm", spo2: "91%", pa: "105/65 mmHg", alert: true },
                 layer: "bones",
                 targetId: "costole",
                 story: "Un'impalcatura mi ha colpito sul fianco del torace. Quando respiro profondamente sento una fitta acuta sul lato del petto!",
@@ -1482,8 +1767,10 @@
             },
             {
                 patient: "Sofia, 19 anni (Calciatrice)",
+                gender: "female",
                 avatar: "⚽",
                 triage: "verde",
+                vitals: { fc: "84 bpm", spo2: "99%", pa: "118/75 mmHg", alert: false },
                 layer: "muscles",
                 targetId: "gemello",
                 story: "Al 85° minuto della partita ho sentito un crampo fortissimo e uno strappo dietro la parte bassa della gamba mentre spingevo sul piede.",
@@ -1505,8 +1792,10 @@
             },
             {
                 patient: "Carlos, 41 anni (Traslocatore)",
+                gender: "male",
                 avatar: "📦",
                 triage: "verde",
+                vitals: { fc: "82 bpm", spo2: "99%", pa: "125/80 mmHg", alert: false },
                 layer: "muscles",
                 targetId: "bicipite",
                 story: "Ho sollevato uno scatolone troppo pesante piegando il gomito e ho sentito una fitta acuta nella parte anteriore del braccio.",
@@ -1528,8 +1817,10 @@
             },
             {
                 patient: "Fatima, 24 anni (Pattinatrice)",
+                gender: "female",
                 avatar: "⛸️",
                 triage: "giallo",
+                vitals: { fc: "96 bpm", spo2: "98%", pa: "120/76 mmHg", alert: false },
                 layer: "bones",
                 targetId: "rotula",
                 story: "Sono caduta in avanti sul ghiaccio battendo direttamente la parte anteriore del ginocchio!",
@@ -1551,8 +1842,10 @@
             },
             {
                 patient: "Luca, 31 anni",
+                gender: "male",
                 avatar: "🛹",
                 triage: "giallo",
+                vitals: { fc: "94 bpm", spo2: "99%", pa: "128/82 mmHg", alert: false },
                 layer: "bones",
                 targetId: "radio",
                 story: "Cadendo dallo skateboard ho battuto l'avambraccio sul lato del pollice e ora non riesco a ruotare il polso.",
@@ -1574,8 +1867,10 @@
             },
             {
                 patient: "Nadia, 38 anni (Podista)",
+                gender: "female",
                 avatar: "🏃‍♀️",
                 triage: "verde",
+                vitals: { fc: "88 bpm", spo2: "99%", pa: "115/72 mmHg", alert: false },
                 layer: "muscles",
                 targetId: "quadricipite",
                 story: "Durante uno scatto in salita ho sentito tirare fortemente la parte anteriore della coscia.",
@@ -1597,8 +1892,10 @@
             },
             {
                 patient: "Davide, 22 anni (Pugile dilettante)",
+                gender: "male",
                 avatar: "🥊",
                 triage: "giallo",
+                vitals: { fc: "102 bpm", spo2: "98%", pa: "132/84 mmHg", alert: false },
                 layer: "bones",
                 targetId: "mascella",
                 story: "Ho ricevuto un colpo forte sotto lo zigomo destro, sopra il labbro superiore: sento dolore ai denti superiori e gonfiore al viso.",
@@ -1620,8 +1917,10 @@
             },
             {
                 patient: "Giulia, 45 anni (Impiegata)",
+                gender: "female",
                 avatar: "💻",
                 triage: "verde",
+                vitals: { fc: "76 bpm", spo2: "99%", pa: "120/78 mmHg", alert: false },
                 layer: "muscles",
                 targetId: "trapezio",
                 story: "Dopo un brusco movimento del collo ho una contrattura dolorosa nella parte alta tra il collo e le spalle.",
@@ -1643,8 +1942,10 @@
             },
             {
                 patient: "Matteo, 30 anni (Palestra)",
+                gender: "male",
                 avatar: "🏋️",
                 triage: "verde",
+                vitals: { fc: "86 bpm", spo2: "99%", pa: "124/78 mmHg", alert: false },
                 layer: "muscles",
                 targetId: "retto_addominale",
                 story: "Facendo esercizi intensi per il busto ho sentito una fitta nella parte anteriore della pancia.",
@@ -1666,8 +1967,10 @@
             },
             {
                 patient: "Chiara, 52 anni (Escursionista)",
+                gender: "female",
                 avatar: "🥾",
                 triage: "verde",
+                vitals: { fc: "80 bpm", spo2: "99%", pa: "122/76 mmHg", alert: false },
                 layer: "muscles",
                 targetId: "glutei",
                 story: "Salendo un sentiero molto ripido ho sentito un forte dolore nella regione posteriore del bacino.",
@@ -1684,6 +1987,294 @@
                     "Fermarsi a riposo, evitare salite ripide e applicare freddo appena possibile",
                     "Correre in discesa per arrivare prima",
                     "Fare affondi profondi a freddo"
+                ],
+                firstAidCorrect: 0
+            },
+            {
+                patient: "Youssef, 26 anni (Ciclista urbano)",
+                gender: "male",
+                avatar: "🚲",
+                triage: "giallo",
+                layer: "bones",
+                targetId: "mandibola",
+                story: "Sono caduto in avanti battendo il mento sull'asfalto: ora faccio fatica ad aprire e chiudere la bocca e i denti inferiori non combaciano più.",
+                hint: "È l'unico osso mobile del cranio, nella parte inferiore del viso.",
+                question: "Qual è l'articolazione che permette a questo osso di muoversi?",
+                options: [
+                    "Articolazione temporo-mandibolare",
+                    "Articolazione scapolo-omerale",
+                    "Articolazione sacro-iliaca"
+                ],
+                correctOpt: 0,
+                firstAidQuestion: "Cosa fare subito in caso di sospetta frattura o lussazione della mandibola?",
+                firstAidOptions: [
+                    "Sostenere delicatamente il mento con una benda morbida senza forzare la chiusura e recarsi in Pronto Soccorso",
+                    "Spingere con forza il mento verso l'alto per rimetterlo in sede",
+                    "Masticare qualcosa di duro per provare il movimento"
+                ],
+                firstAidCorrect: 0
+            },
+            {
+                patient: "Valentina, 39 anni (Magazziniera)",
+                gender: "female",
+                avatar: "🚚",
+                triage: "rosso",
+                layer: "bones",
+                targetId: "colonna",
+                story: "Sono scivolata da una scala battendo forte la schiena a terra: sento un dolore acuto lungo le vertebre e formicolio alle gambe!",
+                hint: "È l'asse portante del corpo formato da 33-34 vertebre sovrapposte.",
+                question: "Quale delicata struttura nervosa passa all'interno di questo osso?",
+                options: [
+                    "Il midollo spinale",
+                    "Il tendine d'Achille",
+                    "L'arteria femorale"
+                ],
+                correctOpt: 0,
+                firstAidQuestion: "Qual è la regola fondamentale di Primo Soccorso in caso di trauma alla colonna vertebrale?",
+                firstAidOptions: [
+                    "NON spostare né sollevare assolutamente il paziente, chiamare subito il 112/118 e mantenerlo immobile",
+                    "Aiutarlo a mettersi seduto su una sedia",
+                    "Farlo piegare in avanti per sciogliere la schiena"
+                ],
+                firstAidCorrect: 0
+            },
+            {
+                patient: "Paolo, 48 anni (Giardiniere)",
+                gender: "male",
+                avatar: "🪜",
+                triage: "giallo",
+                layer: "bones",
+                targetId: "omero",
+                story: "Sono caduto dall'albero battendo violentemente il braccio tra la spalla e il gomito: non riesco più a sollevarlo.",
+                hint: "È l'osso lungo del braccio, tra la spalla e il gomito.",
+                question: "Con quali due articolazioni si collega questo osso?",
+                options: [
+                    "Spalla (in alto) e gomito (in basso)",
+                    "Anca e ginocchio",
+                    "Polso e caviglia"
+                ],
+                correctOpt: 0,
+                firstAidQuestion: "Come si immobilizza correttamente un sospetto trauma all'omero in attesa del medico?",
+                firstAidOptions: [
+                    "Sostenere l'avambraccio al collo con un telo triangolare e bloccare delicatamente il braccio al tronco",
+                    "Tirare il braccio verso il basso per allungarlo",
+                    "Far ruotare il braccio in cerchio"
+                ],
+                firstAidCorrect: 0
+            },
+            {
+                patient: "Amina, 27 anni (Calciatrice)",
+                gender: "female",
+                avatar: "👟",
+                triage: "giallo",
+                layer: "bones",
+                targetId: "tibia",
+                story: "Ho ricevuto un forte calcio diretto sullo stinco, nella parte anteriore della gamba sotto il ginocchio: fa malissimo e non posso caricare il peso.",
+                hint: "È l'osso lungo e robusto della gamba situato nella parte anteriore (lo stinco).",
+                question: "Quale osso sottile si trova parallelo ad esso sul lato esterno della gamba?",
+                options: [
+                    "Il perone",
+                    "L'ulna",
+                    "La clavicola"
+                ],
+                correctOpt: 0,
+                firstAidQuestion: "Cosa bisogna fare subito in caso di sospetta frattura della tibia?",
+                firstAidOptions: [
+                    "Non far appoggiare il piede a terra, immobilizzare la gamba nella posizione trovata e applicare ghiaccio protetto",
+                    "Far camminare il paziente per verificare se l'osso regge",
+                    "Massaggiare con forza lo stinco"
+                ],
+                firstAidCorrect: 0
+            },
+            {
+                patient: "Roberto, 59 anni (Motociclista)",
+                gender: "male",
+                avatar: "🏍️",
+                triage: "rosso",
+                layer: "bones",
+                targetId: "bacino",
+                story: "Dopo una caduta lateralmente con la moto sento un dolore fortissimo ai fianchi e alla base del tronco: non riesco a muovere le gambe!",
+                hint: "È la robusta struttura ossea ad anello alla base del tronco.",
+                question: "Qual è una delle funzioni principali di questa struttura ossea?",
+                options: [
+                    "Sostenere il peso del tronco, proteggere gli organi interni e collegare gli arti inferiori",
+                    "Permettere la rotazione del polso",
+                    "Proteggere il cervello"
+                ],
+                correctOpt: 0,
+                firstAidQuestion: "Come intervenire in presenza di un forte trauma al bacino?",
+                firstAidOptions: [
+                    "Lasciare il paziente sdraiato immobile dov'è, coprirlo per evitare ipotermia e chiamare subito il 112/118",
+                    "Sollevarlo per le braccia e farlo camminare",
+                    "Metterlo seduto appoggiato a un muro"
+                ],
+                firstAidCorrect: 0
+            },
+            {
+                patient: "Sara, 33 anni (Arrampicatrice)",
+                gender: "female",
+                avatar: "🧗‍♀️",
+                triage: "giallo",
+                layer: "bones",
+                targetId: "scapola",
+                story: "Sono caduta all'indietro su una roccia battendo la parte alta della schiena dietro la spalla destra: ogni movimento del braccio mi provoca una fitta.",
+                hint: "Passa alla vista OSSA (Retro) e clicca l'osso piatto triangolare nella parte alta della schiena.",
+                question: "Che forma ha questo osso piatto situato dietro la gabbia toracica?",
+                options: [
+                    "Forma triangolare",
+                    "Forma circolare come una moneta",
+                    "Forma cilindrica molto lunga"
+                ],
+                correctOpt: 0,
+                firstAidQuestion: "Qual è il primo intervento corretto dopo un trauma alla scapola?",
+                firstAidOptions: [
+                    "Mettere il braccio a riposo al collo con un reggibraccio e applicare impacchi freddi nella zona dorsale",
+                    "Eseguire flessioni sulle braccia per scaldare la schiena",
+                    "Spingere la spalla all'indietro con forza"
+                ],
+                firstAidCorrect: 0
+            },
+            {
+                patient: "Karim, 29 anni (Imbianchino)",
+                gender: "male",
+                avatar: "🖌️",
+                triage: "verde",
+                layer: "muscles",
+                targetId: "deltoide",
+                story: "Dopo aver dipinto il soffitto per ore con il braccio sollevato, sento un dolore acuto proprio sulla rotondità della spalla.",
+                hint: "Passa alla vista MUSCOLI e clicca il muscolo triangolare che avvolge la spalla.",
+                question: "Qual è il movimento principale permesso da questo muscolo?",
+                options: [
+                    "Sollevare il braccio lateralmente, in avanti e indietro",
+                    "Piegare il ginocchio",
+                    "Flettere il busto in avanti"
+                ],
+                correctOpt: 0,
+                firstAidQuestion: "Cosa è consigliato fare in caso di sovraccarico o stiramento del deltoide?",
+                firstAidOptions: [
+                    "Mettere a riposo il braccio evitando di sollevarlo sopra la spalla e applicare ghiaccio avvolto in un panno",
+                    "Continuare a lavorare tenendo il braccio alzato",
+                    "Sollevare pesi con il braccio dolorante"
+                ],
+                firstAidCorrect: 0
+            },
+            {
+                patient: "Marta, 36 anni (Nuotatrice)",
+                gender: "female",
+                avatar: "🏊‍♀️",
+                triage: "verde",
+                layer: "muscles",
+                targetId: "grande_pettorale",
+                story: "Durante una bracciata potente in piscina ho sentito tirare la parte anteriore del torace, vicino all'ascella.",
+                hint: "Passa alla vista MUSCOLI (Fronte) e clicca l'ampio muscolo a ventaglio sul petto.",
+                question: "Quale movimento compie questo muscolo quando si contrae?",
+                options: [
+                    "Avvicina il braccio al corpo e lo ruota verso l'interno",
+                    "Estende la gamba indietro",
+                    "Solleva la punta del piede"
+                ],
+                correctOpt: 0,
+                firstAidQuestion: "Qual è l'intervento corretto dopo uno stiramento del grande pettorale?",
+                firstAidOptions: [
+                    "Sospendere subito l'allenamento, tenere il braccio vicino al corpo a riposo e applicare freddo localizzato",
+                    "Fare piegamenti sulle braccia per allungare il muscolo",
+                    "Applicare subito calore intenso sul petto"
+                ],
+                firstAidCorrect: 0
+            },
+            {
+                patient: "Andrea, 25 anni (Pallavolista)",
+                gender: "male",
+                avatar: "🏐",
+                triage: "verde",
+                layer: "muscles",
+                targetId: "tricipite",
+                story: "Schiacciando forte la palla con il gomito completamente disteso ho sentito una fitta nella parte posteriore del braccio.",
+                hint: "Passa alla vista MUSCOLI (Retro o Lato) e clicca il muscolo posteriore del braccio.",
+                question: "Qual è il muscolo antagonista del tricipite brachiale?",
+                options: [
+                    "Il bicipite brachiale",
+                    "Il gemello (gastrocnemio)",
+                    "Il tibiale anteriore"
+                ],
+                correctOpt: 0,
+                firstAidQuestion: "Cosa bisogna fare subito in caso di stiramento al tricipite?",
+                firstAidOptions: [
+                    "Mettere il braccio a riposo senza estendere il gomito sotto sforzo e applicare ghiaccio avvolto in un panno",
+                    "Distendere il braccio con forza spingendo contro un muro",
+                    "Continuare a schiacciare palloni"
+                ],
+                firstAidCorrect: 0
+            },
+            {
+                patient: "Layla, 42 anni (Addetta alle pulizie)",
+                gender: "female",
+                avatar: "🧹",
+                triage: "verde",
+                layer: "muscles",
+                targetId: "dorsale",
+                story: "Tirando verso di me un carrello molto pesante ho sentito uno strappo nella parte medio-bassa e laterale della schiena.",
+                hint: "Passa alla vista MUSCOLI (Retro o Lato) e clicca il muscolo più largo della schiena.",
+                question: "Quale azione svolge il muscolo gran dorsale?",
+                options: [
+                    "Abbassa, estende e avvicina il braccio al tronco (es. tirare)",
+                    "Chiude la mandibola",
+                    "Raddrizza il ginocchio"
+                ],
+                correctOpt: 0,
+                firstAidQuestion: "Come comportarsi subito dopo uno strappo muscolare al dorsale?",
+                firstAidOptions: [
+                    "Interrompere lo sforzo di trazione, riposare in posizione comoda e applicare impacchi freddi per 15-20 minuti",
+                    "Sollevare subito altri pesi per scaldare la schiena",
+                    "Fare torsioni brusche del busto"
+                ],
+                firstAidCorrect: 0
+            },
+            {
+                patient: "Samir, 23 anni (Velocista)",
+                gender: "male",
+                avatar: "🏃",
+                triage: "verde",
+                layer: "muscles",
+                targetId: "ischiotibiale",
+                story: "Durante uno sprint sui 100 metri ho sentito una fitta improvvisa dietro la coscia e ho dovuto fermarmi subito!",
+                hint: "Passa alla vista MUSCOLI (Retro o Lato) e clicca i muscoli posteriori della coscia.",
+                question: "Qual è il movimento principale dei muscoli ischiotibiali?",
+                options: [
+                    "Flettono il ginocchio piegando la gamba indietro ed estendono l'anca",
+                    "Sollevano le spalle verso le orecchie",
+                    "Avvicinano il braccio al petto"
+                ],
+                correctOpt: 0,
+                firstAidQuestion: "Qual è l'intervento immediato corretto per uno stiramento dietro la coscia?",
+                firstAidOptions: [
+                    "Fermare subito la corsa, applicare ghiaccio avvolto in un panno, bendaggio elastico leggero e tenere la gamba sollevata",
+                    "Continuare a correre piano per non far raffreddare la gamba",
+                    "Fare stretching forzato toccando le punte dei piedi"
+                ],
+                firstAidCorrect: 0
+            },
+            {
+                patient: "Beatrice, 47 anni (Camminatrice)",
+                gender: "female",
+                avatar: "🚶‍♀️",
+                triage: "verde",
+                layer: "muscles",
+                targetId: "tibiale_anteriore",
+                story: "Dopo una lunga camminata in salita su strada asfaltata sento dolore e bruciore nella parte anteriore della gamba, accanto allo stinco.",
+                hint: "Passa alla vista MUSCOLI (Fronte) e clicca il muscolo anteriore della gamba accanto alla tibia.",
+                question: "Quale movimento del piede compie questo muscolo?",
+                options: [
+                    "Solleva la punta del piede verso l'alto (flessione dorsale)",
+                    "Spinge il piede verso il basso sulle punte",
+                    "Ruota la testa a destra e sinistra"
+                ],
+                correctOpt: 0,
+                firstAidQuestion: "Cosa fare in caso di infiammazione o affaticamento del tibiale anteriore?",
+                firstAidOptions: [
+                    "Riposare dalla camminata, applicare impacchi freddi sulla parte anteriore della gamba ed evitare salite ripide",
+                    "Camminare velocemente sui talloni per un'ora",
+                    "Massaggiare con forza direttamente sull'osso dello stinco"
                 ],
                 firstAidCorrect: 0
             }
@@ -1812,10 +2403,21 @@
         let erScore = 0;
         let erStreak = 0;
         let erStep = "idle";
-        let erHintUsed = false;
         let erMissedCases = [];
-        let erCurrentCorrectOpt = 0;
-        let erCurrentFirstAidCorrect = 0;
+        let erCasePerfect = true;
+        let erLocationFirstTry = true;
+
+        const PEER_PREFIX = "cpia-ps-ortopedico-";
+        let peerInstance = null;
+        let playerHostConn = null;
+        let localRoomChannel = null;
+        let roomMode = "none";
+        let currentRoomPin = "";
+        let currentTeamDocId = "";
+        let currentTeamName = "";
+        let currentTeamMembers = [];
+        let hostSharedCaseIndices = [];
+        let latestRoomTeams = [];
 
         let quizSessionQuestions = [];
         let quizIndex = 0;
@@ -1860,6 +2462,15 @@
                     gain.gain.exponentialRampToValueAtTime(0.001, now + 0.14);
                     osc.start(now);
                     osc.stop(now + 0.15);
+                } else if (type === "redalert") {
+                    osc.type = "sine";
+                    osc.frequency.setValueAtTime(880, now);
+                    osc.frequency.setValueAtTime(1046.5, now + 0.14);
+                    osc.frequency.setValueAtTime(880, now + 0.28);
+                    gain.gain.setValueAtTime(0.055, now);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.44);
+                    osc.start(now);
+                    osc.stop(now + 0.45);
                 } else if (type === "ok") {
                     osc.type = "triangle";
                     osc.frequency.setValueAtTime(523.25, now);
@@ -1876,6 +2487,16 @@
                     gain.gain.exponentialRampToValueAtTime(0.001, now + 0.24);
                     osc.start(now);
                     osc.stop(now + 0.25);
+                } else if (type === "alarm") {
+                    osc.type = "sawtooth";
+                    osc.frequency.setValueAtTime(760, now);
+                    osc.frequency.linearRampToValueAtTime(1040, now + 0.18);
+                    osc.frequency.linearRampToValueAtTime(760, now + 0.36);
+                    osc.frequency.linearRampToValueAtTime(1040, now + 0.54);
+                    gain.gain.setValueAtTime(0.08, now);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.58);
+                    osc.start(now);
+                    osc.stop(now + 0.6);
                 }
             } catch (e) {}
         }
@@ -1892,7 +2513,6 @@
         const plateImg = document.getElementById("plate-img");
         const fallbackSvg = document.getElementById("fallback-svg");
         const loadingXray = document.getElementById("loading-xray");
-        const loadingText = document.getElementById("loading-text");
         const highlightSvg = document.getElementById("highlight-svg");
         const hotspotsLayer = document.getElementById("hotspots-layer");
         const infoPanel = document.getElementById("info-panel");
@@ -1909,7 +2529,6 @@
 
             loadingXray.classList.remove("active");
 
-            // Prova prima i file locali e, se non presenti (es. in anteprima), quelli pubblicati su GitHub Pages
             const ghBase = "https://paolafrosio.github.io/apparatolocomotore/";
             const candidates = [
                 `${key}.png`, `${key}.jpg`, `${key}.jpeg`, `${key}.webp`,
@@ -1942,13 +2561,9 @@
         function renderFallbackAnatomySvg(layer, view) {
             const isBones = layer === "bones";
             const isSide = view === "right" || view === "left";
-
-            // Palette anatomica ad alto contrasto
             const boneMain = "#f1ebd9";
             const boneShade = "#d6ccb4";
             const boneStroke = "#8c7f65";
-            const cartilage = "#93c5fd";
-
             const muscMain = "#dc2626";
             const muscDark = "#991b1b";
             const muscLight = "#ef4444";
@@ -1956,281 +2571,54 @@
 
             if (isBones) {
                 if (isSide) {
-                    // Vista laterale pura: dir = 1 guarda a destra (Lato Dx), dir = -1 guarda a sinistra (Lato Sx)
                     const dir = view === "right" ? 1 : -1;
                     fallbackSvg.innerHTML = `
                         <g transform="translate(50,0) scale(${dir},1) translate(-50,0)" stroke="${boneStroke}" stroke-width="0.28" stroke-linejoin="round" stroke-linecap="round">
-                            <!-- Cranio in profilo puro (guarda verso destra +X) -->
                             <path d="M 45.2 6.8 C 45.2 3.4, 53.5 3.0, 54.4 6.6 C 54.8 8.0, 54.2 9.4, 53.5 10.2 L 50.8 10.4 L 49.5 9.8 C 47.2 10.2, 45.2 8.8, 45.2 6.8 Z" fill="${boneMain}" />
-                            <!-- Orbita oculare, zigomo e mascella -->
                             <ellipse cx="52.9" cy="7.2" rx="0.9" ry="1.2" fill="#1e293b" />
-                            <path d="M 51.0 8.2 L 54.2 8.4 L 53.8 10.3 L 51.2 10.2 Z" fill="${boneShade}" />
-                            <!-- Denti superiori e inferiori -->
-                            <rect x="52.4" y="10.2" width="1.4" height="0.6" fill="#ffffff" stroke="none" />
-                            <rect x="52.2" y="10.9" width="1.4" height="0.6" fill="#ffffff" stroke="none" />
-                            <!-- Mandibola -->
                             <path d="M 49.4 9.6 L 50.4 12.2 L 53.6 12.8 L 53.8 11.4 L 51.0 11.2 L 50.3 9.5 Z" fill="${boneMain}" />
-
-                            <!-- Colonna vertebrale con curve fisiologiche (cervicale, dorsale, lombare, sacro) -->
                             <path d="M 47.6 10.4 Q 48.4 14.0 47.4 17.5 Q 45.4 24.5 47.6 32.0 Q 48.6 36.5 47.4 41.0 L 46.2 45.5 L 48.0 45.8 L 49.4 41.2 Q 50.4 36.5 49.4 32.0 Q 47.4 24.5 49.2 17.5 Q 50.0 14.0 49.2 10.4 Z" fill="${boneShade}" />
-                            <!-- Processi spinosi posteriori delle vertebre -->
-                            <g fill="${boneMain}">
-                                <rect x="46.2" y="14.5" width="1.4" height="0.8" rx="0.3" />
-                                <rect x="45.6" y="18.0" width="1.5" height="0.9" rx="0.3" />
-                                <rect x="45.0" y="21.5" width="1.5" height="0.9" rx="0.3" />
-                                <rect x="44.8" y="25.0" width="1.5" height="0.9" rx="0.3" />
-                                <rect x="45.2" y="28.5" width="1.5" height="0.9" rx="0.3" />
-                                <rect x="46.0" y="32.0" width="1.5" height="0.9" rx="0.3" />
-                                <rect x="46.6" y="35.5" width="1.5" height="1.0" rx="0.3" />
-                                <rect x="46.2" y="39.0" width="1.5" height="1.0" rx="0.3" />
-                            </g>
-
-                            <!-- Scapola (posteriore) e Clavicola (anteriore) -->
-                            <path d="M 46.0 18.2 L 49.2 18.6 L 47.2 25.0 Z" fill="${boneMain}" />
-                            <path d="M 49.2 17.6 Q 51.5 17.0 53.8 18.0" fill="none" stroke="${boneMain}" stroke-width="1.0" />
-
-                            <!-- Sterno anteriore -->
-                            <path d="M 53.6 18.2 L 54.6 18.4 L 54.2 26.8 L 53.2 26.6 Z" fill="${boneMain}" />
-
-                            <!-- Gabbia toracica (costole curve da dietro a davanti) -->
-                            <g fill="none" stroke="${boneMain}" stroke-width="0.95">
-                                <path d="M 47.5 18.8 Q 51.2 19.2 53.8 19.0" />
-                                <path d="M 47.0 20.6 Q 51.5 21.2 54.0 20.8" />
-                                <path d="M 46.6 22.4 Q 51.8 23.2 54.0 22.6" />
-                                <path d="M 46.5 24.2 Q 52.0 25.2 53.8 24.4" />
-                                <path d="M 46.8 26.0 Q 51.8 27.0 53.5 26.2" />
-                                <path d="M 47.2 27.8 Q 51.2 28.8 52.6 27.8" />
-                                <path d="M 47.6 29.6 Q 50.4 30.4 51.4 29.5" />
-                            </g>
-
-                            <!-- Bacino in profilo (cresta iliaca, acetabolo, ischio, pube) -->
                             <path d="M 46.8 40.5 C 48.5 39.2, 53.2 40.2, 53.6 43.2 C 53.8 45.5, 52.4 48.6, 50.2 48.8 C 48.0 49.0, 46.4 46.5, 46.8 40.5 Z" fill="${boneMain}" />
-                            <circle cx="50.0" cy="45.6" r="1.4" fill="${boneShade}" />
-
-                            <!-- Femore -->
                             <path d="M 49.0 46.2 L 51.2 46.2 L 51.4 68.2 L 48.8 68.2 Z" fill="${boneMain}" />
-                            <ellipse cx="50.2" cy="68.4" rx="2.0" ry="1.4" fill="${boneShade}" />
-
-                            <!-- Rotula anteriore -->
                             <ellipse cx="52.3" cy="69.2" rx="0.9" ry="1.4" fill="#ffffff" />
-
-                            <!-- Tibia (anteriore) e Perone (posteriore) -->
                             <path d="M 49.8 70.2 L 51.8 70.2 L 51.4 91.2 L 49.8 91.2 Z" fill="${boneMain}" />
                             <path d="M 48.2 71.2 L 49.1 71.2 L 48.9 91.4 L 48.1 91.4 Z" fill="${boneShade}" />
-
-                            <!-- Piede in profilo (calcagno indietro, dita avanti) -->
                             <path d="M 47.4 91.5 L 51.5 91.5 L 56.4 94.6 L 56.4 95.8 L 47.2 95.8 Z" fill="${boneMain}" />
-
-                            <!-- Arto superiore: Omero, Radio (anteriore), Ulna (posteriore) e Mano -->
                             <path d="M 48.6 18.8 L 50.6 18.8 L 50.4 33.0 L 48.6 33.0 Z" fill="${boneMain}" />
                             <path d="M 49.8 33.4 L 51.0 33.4 L 52.2 45.6 L 51.1 45.6 Z" fill="${boneMain}" />
-                            <path d="M 48.6 33.2 L 49.6 33.2 L 50.6 45.6 L 49.7 45.6 Z" fill="${boneShade}" />
-                            <path d="M 50.2 45.8 L 52.4 45.8 L 53.2 51.5 L 51.0 51.5 Z" fill="${boneMain}" />
                         </g>
                     `;
                 } else {
                     const isBack = view === "back";
                     fallbackSvg.innerHTML = `
                         <g stroke="${boneStroke}" stroke-width="0.28" stroke-linejoin="round" stroke-linecap="round">
-                            <!-- Cranio -->
                             <path d="M 45.4 6.5 C 45.4 3.0, 54.6 3.0, 54.6 6.5 C 54.6 8.6, 53.4 10.2, 52.4 10.8 L 47.6 10.8 C 46.6 10.2, 45.4 8.6, 45.4 6.5 Z" fill="${boneMain}" />
-                            ${isBack ? `
-                                <!-- Suture craniche posteriori -->
-                                <path d="M 50.0 3.3 L 50.0 7.2 M 46.6 8.8 L 50.0 7.2 L 53.4 8.8" fill="none" stroke="${boneStroke}" stroke-width="0.25" />
-                            ` : `
-                                <!-- Orbite oculari, cavità nasale, zigomi e denti -->
-                                <ellipse cx="48.1" cy="7.2" rx="1.2" ry="1.1" fill="#1e293b" />
-                                <ellipse cx="51.9" cy="7.2" rx="1.2" ry="1.1" fill="#1e293b" />
-                                <path d="M 50.0 7.8 L 49.3 9.5 L 50.7 9.5 Z" fill="#1e293b" />
-                                <rect x="48.3" y="10.2" width="3.4" height="0.7" rx="0.2" fill="#ffffff" stroke="none" />
-                                <!-- Mandibola -->
-                                <path d="M 47.2 9.6 L 47.7 12.6 Q 50.0 13.8 52.3 12.6 L 52.8 9.6 L 51.8 11.2 L 48.2 11.2 Z" fill="${boneMain}" />
-                                <rect x="48.5" y="11.0" width="3.0" height="0.6" rx="0.2" fill="#ffffff" stroke="none" />
-                            `}
-
-                            <!-- Colonna vertebrale completa -->
-                            <g fill="${boneShade}">
-                                <rect x="48.7" y="13.6" width="2.6" height="27.8" rx="0.8" />
-                            </g>
-                            <!-- Singole vertebre -->
-                            <g fill="${boneMain}">
-                                ${[14.2,15.6,17.0,18.5,20.0,21.5,23.0,24.5,26.0,27.5,29.0,30.5,32.2,34.0,35.8,37.6,39.4].map(vy => `
-                                    <rect x="48.3" y="${vy}" width="3.4" height="1.1" rx="0.35" />
-                                `).join("")}
-                            </g>
-
-                            ${isBack ? `
-                                <!-- Scapole posteriori ben visibili -->
-                                <path d="M 45.6 18.2 L 39.2 18.8 L 44.6 25.4 Z" fill="${boneMain}" />
-                                <path d="M 54.4 18.2 L 60.8 18.8 L 55.4 25.4 Z" fill="${boneMain}" />
-                                <line x1="39.4" y1="19.4" x2="45.4" y2="20.2" stroke="${boneShade}" stroke-width="0.6" />
-                                <line x1="60.6" y1="19.4" x2="54.6" y2="20.2" stroke="${boneShade}" stroke-width="0.6" />
-                            ` : `
-                                <!-- Clavicole a S -->
-                                <path d="M 49.0 17.6 Q 43.5 16.6 37.2 18.0" fill="none" stroke="${boneMain}" stroke-width="1.15" />
-                                <path d="M 51.0 17.6 Q 56.5 16.6 62.8 18.0" fill="none" stroke="${boneMain}" stroke-width="1.15" />
-                            `}
-
-                            <!-- Gabbia toracica (12 paia di costole) -->
-                            <g fill="none" stroke="${boneMain}" stroke-width="0.9">
-                                <path d="M 48.5 18.6 C 43.2 18.4, 42.4 20.6, 48.6 20.4" />
-                                <path d="M 51.5 18.6 C 56.8 18.4, 57.6 20.6, 51.4 20.4" />
-                                <path d="M 48.5 20.4 C 42.2 20.2, 41.4 22.8, 48.6 22.4" />
-                                <path d="M 51.5 20.4 C 57.8 20.2, 58.6 22.8, 51.4 22.4" />
-                                <path d="M 48.5 22.2 C 41.4 22.2, 41.0 25.2, 48.6 24.4" />
-                                <path d="M 51.5 22.2 C 58.6 22.2, 59.0 25.2, 51.4 24.4" />
-                                <path d="M 48.5 24.0 C 41.2 24.2, 41.4 27.6, 48.8 26.4" />
-                                <path d="M 51.5 24.0 C 58.8 24.2, 58.6 27.6, 51.2 26.4" />
-                                <path d="M 48.5 25.8 C 41.8 26.4, 42.6 29.8, 49.0 28.0" />
-                                <path d="M 51.5 25.8 C 58.2 26.4, 57.4 29.8, 51.0 28.0" />
-                                <path d="M 48.5 27.6 C 42.8 28.4, 44.0 31.2, 49.2 29.4" />
-                                <path d="M 51.5 27.6 C 57.2 28.4, 56.0 31.2, 50.8 29.4" />
-                                <path d="M 48.5 29.4 C 44.4 30.2, 45.2 32.0, 47.2 31.6" />
-                                <path d="M 51.5 29.4 C 55.6 30.2, 54.8 32.0, 52.8 31.6" />
-                            </g>
-
-                            ${!isBack ? `
-                                <!-- Cartilagini costali e Sterno -->
-                                <path d="M 48.9 17.8 L 51.1 17.8 L 50.8 27.6 L 50.0 29.0 L 49.2 27.6 Z" fill="${boneMain}" />
-                                <line x1="48.9" y1="19.6" x2="51.1" y2="19.6" stroke="${boneStroke}" stroke-width="0.25" />
-                            ` : ""}
-
-                            <!-- Bacino (Ileo, Sacro, Ischio, Pube) -->
-                            <path d="M 48.2 41.0 L 51.8 41.0 L 51.0 46.2 L 50.0 47.4 L 49.0 46.2 Z" fill="${boneShade}" />
+                            ${!isBack ? `<path d="M 47.2 9.6 L 47.7 12.6 Q 50.0 13.8 52.3 12.6 L 52.8 9.6 L 51.8 11.2 L 48.2 11.2 Z" fill="${boneMain}" />` : ""}
+                            <rect x="48.7" y="13.6" width="2.6" height="27.8" rx="0.8" fill="${boneShade}" />
                             <path d="M 48.2 41.4 C 44.2 39.6, 40.4 41.2, 41.0 44.8 C 41.4 47.2, 43.2 49.4, 45.6 49.2 C 47.4 49.0, 48.4 47.2, 48.8 45.8 Z" fill="${boneMain}" />
                             <path d="M 51.8 41.4 C 55.8 39.6, 59.6 41.2, 59.0 44.8 C 58.6 47.2, 56.8 49.4, 54.4 49.2 C 52.6 49.0, 51.6 47.2, 51.2 45.8 Z" fill="${boneMain}" />
-                            <ellipse cx="45.8" cy="47.2" rx="1.2" ry="1.0" fill="#0f172a" />
-                            <ellipse cx="54.2" cy="47.2" rx="1.2" ry="1.0" fill="#0f172a" />
-
-                            <!-- Arti superiori: Omero (dx e sx) -->
                             <path d="M 36.2 18.6 L 38.0 18.8 L 35.4 33.0 L 33.8 32.8 Z" fill="${boneMain}" />
                             <path d="M 63.8 18.6 L 62.0 18.8 L 64.6 33.0 L 66.2 32.8 Z" fill="${boneMain}" />
-
-                            <!-- Avambracci: Radio (esterno) e Ulna (interno) -->
-                            <path d="M 33.6 33.4 L 34.4 33.5 L 31.6 45.6 L 30.7 45.5 Z" fill="${boneMain}" />
-                            <path d="M 34.8 33.4 L 35.6 33.5 L 33.4 45.6 L 32.6 45.5 Z" fill="${boneShade}" />
-
-                            <path d="M 66.4 33.4 L 65.6 33.5 L 68.4 45.6 L 69.3 45.5 Z" fill="${boneMain}" />
-                            <path d="M 65.2 33.4 L 64.4 33.5 L 66.6 45.6 L 67.4 45.5 Z" fill="${boneShade}" />
-
-                            <!-- Mani (carpo, metacarpo, falangi) -->
-                            <path d="M 30.6 45.8 L 33.4 46.0 L 32.6 51.6 L 29.6 51.0 Z" fill="${boneMain}" />
-                            <path d="M 69.4 45.8 L 66.6 46.0 L 67.4 51.6 L 70.4 51.0 Z" fill="${boneMain}" />
-
-                            <!-- Femori (dx e sx) -->
                             <path d="M 41.6 47.6 L 44.0 47.8 L 45.2 68.2 L 43.2 68.2 Z" fill="${boneMain}" />
                             <path d="M 58.4 47.6 L 56.0 47.8 L 54.8 68.2 L 56.8 68.2 Z" fill="${boneMain}" />
-
-                            <!-- Condili femorali -->
-                            <ellipse cx="44.2" cy="68.5" rx="1.8" ry="1.2" fill="${boneShade}" />
-                            <ellipse cx="55.8" cy="68.5" rx="1.8" ry="1.2" fill="${boneShade}" />
-
-                            ${!isBack ? `
-                                <!-- Rotule -->
-                                <ellipse cx="44.3" cy="69.2" rx="1.1" ry="1.3" fill="#ffffff" />
-                                <ellipse cx="55.7" cy="69.2" rx="1.1" ry="1.3" fill="#ffffff" />
-                            ` : ""}
-
-                            <!-- Tibia (interna, più spessa) e Perone (esterno, più sottile) -->
                             <path d="M 44.4 70.2 L 46.2 70.2 L 45.8 91.2 L 44.4 91.2 Z" fill="${boneMain}" />
-                            <path d="M 42.6 70.8 L 43.4 70.8 L 43.1 91.4 L 42.3 91.4 Z" fill="${boneShade}" />
-
                             <path d="M 55.6 70.2 L 53.8 70.2 L 54.2 91.2 L 55.6 91.2 Z" fill="${boneMain}" />
-                            <path d="M 57.4 70.8 L 56.6 70.8 L 56.9 91.4 L 57.7 91.4 Z" fill="${boneShade}" />
-
-                            <!-- Piedi -->
-                            <path d="M 42.4 91.6 L 45.8 91.6 L 46.2 95.6 L 41.4 95.6 Z" fill="${boneMain}" />
-                            <path d="M 57.6 91.6 L 54.2 91.6 L 53.8 95.6 L 58.6 95.6 Z" fill="${boneMain}" />
                         </g>
                     `;
                 }
             } else {
-                // SISTEMA MUSCOLARE (4 VISTE PROPORZIONATE ALLO SCHELETRO)
-                if (isSide) {
-                    const dir = view === "right" ? 1 : -1;
-                    fallbackSvg.innerHTML = `
-                        <g transform="translate(50,0) scale(${dir},1) translate(-50,0)" stroke="${muscDark}" stroke-width="0.28">
-                            <!-- Testa e muscoli del collo (sternocleidomastoideo) -->
-                            <ellipse cx="49.8" cy="7.2" rx="4.4" ry="4.8" fill="#fca5a5" opacity="0.35" stroke="#f87171" />
-                            <path d="M 47.2 11.2 L 51.8 11.4 L 52.4 17.5 L 46.4 17.5 Z" fill="${muscMain}" />
-                            <!-- Pettorale e torace laterale -->
-                            <path d="M 46.2 17.5 L 54.2 18.0 C 55.2 21.5, 54.8 25.5, 53.4 27.5 L 46.0 27.5 Z" fill="${muscMain}" />
-                            <!-- Addominali e obliqui -->
-                            <path d="M 46.4 27.5 L 53.6 27.5 L 53.2 41.0 L 46.8 41.0 Z" fill="${muscLight}" />
-                            <!-- Grande Gluteo -->
-                            <path d="M 45.0 40.5 C 43.2 43.5, 43.5 49.0, 46.8 50.5 L 52.5 49.5 L 52.5 41.0 Z" fill="${muscDark}" />
-                            <!-- Quadricipite (anteriore) e Bicipite femorale (posteriore) -->
-                            <path d="M 50.0 49.0 L 53.6 49.5 C 54.2 56.0, 53.6 63.0, 52.2 68.0 L 50.0 68.0 Z" fill="${muscMain}" />
-                            <path d="M 46.6 49.5 L 50.0 49.0 L 50.0 68.0 L 47.2 68.0 C 46.2 62.0, 46.0 55.0, 46.6 49.5 Z" fill="${muscDark}" />
-                            <!-- Ginocchio tendineo -->
-                            <rect x="47.8" y="68.0" width="4.4" height="3.2" rx="1.2" fill="${tendon}" />
-                            <!-- Polpaccio (gastrocnemio) e Tibiale anteriore -->
-                            <path d="M 47.4 71.2 C 45.4 75.5, 45.8 81.5, 48.0 85.0 L 49.2 91.5 L 51.6 91.5 L 52.0 71.2 Z" fill="${muscMain}" />
-                            <!-- Piede -->
-                            <path d="M 47.4 91.5 L 51.6 91.5 L 56.4 94.6 L 56.4 95.8 L 47.2 95.8 Z" fill="${tendon}" />
-                            <!-- Deltoide, Bicipite (avanti) e Tricipite (dietro) -->
-                            <path d="M 47.6 17.5 C 50.2 17.0, 52.4 18.8, 52.0 22.8 L 47.4 22.8 Z" fill="${muscLight}" />
-                            <path d="M 50.0 22.8 L 52.2 22.8 L 51.6 32.5 L 50.0 32.5 Z" fill="${muscMain}" />
-                            <path d="M 47.4 22.8 L 50.0 22.8 L 50.0 32.5 L 47.6 32.5 Z" fill="${muscDark}" />
-                            <path d="M 48.2 32.8 L 51.4 32.8 L 52.4 45.8 L 49.8 45.8 Z" fill="${muscMain}" />
-                        </g>
-                    `;
-                } else {
-                    const isBack = view === "back";
-                    fallbackSvg.innerHTML = `
-                        <g stroke="${muscDark}" stroke-width="0.28">
-                            <!-- Testa e collo -->
-                            <ellipse cx="50.0" cy="7.2" rx="4.5" ry="4.8" fill="#fca5a5" opacity="0.35" stroke="#f87171" />
-                            <path d="M 47.4 11.5 L 52.6 11.5 L 54.5 17.5 L 45.5 17.5 Z" fill="${muscMain}" />
-
-                            ${isBack ? `
-                                <!-- Trapezio e Gran Dorsale -->
-                                <path d="M 45.5 17.5 L 54.5 17.5 L 50.0 28.5 Z" fill="${muscLight}" />
-                                <path d="M 41.2 18.5 L 58.8 18.5 L 55.6 35.5 L 44.4 35.5 Z" fill="${muscMain}" />
-                                <!-- Glutei -->
-                                <ellipse cx="45.6" cy="45.0" rx="4.2" ry="4.8" fill="${muscDark}" />
-                                <ellipse cx="54.4" cy="45.0" rx="4.2" ry="4.8" fill="${muscDark}" />
-                            ` : `
-                                <!-- Grandi Pettorali -->
-                                <path d="M 41.2 18.0 L 49.8 18.2 L 49.8 26.2 C 46.0 26.8, 42.2 25.6, 41.2 22.5 Z" fill="${muscMain}" />
-                                <path d="M 58.8 18.0 L 50.2 18.2 L 50.2 26.2 C 54.0 26.8, 57.8 25.6, 58.8 22.5 Z" fill="${muscMain}" />
-                                <!-- Diaframma (arco sottocostale) -->
-                                <path d="M 43.2 28.8 Q 50.0 25.8 56.8 28.8" fill="none" stroke="#facc15" stroke-width="1.1" />
-                                <!-- Retto dell'Addome -->
-                                <rect x="45.6" y="27.2" width="8.8" height="13.8" rx="2.0" fill="${muscLight}" />
-                                <line x1="50.0" y1="27.2" x2="50.0" y2="41.0" stroke="${tendon}" stroke-width="0.4" />
-                                <line x1="45.6" y1="31.5" x2="54.4" y2="31.5" stroke="${tendon}" stroke-width="0.35" />
-                                <line x1="45.6" y1="35.8" x2="54.4" y2="35.8" stroke="${tendon}" stroke-width="0.35" />
-                            `}
-
-                            <!-- Deltoidi e Braccia (Bicipiti / Tricipiti) -->
-                            <ellipse cx="38.2" cy="19.5" rx="2.6" ry="2.4" fill="${muscLight}" />
-                            <ellipse cx="61.8" cy="19.5" rx="2.6" ry="2.4" fill="${muscLight}" />
-                            <path d="M 35.6 21.2 L 38.6 21.5 L 36.2 32.5 L 33.4 32.2 Z" fill="${isBack ? muscDark : muscMain}" />
-                            <path d="M 64.4 21.2 L 61.4 21.5 L 63.8 32.5 L 66.6 32.2 Z" fill="${isBack ? muscDark : muscMain}" />
-                            <path d="M 33.2 33.0 L 35.8 33.2 L 33.2 45.6 L 30.8 45.4 Z" fill="${muscMain}" />
-                            <path d="M 66.8 33.0 L 64.2 33.2 L 66.8 45.6 L 69.2 45.4 Z" fill="${muscMain}" />
-
-                            <!-- Cosce (Quadricipiti / Bicipiti femorali) -->
-                            <path d="M 40.8 48.0 L 48.2 48.5 L 46.6 67.8 L 42.2 67.8 Z" fill="${isBack ? muscDark : muscMain}" />
-                            <path d="M 59.2 48.0 L 51.8 48.5 L 53.4 67.8 L 57.8 67.8 Z" fill="${isBack ? muscDark : muscMain}" />
-
-                            <!-- Ginocchia tendinee -->
-                            <rect x="42.4" y="67.8" width="4.0" height="3.0" rx="1.0" fill="${tendon}" />
-                            <rect x="53.6" y="67.8" width="4.0" height="3.0" rx="1.0" fill="${tendon}" />
-
-                            <!-- Gambe e Polpacci -->
-                            <path d="M 42.0 70.8 L 46.6 70.8 L 45.8 85.5 L 42.4 85.5 Z" fill="${muscMain}" />
-                            <path d="M 58.0 70.8 L 53.4 70.8 L 54.2 85.5 L 57.6 85.5 Z" fill="${muscMain}" />
-                            <rect x="43.2" y="85.5" width="2.2" height="6.0" fill="${tendon}" />
-                            <rect x="54.6" y="85.5" width="2.2" height="6.0" fill="${tendon}" />
-
-                            <!-- Piedi -->
-                            <path d="M 42.2 91.6 L 46.0 91.6 L 46.4 95.6 L 41.4 95.6 Z" fill="${tendon}" />
-                            <path d="M 57.8 91.6 L 54.0 91.6 L 53.6 95.6 L 58.6 95.6 Z" fill="${tendon}" />
-                        </g>
-                    `;
-                }
+                fallbackSvg.innerHTML = `
+                    <g stroke="${muscDark}" stroke-width="0.28">
+                        <ellipse cx="50.0" cy="7.2" rx="4.5" ry="4.8" fill="#fca5a5" opacity="0.35" />
+                        <path d="M 41.2 18.0 L 58.8 18.0 L 55.6 41.0 L 44.4 41.0 Z" fill="${muscMain}" />
+                        <path d="M 40.8 48.0 L 48.2 48.5 L 46.6 67.8 L 42.2 67.8 Z" fill="${muscLight}" />
+                        <path d="M 59.2 48.0 L 51.8 48.5 L 53.4 67.8 L 57.8 67.8 Z" fill="${muscLight}" />
+                        <path d="M 42.0 70.8 L 46.6 70.8 L 45.8 85.5 L 42.4 85.5 Z" fill="${muscMain}" />
+                        <path d="M 58.0 70.8 L 53.4 70.8 L 54.2 85.5 L 57.6 85.5 Z" fill="${muscMain}" />
+                        <path d="M 42.2 91.6 L 46.0 91.6 L 46.4 95.6 L 41.4 95.6 Z" fill="${tendon}" />
+                        <path d="M 57.8 91.6 L 54.0 91.6 L 53.6 95.6 L 58.6 95.6 Z" fill="${tendon}" />
+                    </g>
+                `;
             }
             plateImg.style.display = "none";
             fallbackSvg.style.display = "block";
@@ -2427,95 +2815,980 @@
             if (btn) btn.classList.toggle("active", enabled);
         }
 
-        function speakItalian(text) {
-            if (!("speechSynthesis" in window)) return;
-            window.speechSynthesis.cancel();
-            const utter = new SpeechSynthesisUtterance(text);
-            utter.lang = "it-IT";
-            utter.rate = 0.95;
-            window.speechSynthesis.speak(utter);
+        function getMetalClipSvg() {
+            return `
+                <svg class="clipboard-metal-clip" viewBox="0 0 180 72" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                    <defs>
+                        <linearGradient id="steelBody" x1="0" y1="0" x2="1" y2="0">
+                            <stop offset="0%" stop-color="#64748b"/>
+                            <stop offset="18%" stop-color="#f1f5f9"/>
+                            <stop offset="38%" stop-color="#94a3b8"/>
+                            <stop offset="52%" stop-color="#ffffff"/>
+                            <stop offset="72%" stop-color="#cbd5e1"/>
+                            <stop offset="88%" stop-color="#64748b"/>
+                            <stop offset="100%" stop-color="#475569"/>
+                        </linearGradient>
+                        <linearGradient id="steelWire" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0%" stop-color="#e2e8f0"/>
+                            <stop offset="50%" stop-color="#94a3b8"/>
+                            <stop offset="100%" stop-color="#334155"/>
+                        </linearGradient>
+                    </defs>
+                    <path d="M56 34 V14 C56 7 63 4 72 4 H108 C117 4 124 7 124 14 V34" stroke="url(#steelWire)" stroke-width="5.5" stroke-linecap="round"/>
+                    <circle cx="90" cy="14" r="5" fill="#472712" stroke="#cbd5e1" stroke-width="2.5"/>
+                    <rect x="26" y="30" width="128" height="34" rx="8" fill="url(#steelBody)" stroke="#334155" stroke-width="1.6"/>
+                    <rect x="34" y="36" width="112" height="5" rx="2.5" fill="#475569" opacity="0.55"/>
+                    <rect x="30" y="57" width="120" height="5" rx="2.5" fill="#1e293b"/>
+                    <circle cx="38" cy="48" r="3.2" fill="#475569" stroke="#f8fafc" stroke-width="1"/>
+                    <circle cx="142" cy="48" r="3.2" fill="#475569" stroke="#f8fafc" stroke-width="1"/>
+                </svg>
+            `;
         }
 
-        toggleNames.addEventListener("change", () => {
-            anatomyStage.classList.toggle("show-all-labels", toggleNames.checked);
-        });
+        function renderMedicalClipboard(innerHtml, subtitle = "Cartella Clinica • PS Ortopedia", isRedAlert = false) {
+            infoPanel.classList.add("clipboard-mode");
+            infoPanel.classList.toggle("red-alert", Boolean(isRedAlert));
+            infoPanel.innerHTML = `
+                ${getMetalClipSvg()}
+                <div class="medical-sheet">
+                    ${isRedAlert ? `<div class="red-siren-banner">🚨 Emergenza • Codice Rosso Prioritario</div>` : ""}
+                    <div class="medical-sheet-header">
+                        <div class="hospital-emblem">
+                            <div class="hospital-cross">+</div>
+                            <div>
+                                <div style="font-size:0.72rem; font-weight:800; color:#dc2626; letter-spacing:0.6px; text-transform:uppercase;">Azienda Ospedaliera CPIA</div>
+                                <div style="font-size:1rem; font-weight:800; color:#0f172a;">Cartella Clinica di Accettazione</div>
+                            </div>
+                        </div>
+                        <div class="sheet-meta-box">
+                            <div>Mod. PS-ORT/26</div>
+                            <div style="color:#0369a1;">${subtitle}</div>
+                        </div>
+                    </div>
+                    ${innerHtml}
+                </div>
+            `;
+        }
 
-        /* ================= PANNELLO ESPLORAZIONE ================= */
+        function selectAnatomyItemFromChip(id) {
+            const list = currentLayer === "bones" ? BONES : MUSCLES;
+            const found = list.find(i => i.id === id);
+            if (!found) return;
+            if (currentLayer === "bones") selectedBone = found;
+            else selectedMuscle = found;
+
+            const pos = found.views[currentView] || found.views.front;
+            if (pos.hidden) {
+                const validView = Object.keys(found.views).find(v => !found.views[v].hidden) || "front";
+                switchAnatomyView(validView);
+            }
+            highlightSelectedBone(found.id);
+            renderAnatomyHighlight();
+            renderExplorePanel();
+        }
+
         function renderExplorePanel() {
+            infoPanel.classList.remove("clipboard-mode", "red-alert");
             const isBones = currentLayer === "bones";
             const list = isBones ? BONES : MUSCLES;
-            const current = isBones ? selectedBone : selectedMuscle;
-            const regions = ["Tutte", "Testa", "Tronco", "Arti superiori", "Arti inferiori"];
+            const item = isBones ? selectedBone : selectedMuscle;
+            const regions = ["Tutte", ...new Set(list.map(i => i.region))];
             const filtered = selectedRegionFilter === "Tutte"
                 ? list
                 : list.filter(i => i.region === selectedRegionFilter);
 
-            highlightSelectedBone(current.id);
+            const exploreSpeechText = `${item.name}. ${item.desc}. Funzione: ${item.func}`;
+            prefetchItalianTts(exploreSpeechText, "neutral");
 
             infoPanel.innerHTML = `
                 <div class="bone-header">
                     <div>
-                        <span class="region-tag ${isBones ? "" : "muscle-tag"}">${isBones ? "🦴 Osso" : "💪 Muscolo"} • ${current.region}</span>
-                        <h2 class="bone-title">${current.name}</h2>
+                        <span class="region-tag ${isBones ? "" : "muscle-tag"}">${isBones ? "🦴 Osso" : "💪 Muscolo"} • ${item.region}</span>
+                        <h2 class="bone-title">${item.name}</h2>
                     </div>
-                    <button type="button" class="speak-btn" onclick="speakItalian('${current.name}. ${current.desc} Funzione: ${current.func}')">🔊 Ascolta</button>
+                    <button type="button" class="speak-btn" onclick="speakItalian('${item.name}. ${item.desc.replace(/'/g, "\\'")}. Funzione: ${item.func.replace(/'/g, "\\'")}', 'neutral', this)">🔊 Ascolta</button>
                 </div>
 
                 <div class="info-box ${isBones ? "" : "muscle-box"}">
-                    <h3>Descrizione anatomica</h3>
-                    <p>${current.desc}</p>
+                    <h3>Che cos'è</h3>
+                    <p>${item.desc}</p>
                 </div>
 
                 <div class="info-box ${isBones ? "" : "muscle-box"}">
                     <h3>Funzione principale</h3>
-                    <p>${current.func}</p>
+                    <p>${item.func}</p>
                 </div>
 
                 <div class="info-box ${isBones ? "" : "muscle-box"}">
-                    <h3>Articolazioni e collegamenti</h3>
-                    <p><strong>Articolazioni:</strong> ${current.joints}<br>
-                    <strong>${isBones ? "Muscoli collegati" : "Ossa collegate"}:</strong> ${isBones ? current.muscles : current.bones}</p>
+                    <h3>Articolazioni e ${isBones ? "Muscoli collegati" : "Ossa collegate"}</h3>
+                    <p><strong>Articolazioni:</strong> ${item.joints}<br>
+                    <strong>${isBones ? "Muscoli" : "Ossa"}:</strong> ${isBones ? item.muscles : item.bones}</p>
                 </div>
 
                 <div>
+                    <h3 style="font-size:0.85rem; text-transform:uppercase; color:var(--muted); margin-bottom:0.45rem;">Filtra per regione</h3>
                     <div class="filter-bar">
                         ${regions.map(r => `
                             <button type="button" class="filter-chip ${selectedRegionFilter === r ? "active" : ""}" onclick="selectedRegionFilter='${r}'; renderExplorePanel();">${r}</button>
                         `).join("")}
                     </div>
                     <div class="bone-grid">
-                        ${filtered.map(it => `
-                            <button type="button" class="bone-chip ${it.id === current.id ? "active" : ""}" onclick="handleAnatomyItemClick(${isBones ? "BONES" : "MUSCLES"}.find(x=>x.id==='${it.id}'))">${it.name}</button>
+                        ${filtered.map(el => `
+                            <button type="button" class="bone-chip ${el.id === item.id ? "active" : ""}" onclick="selectAnatomyItemFromChip('${el.id}')">${el.name}</button>
                         `).join("")}
                     </div>
                 </div>
             `;
+            highlightSelectedBone(item.id);
         }
 
-        /* ================= MODALITÀ PRONTO SOCCORSO ================= */
-        function renderErIntroScreen() {
-            resetHotspotStates();
-            setXrayVisual(true);
-            infoPanel.innerHTML = `
-                <div class="er-start-wrapper">
-                    <div class="er-start-overlay">
-                        <div class="er-start-card">
-                            <span class="region-tag muscle-tag">🚑 Simulazione Clinica CPIA</span>
-                            <h2 style="font-size:1.45rem; font-weight:800; margin:0.4rem 0;">Turno al Pronto Soccorso</h2>
-                            <p style="color:var(--muted); font-size:0.95rem;">Valuta il codice Triage, individua sul corpo l'osso o il muscolo coinvolto, rispondi al quesito anatomico e scegli l'intervento di Primo Soccorso.</p>
-                            <button type="button" class="er-start-btn" onclick="startErShift()">Inizia il turno 🩺</button>
-                        </div>
+        function destroyActivePeer() {
+            if (playerHostConn) {
+                try { playerHostConn.close(); } catch (e) {}
+                playerHostConn = null;
+            }
+            if (peerInstance) {
+                try { peerInstance.destroy(); } catch (e) {}
+                peerInstance = null;
+            }
+            if (localRoomChannel) {
+                try { localRoomChannel.close(); } catch (e) {}
+                localRoomChannel = null;
+            }
+        }
+
+        const preferredItalianVoices = {
+            female: null,
+            male: null,
+            neutral: null
+        };
+        const neuralTtsCache = new Map();
+        const neuralTtsInFlight = new Map();
+        let activeAudioPlayer = null;
+        let activeSpeakBtn = null;
+
+        function selectBestItalianVoices() {
+            if (!("speechSynthesis" in window)) return preferredItalianVoices;
+            const voices = window.speechSynthesis.getVoices() || [];
+            const itVoices = voices.filter(v => {
+                const lang = (v.lang || "").toLowerCase();
+                const name = (v.name || "").toLowerCase();
+                return lang.startsWith("it") || name.includes("italian") || name.includes("italiano");
+            });
+            if (itVoices.length === 0) return preferredItalianVoices;
+
+            const maleHints = [
+                "diego", "giuseppe", "luca", "cosimo", "fabio", "giovanni",
+                "lorenzo", "vittorio", "marco", "matteo", "alessandro",
+                "emanuele", "paolo", "andrea", "roberto", "stefano", "male", "uomo", "maschile"
+            ];
+            const femaleHints = [
+                "elsa", "isabella", "alice", "federica", "paola", "silvia",
+                "bianca", "carla", "fabiola", "lucia", "chiara", "elena",
+                "giulia", "sofia", "female", "donna", "femminile", "google italiano"
+            ];
+
+            const isNeuralVoice = (v) => {
+                const n = (v.name || "").toLowerCase();
+                return n.includes("natural") || n.includes("neural") || n.includes("online") || n.includes("enhanced") || n.includes("premium");
+            };
+
+            const baseQualityScore = (v) => {
+                const name = (v.name || "").toLowerCase();
+                let score = 0;
+                if (isNeuralVoice(v)) score += 150;
+                if (name.includes("google")) score += 110;
+                if (name.includes("microsoft")) score += 60;
+                if (name.includes("espeak") || name.includes("compact")) score -= 250;
+                return score;
+            };
+
+            const validItVoices = itVoices.filter(v => {
+                const name = (v.name || "").toLowerCase();
+                return !name.includes("espeak") && !name.includes("compact");
+            });
+            const pool = validItVoices.length > 0 ? validItVoices : itVoices;
+            const bestOverall = [...pool].sort((a, b) => baseQualityScore(b) - baseQualityScore(a))[0] || null;
+
+            const maleVoices = pool
+                .filter(v => {
+                    const n = (v.name || "").toLowerCase();
+                    if (femaleHints.some(fh => n.includes(fh))) return false;
+                    return maleHints.some(h => n.includes(h));
+                })
+                .sort((a, b) => baseQualityScore(b) - baseQualityScore(a));
+
+            const femaleVoices = pool
+                .filter(v => femaleHints.some(h => (v.name || "").toLowerCase().includes(h)))
+                .sort((a, b) => baseQualityScore(b) - baseQualityScore(a));
+
+            preferredItalianVoices.male = maleVoices[0] || bestOverall;
+            preferredItalianVoices.female = femaleVoices[0] || bestOverall;
+            preferredItalianVoices.neutral = bestOverall;
+            return preferredItalianVoices;
+        }
+
+        if ("speechSynthesis" in window) {
+            selectBestItalianVoices();
+            window.speechSynthesis.onvoiceschanged = () => {
+                selectBestItalianVoices();
+            };
+        }
+
+        function stopAllSpeech() {
+            if ("speechSynthesis" in window) {
+                window.speechSynthesis.cancel();
+            }
+            if (activeAudioPlayer) {
+                try {
+                    activeAudioPlayer.pause();
+                    activeAudioPlayer.currentTime = 0;
+                } catch (e) {}
+                activeAudioPlayer = null;
+            }
+            if (activeSpeakBtn) {
+                activeSpeakBtn.textContent = activeSpeakBtn.dataset.origLabel || "🔊 Ascolta";
+                activeSpeakBtn.disabled = false;
+                activeSpeakBtn = null;
+            }
+        }
+
+        function pcm16Base64ToWavUrl(base64Pcm, sampleRate = 24000) {
+            const binary = atob(base64Pcm);
+            const pcmLen = binary.length;
+            const buffer = new ArrayBuffer(44 + pcmLen);
+            const view = new DataView(buffer);
+            const writeStr = (offset, str) => {
+                for (let i = 0; i < str.length; i++) view.setUint8(offset + i, str.charCodeAt(i));
+            };
+            writeStr(0, "RIFF");
+            view.setUint32(4, 36 + pcmLen, true);
+            writeStr(8, "WAVE");
+            writeStr(12, "fmt ");
+            view.setUint32(16, 16, true);
+            view.setUint16(20, 1, true);
+            view.setUint16(22, 1, true);
+            view.setUint32(24, sampleRate, true);
+            view.setUint32(28, sampleRate * 2, true);
+            view.setUint16(32, 2, true);
+            view.setUint16(34, 16, true);
+            writeStr(36, "data");
+            view.setUint32(40, pcmLen, true);
+            const bytes = new Uint8Array(buffer, 44);
+            for (let i = 0; i < pcmLen; i++) bytes[i] = binary.charCodeAt(i);
+            return URL.createObjectURL(new Blob([buffer], { type: "audio/wav" }));
+        }
+
+        function speakWithBrowserFallback(cleanText, gender = "neutral") {
+            if (!("speechSynthesis" in window)) return;
+            const selectedSet = selectBestItalianVoices();
+            const chosenVoice = selectedSet[gender] || selectedSet.neutral;
+            const u = new SpeechSynthesisUtterance(cleanText);
+            u.lang = "it-IT";
+            if (chosenVoice) u.voice = chosenVoice;
+            const voiceNameLower = (chosenVoice?.name || "").toLowerCase();
+            const isFemaleFallback = voiceNameLower.includes("elsa") || voiceNameLower.includes("isabella") || voiceNameLower.includes("alice") || voiceNameLower.includes("google italiano");
+            if (gender === "male") {
+                u.rate = 0.94;
+                u.pitch = isFemaleFallback ? 0.82 : 0.96;
+            } else if (gender === "female") {
+                u.rate = 0.98;
+                u.pitch = 1.04;
+            } else {
+                u.rate = 0.96;
+                u.pitch = 1.0;
+            }
+            u.volume = 1.0;
+            window.speechSynthesis.speak(u);
+        }
+
+        async function tryNeuralItalianTts(cleanText, gender) {
+            const cacheKey = `${gender}:${cleanText}`;
+            if (neuralTtsCache.has(cacheKey)) {
+                return neuralTtsCache.get(cacheKey);
+            }
+            if (neuralTtsInFlight.has(cacheKey)) {
+                return neuralTtsInFlight.get(cacheKey);
+            }
+
+            const fetchPromise = (async () => {
+                const voiceName = gender === "male" ? "Orus" : (gender === "female" ? "Aoede" : "Charon");
+                const stylePrompt = gender === "male"
+                    ? `Leggi in italiano con voce maschile naturale, chiara ed espressiva, come un paziente che descrive i propri sintomi: "${cleanText}"`
+                    : `Leggi in italiano con voce femminile naturale, chiara ed espressiva: "${cleanText}"`;
+
+                const apiKey = "";
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent?key=${apiKey}`;
+                const payload = {
+                    contents: [{ parts: [{ text: stylePrompt }] }],
+                    generationConfig: {
+                        responseModalities: ["AUDIO"],
+                        speechConfig: {
+                            voiceConfig: {
+                                prebuiltVoiceConfig: { voiceName }
+                            }
+                        }
+                    },
+                    model: "gemini-2.5-flash-preview-tts"
+                };
+
+                const res = await fetch(apiUrl, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(payload)
+                });
+                if (!res.ok) throw new Error("TTS API error");
+                const data = await res.json();
+                const part = data?.candidates?.[0]?.content?.parts?.[0];
+                const audioData = part?.inlineData?.data;
+                const mimeType = part?.inlineData?.mimeType || "";
+                if (!audioData || !mimeType.startsWith("audio/")) throw new Error("No audio data");
+
+                const rateMatch = mimeType.match(/rate=(\d+)/);
+                const sampleRate = rateMatch ? parseInt(rateMatch[1], 10) : 24000;
+                const wavUrl = pcm16Base64ToWavUrl(audioData, sampleRate);
+                neuralTtsCache.set(cacheKey, wavUrl);
+                return wavUrl;
+            })();
+
+            neuralTtsInFlight.set(cacheKey, fetchPromise);
+            try {
+                return await fetchPromise;
+            } finally {
+                neuralTtsInFlight.delete(cacheKey);
+            }
+        }
+
+        function prefetchItalianTts(text, gender = "neutral") {
+            if (!text) return;
+            const cleanText = String(text).replace(/\s+/g, " ").trim();
+            tryNeuralItalianTts(cleanText, gender).catch(() => {});
+        }
+
+        function prefetchErQueueVoices(queue, startIdx = 0) {
+            if (!Array.isArray(queue)) return;
+            for (let i = startIdx; i < Math.min(queue.length, startIdx + 6); i++) {
+                const item = queue[i];
+                if (item && item.story) {
+                    prefetchItalianTts(item.story, item.gender || "neutral");
+                }
+            }
+        }
+
+        function prefetchAllErVoices() {
+            ER_CASES.forEach((item, idx) => {
+                if (item && item.story) {
+                    setTimeout(() => {
+                        prefetchItalianTts(item.story, item.gender || "neutral");
+                    }, idx * 120);
+                }
+            });
+        }
+
+        async function speakItalian(text, gender = "neutral", btnEl = null) {
+            if (!text) return;
+            stopAllSpeech();
+            const cleanText = String(text).replace(/\s+/g, " ").trim();
+
+            if (btnEl) {
+                if (!btnEl.dataset.origLabel) btnEl.dataset.origLabel = btnEl.textContent;
+                activeSpeakBtn = btnEl;
+                btnEl.textContent = "⏳ Voce...";
+                btnEl.disabled = true;
+            }
+
+            try {
+                const wavUrl = await tryNeuralItalianTts(cleanText, gender);
+                const audio = new Audio(wavUrl);
+                activeAudioPlayer = audio;
+                if (btnEl) {
+                    btnEl.disabled = false;
+                    btnEl.textContent = "🔊 In lettura...";
+                }
+                audio.onended = () => {
+                    if (activeSpeakBtn === btnEl && btnEl) {
+                        btnEl.textContent = btnEl.dataset.origLabel || "🔊 Ascolta";
+                        activeSpeakBtn = null;
+                    }
+                };
+                await audio.play();
+                return;
+            } catch (e) {
+                if (btnEl) {
+                    btnEl.disabled = false;
+                    btnEl.textContent = btnEl.dataset.origLabel || "🔊 Ascolta";
+                    activeSpeakBtn = null;
+                }
+                speakWithBrowserFallback(cleanText, gender);
+            }
+        }
+
+        async function speakItalian(text, gender = "neutral", btnEl = null) {
+            if (!text) return;
+            stopAllSpeech();
+            const cleanText = String(text).replace(/\s+/g, " ").trim();
+            const cacheKey = `${gender}:${cleanText}`;
+
+            if (btnEl) {
+                if (!btnEl.dataset.origLabel) btnEl.dataset.origLabel = btnEl.textContent;
+                activeSpeakBtn = btnEl;
+                btnEl.textContent = "🔊 In lettura...";
+            }
+
+            // Se l'audio neurale è già pronto in cache, parte all'istante (0 ms)
+            if (neuralTtsCache.has(cacheKey)) {
+                try {
+                    const audio = new Audio(neuralTtsCache.get(cacheKey));
+                    activeAudioPlayer = audio;
+                    audio.onended = () => {
+                        if (activeSpeakBtn === btnEl && btnEl) {
+                            btnEl.textContent = btnEl.dataset.origLabel || "🔊 Ascolta";
+                            activeSpeakBtn = null;
+                        }
+                    };
+                    await audio.play();
+                    return;
+                } catch (e) {}
+            }
+
+            // Avvia subito in parallelo la preparazione neurale per il futuro
+            tryNeuralItalianTts(cleanText, gender).catch(() => {});
+
+            // Nel frattempo parte immediatamente (0 ms) senza farti aspettare
+            speakWithBrowserFallback(cleanText, gender);
+            if (btnEl) {
+                setTimeout(() => {
+                    if (activeSpeakBtn === btnEl) {
+                        btnEl.textContent = btnEl.dataset.origLabel || "🔊 Ascolta";
+                        activeSpeakBtn = null;
+                    }
+                }, 1800);
+            }
+        }
+
+        const ECG_COLORS = ["#22c55e", "#38bdf8", "#facc15", "#f43f5e", "#c084fc", "#fb923c", "#2dd4bf", "#a3e635"];
+
+        function buildTeamEcgChartHtml(teams, totalCases) {
+            const maxScore = totalCases * 4;
+            const W = 540;
+            const H = 170;
+            const padLeft = 28;
+            const padRight = 22;
+            const padTop = 18;
+            const padBottom = 22;
+            const plotW = W - padLeft - padRight;
+            const plotH = H - padTop - padBottom;
+
+            // Griglia millimetrata stile monitor ECG ospedaliero
+            let gridLines = "";
+            for (let x = padLeft; x <= W - padRight; x += 20) {
+                gridLines += `<line x1="${x}" y1="${padTop}" x2="${x}" y2="${H - padBottom}" stroke="rgba(16,185,129,0.12)" stroke-width="1"/>`;
+            }
+            for (let s = 0; s <= maxScore; s += 4) {
+                const y = padTop + plotH - (s / Math.max(1, maxScore)) * plotH;
+                gridLines += `<line x1="${padLeft}" y1="${y.toFixed(1)}" x2="${W - padRight}" y2="${y.toFixed(1)}" stroke="rgba(16,185,129,0.22)" stroke-width="1"/>`;
+                gridLines += `<text x="${padLeft - 6}" y="${(y + 3).toFixed(1)}" fill="#64748b" font-size="9" font-weight="700" text-anchor="end">${s}</text>`;
+            }
+
+            const traces = teams.map((team, idx) => {
+                const color = ECG_COLORS[idx % ECG_COLORS.length];
+                const hist = Array.isArray(team.history) && team.history.length > 0
+                    ? team.history
+                    : [{ step: 0, score: 0, ok: true }];
+
+                // Leggero offset verticale per non sovrapporre linee a pari punteggio
+                const laneOffset = ((idx % 4) - 1.5) * 1.4;
+                const getX = (step) => padLeft + (Math.min(step, totalCases) / Math.max(1, totalCases)) * plotW;
+                const getY = (score) => padTop + plotH - (Math.min(score, maxScore) / Math.max(1, maxScore)) * plotH + laneOffset;
+
+                let d = `M ${getX(hist[0].step).toFixed(1)} ${getY(hist[0].score).toFixed(1)}`;
+                let lastX = getX(hist[0].step);
+                let lastY = getY(hist[0].score);
+
+                for (let i = 1; i < hist.length; i++) {
+                    const prev = hist[i - 1];
+                    const curr = hist[i];
+                    const x0 = getX(prev.step);
+                    const y0 = getY(prev.score);
+                    const x1 = getX(curr.step);
+                    const y1 = getY(curr.score);
+                    const span = Math.max(12, x1 - x0);
+                    const mid = x0 + span * 0.45;
+
+                    if (curr.ok) {
+                        // Complesso QRS elettrocardiografico (picco netto verso l'alto e onda S)
+                        const qX = mid - 6;
+                        const rX = mid - 1;
+                        const sX = mid + 4;
+                        const tX = mid + 10;
+                        const rPeakY = Math.max(6, y1 - 15);
+                        const sDipY = Math.min(H - 6, y1 + 8);
+                        d += ` L ${qX.toFixed(1)} ${(y0 + 3).toFixed(1)}`;
+                        d += ` L ${rX.toFixed(1)} ${rPeakY.toFixed(1)}`;
+                        d += ` L ${sX.toFixed(1)} ${sDipY.toFixed(1)}`;
+                        d += ` L ${tX.toFixed(1)} ${y1.toFixed(1)}`;
+                        d += ` L ${x1.toFixed(1)} ${y1.toFixed(1)}`;
+                    } else {
+                        // Onda piatta / lieve oscillazione senza avanzamento di punteggio
+                        d += ` L ${mid.toFixed(1)} ${(y0 + 2).toFixed(1)} L ${x1.toFixed(1)} ${y1.toFixed(1)}`;
+                    }
+                    lastX = x1;
+                    lastY = y1;
+                }
+
+                // Aggiunge un battito terminale vivo sul punto attuale della squadra
+                const beatEnd = Math.min(W - 6, lastX + 10);
+                d += ` L ${(lastX + 2).toFixed(1)} ${(lastY + 2).toFixed(1)} L ${(lastX + 4).toFixed(1)} ${Math.max(6, lastY - 9).toFixed(1)} L ${(lastX + 6).toFixed(1)} ${Math.min(H - 6, lastY + 5).toFixed(1)} L ${beatEnd.toFixed(1)} ${lastY.toFixed(1)}`;
+
+                return `
+                    <path d="${d}" fill="none" stroke="${color}" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="filter: drop-shadow(0 0 4px ${color});" />
+                    <circle cx="${beatEnd.toFixed(1)}" cy="${lastY.toFixed(1)}" r="3.6" fill="${color}" stroke="#ffffff" stroke-width="1.2" />
+                `;
+            }).join("");
+
+            const legend = teams.map((t, idx) => {
+                const color = ECG_COLORS[idx % ECG_COLORS.length];
+                return `
+                    <span class="ecg-legend-item">
+                        <span style="width:10px; height:10px; border-radius:50%; background:${color}; box-shadow:0 0 6px ${color}; display:inline-block;"></span>
+                        <span style="color:#f8fafc;">${escapeHtml(t.teamName)}</span>
+                        <span style="color:${color};">(${t.score} pt)</span>
+                    </span>
+                `;
+            }).join("");
+
+            return `
+                <div class="ecg-monitor-card">
+                    <div class="ecg-monitor-header">
+                        <span><span class="ecg-live-dot"></span>Monitor ECG • Andamento Squadre</span>
+                        <span style="color:#94a3b8;">0 → ${maxScore} Punti (${totalCases} Pazienti)</span>
                     </div>
+                    <svg class="ecg-svg" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" aria-label="Grafico elettrocardiogramma andamento squadre">
+                        ${gridLines}
+                        ${traces}
+                    </svg>
+                    <div class="ecg-legend">${legend}</div>
                 </div>
             `;
         }
 
-        function startErShift() {
-            erQueue = [...ER_CASES].sort(() => Math.random() - 0.5).slice(0, 6);
+        function renderErIntroScreen() {
+            resetHotspotStates();
+            setXrayVisual(true);
+            destroyActivePeer();
+            roomMode = "none";
+            currentRoomPin = "";
+            currentTeamDocId = "";
+
+            renderMedicalClipboard(`
+                <div class="team-lobby-box">
+                    <div style="text-align:center;">
+                        <span class="region-tag muscle-tag">🚑 Accettazione & Triage</span>
+                        <h2 style="font-size:1.35rem; font-weight:800; margin:0.35rem 0;">Pronto Soccorso Ortopedico</h2>
+                        <p style="color:var(--muted); font-size:0.9rem;">Scegli se giocare in classe a squadre con codice PIN oppure avviare un turno individuale.</p>
+                    </div>
+
+                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:0.65rem;">
+                        <button type="button" class="next-btn" style="background:#0f172a; padding:0.9rem 0.75rem;" onclick="openHostRoomScreen()">
+                            🏫 Crea Stanza<br><span style="font-size:0.78rem; font-weight:500; opacity:0.9;">(Docente / LIM)</span>
+                        </button>
+                        <button type="button" class="next-btn" style="background:#0284c7; padding:0.9rem 0.75rem;" onclick="openJoinRoomScreen()">
+                            👥 Entra in Stanza<br><span style="font-size:0.78rem; font-weight:500; opacity:0.9;">(Squadra con PIN)</span>
+                        </button>
+                    </div>
+
+                    <div style="border-top:1px solid #e2e8f0; padding-top:0.75rem; text-align:center;">
+                        <button type="button" class="secondary-btn" style="width:100%;" onclick="startSingleErShift()">
+                            🩺 Turno Singolo (senza stanza)
+                        </button>
+                    </div>
+                </div>
+            `, "Accettazione • Turno Aperto");
+        }
+
+        function startSingleErShift() {
+            destroyActivePeer();
+            roomMode = "none";
+            currentRoomPin = "";
+            currentTeamDocId = "";
+            startErShift();
+        }
+
+        function generateRoomPin() {
+            return String(Math.floor(1000 + Math.random() * 9000));
+        }
+
+        function generateSharedCaseOrder() {
+            return [...ER_CASES].sort(() => Math.random() - 0.5).slice(0, 6);
+        }
+
+        function handleIncomingRoomMessage(msg, replyFn) {
+            if (!msg || typeof msg !== "object") return;
+            if (msg.type === "join") {
+                const existing = latestRoomTeams.find(t => t.teamId === msg.teamId);
+                if (!existing) {
+                    latestRoomTeams.push({
+                        teamId: msg.teamId,
+                        teamName: msg.teamName || "Squadra",
+                        members: Array.isArray(msg.members) ? msg.members : [],
+                        score: 0,
+                        currentCase: 0,
+                        completed: false,
+                        finishedAt: null,
+                        history: [{ step: 0, score: 0, ok: true }]
+                    });
+                }
+                sortAndRenderHostLeaderboard();
+                if (typeof replyFn === "function") {
+                    replyFn({
+                        type: "welcome",
+                        teamId: msg.teamId,
+                        caseIndices: hostSharedCaseIndices
+                    });
+                }
+            } else if (msg.type === "progress") {
+                const team = latestRoomTeams.find(t => t.teamId === msg.teamId);
+                if (team) {
+                    const prevScore = team.score;
+                    const newScore = Number(msg.score) || 0;
+                    const newCase = Number(msg.currentCase) || 0;
+                    if (newScore !== prevScore || newCase !== team.currentCase || msg.completed) {
+                        const stepNum = msg.completed ? (hostSharedCaseIndices.length || 6) : Math.max(team.history.length, newCase + (newScore > prevScore ? 0.5 : 0));
+                        team.history.push({
+                            step: stepNum,
+                            score: newScore,
+                            ok: newScore > prevScore
+                        });
+                    }
+                    team.score = newScore;
+                    team.currentCase = newCase;
+                    if (msg.completed && !team.completed) {
+                        team.completed = true;
+                        team.finishedAt = Date.now();
+                    }
+                    sortAndRenderHostLeaderboard();
+                }
+            }
+        }
+
+        function setupLocalRoomChannel(pin, isHost) {
+            if (localRoomChannel) {
+                try { localRoomChannel.close(); } catch (e) {}
+                localRoomChannel = null;
+            }
+            if (typeof BroadcastChannel === "undefined") return;
+            try {
+                localRoomChannel = new BroadcastChannel(PEER_PREFIX + pin);
+                localRoomChannel.onmessage = (ev) => {
+                    const msg = ev.data;
+                    if (!msg) return;
+                    if (isHost) {
+                        handleIncomingRoomMessage(msg, (reply) => {
+                            try { localRoomChannel.postMessage(reply); } catch (e) {}
+                        });
+                    } else if (msg.type === "welcome") {
+                        window.dispatchEvent(new CustomEvent("cpia-local-welcome", { detail: msg }));
+                    }
+                };
+            } catch (e) {}
+        }
+
+        function openHostRoomScreen() {
+            destroyActivePeer();
+            renderMedicalClipboard(`
+                <div class="team-lobby-box" style="text-align:center;">
+                    <div style="font-size:1.8rem;">⏳</div>
+                    <p style="font-weight:700;">Apertura stanza alla LIM in corso...</p>
+                </div>
+            `, "Postazione Docente • LIM");
+
+            const pin = generateRoomPin();
+            const sharedCases = generateSharedCaseOrder();
+            hostSharedCaseIndices = sharedCases.map(c => ER_CASES.indexOf(c));
+            latestRoomTeams = [];
+
+            setupLocalRoomChannel(pin, true);
+
+            const activateHostLocalOnly = () => {
+                roomMode = "host";
+                currentRoomPin = pin;
+                renderHostDashboard();
+            };
+
+            if (typeof Peer === "undefined") {
+                activateHostLocalOnly();
+                return;
+            }
+
+            try {
+                const peer = new Peer(PEER_PREFIX + pin, { debug: 0 });
+                peerInstance = peer;
+
+                peer.on("open", () => {
+                    roomMode = "host";
+                    currentRoomPin = pin;
+                    renderHostDashboard();
+                });
+
+                peer.on("connection", (conn) => {
+                    conn.on("data", (msg) => {
+                        handleIncomingRoomMessage(msg, (reply) => {
+                            try { conn.send(reply); } catch (e) {}
+                        });
+                    });
+                });
+
+                peer.on("error", (err) => {
+                    if (err && err.type === "unavailable-id") {
+                        openHostRoomScreen();
+                        return;
+                    }
+                    activateHostLocalOnly();
+                });
+            } catch (e) {
+                activateHostLocalOnly();
+            }
+        }
+
+        function escapeHtml(str) {
+            return String(str || "")
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;");
+        }
+
+        function sortAndRenderHostLeaderboard() {
+            latestRoomTeams.sort((a, b) => {
+                if (b.score !== a.score) return b.score - a.score;
+                if (a.completed && b.completed && a.finishedAt && b.finishedAt) {
+                    return a.finishedAt - b.finishedAt;
+                }
+                return b.currentCase - a.currentCase;
+            });
+            renderHostDashboard();
+        }
+
+        function renderHostDashboard() {
+            const totalCases = hostSharedCaseIndices.length || 6;
+            const maxScore = totalCases * 4;
+            renderMedicalClipboard(`
+                <div class="team-lobby-box">
+                    <div class="pin-display-banner">
+                        <div style="font-size:0.82rem; text-transform:uppercase; letter-spacing:0.6px; color:#93c5fd; font-weight:700;">Codice PIN Stanza (LIM / Docente)</div>
+                        <div class="pin-code-text">${escapeHtml(currentRoomPin)}</div>
+                        <div style="font-size:0.86rem; color:#e2e8f0;">Comunica questo PIN alle squadre per farle entrare dal loro dispositivo</div>
+                    </div>
+
+                    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.5rem;">
+                        <h3 style="font-size:1.05rem; font-weight:800;">🏆 Classifica Squadre (${latestRoomTeams.length})</h3>
+                        <button type="button" class="secondary-btn" onclick="renderErIntroScreen()">Chiudi Stanza ✖</button>
+                    </div>
+
+                    ${latestRoomTeams.length === 0 ? `
+                        <div class="feedback-box" style="text-align:center;">
+                            ⏳ In attesa che le squadre inseriscano il PIN <strong>${escapeHtml(currentRoomPin)}</strong>...
+                        </div>
+                    ` : `
+                        ${buildTeamEcgChartHtml(latestRoomTeams, totalCases)}
+                        <div style="display:flex; flex-direction:column; gap:0.5rem;">
+                            ${latestRoomTeams.map((t, idx) => {
+                                const color = ECG_COLORS[idx % ECG_COLORS.length];
+                                const medal = idx === 0 ? "🥇" : idx === 1 ? "🥈" : idx === 2 ? "🥉" : `#${idx + 1}`;
+                                const statusLabel = t.completed
+                                    ? "✅ Turno completato"
+                                    : `🩺 Paziente ${Math.min(t.currentCase + 1, totalCases)} / ${totalCases}`;
+                                return `
+                                    <div class="leaderboard-row ${idx === 0 ? "top-team" : ""}" style="border-left: 5px solid ${color};">
+                                        <div>
+                                            <div style="font-weight:800; font-size:0.98rem;">${medal} ${escapeHtml(t.teamName)}</div>
+                                            <div style="font-size:0.8rem; color:var(--muted);">
+                                                ${t.members && t.members.length ? escapeHtml(t.members.join(", ")) : "Nessun componente indicato"}
+                                            </div>
+                                            <div style="font-size:0.78rem; font-weight:700; color:#0369a1; margin-top:0.15rem;">${statusLabel}</div>
+                                        </div>
+                                        <div style="text-align:right;">
+                                            <div style="font-size:1.25rem; font-weight:800; color:#0f172a;">${t.score} / ${maxScore}</div>
+                                            <div style="font-size:0.75rem; color:var(--muted); font-weight:600;">punti</div>
+                                        </div>
+                                    </div>
+                                `;
+                            }).join("")}
+                        </div>
+                    `}
+                </div>
+            `, `Stanza PIN: ${escapeHtml(currentRoomPin)}`);
+        }
+
+        function openJoinRoomScreen(errorMsg = "") {
+            destroyActivePeer();
+            renderMedicalClipboard(`
+                <div class="team-lobby-box">
+                    <div style="display:flex; justify-content:space-between; align-items:center; gap:0.5rem;">
+                        <div>
+                            <span class="region-tag">👥 Registrazione Équipe</span>
+                            <h2 style="font-size:1.25rem; font-weight:800;">Entra nella Stanza</h2>
+                        </div>
+                        <button type="button" class="secondary-btn" onclick="renderErIntroScreen()">⬅ Indietro</button>
+                    </div>
+
+                    ${errorMsg ? `<div class="feedback-box error">${errorMsg}</div>` : ""}
+
+                    <div>
+                        <label style="display:block; font-size:0.85rem; font-weight:700; margin-bottom:0.25rem;">Codice PIN della stanza (4 cifre) *</label>
+                        <input type="text" id="join-pin-input" class="team-input" maxlength="4" inputmode="numeric" placeholder="Es. 4821" />
+                    </div>
+
+                    <div>
+                        <label style="display:block; font-size:0.85rem; font-weight:700; margin-bottom:0.25rem;">Nome della Squadra *</label>
+                        <input type="text" id="join-team-name" class="team-input" maxlength="32" placeholder="Es. I Chirurghi del CPIA" />
+                    </div>
+
+                    <div>
+                        <label style="display:block; font-size:0.85rem; font-weight:700; margin-bottom:0.25rem;">Componenti della squadra (max 6)</label>
+                        <div class="members-grid">
+                            <input type="text" class="team-input join-member-input" maxlength="25" placeholder="Componente 1" />
+                            <input type="text" class="team-input join-member-input" maxlength="25" placeholder="Componente 2" />
+                            <input type="text" class="team-input join-member-input" maxlength="25" placeholder="Componente 3" />
+                            <input type="text" class="team-input join-member-input" maxlength="25" placeholder="Componente 4" />
+                            <input type="text" class="team-input join-member-input" maxlength="25" placeholder="Componente 5" />
+                            <input type="text" class="team-input join-member-input" maxlength="25" placeholder="Componente 6" />
+                        </div>
+                    </div>
+
+                    <button type="button" class="er-start-btn" style="margin-top:0.25rem;" onclick="submitJoinRoom()">Conferma ed entra in corsia 🚑</button>
+                </div>
+            `, "Registrazione Squadra");
+        }
+
+        function submitJoinRoom() {
+            const pinInput = (document.getElementById("join-pin-input")?.value || "").trim();
+            const teamNameInput = (document.getElementById("join-team-name")?.value || "").trim();
+            const memberInputs = Array.from(document.querySelectorAll(".join-member-input"))
+                .map(el => el.value.trim())
+                .filter(Boolean)
+                .slice(0, 6);
+
+            if (!/^\d{4}$/.test(pinInput)) {
+                openJoinRoomScreen("⚠️ Inserisci un codice PIN valido di 4 cifre.");
+                return;
+            }
+            if (!teamNameInput) {
+                openJoinRoomScreen("⚠️ Inserisci il nome della tua squadra.");
+                return;
+            }
+
+            renderMedicalClipboard(`
+                <div class="team-lobby-box" style="text-align:center;">
+                    <div style="font-size:1.8rem;">📡</div>
+                    <p style="font-weight:700;">Connessione alla stanza <strong>${escapeHtml(pinInput)}</strong> in corso...</p>
+                </div>
+            `, `Connessione PIN ${escapeHtml(pinInput)}`);
+
+            const teamId = "team_" + Date.now() + "_" + Math.random().toString(36).slice(2, 6);
+            currentTeamDocId = teamId;
+            let joined = false;
+
+            const finalizePlayerJoin = (msg) => {
+                if (joined) return;
+                joined = true;
+                clearTimeout(timeoutId);
+                roomMode = "player";
+                currentRoomPin = pinInput;
+                currentTeamDocId = msg.teamId || teamId;
+                currentTeamName = teamNameInput;
+                currentTeamMembers = memberInputs;
+
+                const indices = Array.isArray(msg.caseIndices) && msg.caseIndices.length > 0
+                    ? msg.caseIndices.map(i => ER_CASES[i]).filter(Boolean)
+                    : generateSharedCaseOrder();
+
+                startErShift(indices);
+            };
+
+            const onLocalWelcome = (ev) => {
+                window.removeEventListener("cpia-local-welcome", onLocalWelcome);
+                finalizePlayerJoin(ev.detail || {});
+            };
+            window.addEventListener("cpia-local-welcome", onLocalWelcome);
+
+            setupLocalRoomChannel(pinInput, false);
+            if (localRoomChannel) {
+                try {
+                    localRoomChannel.postMessage({
+                        type: "join",
+                        teamId,
+                        teamName: teamNameInput,
+                        members: memberInputs
+                    });
+                } catch (e) {}
+            }
+
+            const timeoutId = setTimeout(() => {
+                window.removeEventListener("cpia-local-welcome", onLocalWelcome);
+                if (!joined) {
+                    destroyActivePeer();
+                    openJoinRoomScreen(`❌ Nessuna stanza attiva trovata con il PIN <strong>${escapeHtml(pinInput)}</strong>. Controlla che il docente abbia aperto la stanza!`);
+                }
+            }, 9000);
+
+            if (typeof Peer === "undefined") return;
+
+            try {
+                const peer = new Peer({ debug: 0 });
+                peerInstance = peer;
+
+                peer.on("open", () => {
+                    const conn = peer.connect(PEER_PREFIX + pinInput, { reliable: true });
+                    playerHostConn = conn;
+
+                    conn.on("open", () => {
+                        conn.send({
+                            type: "join",
+                            teamId,
+                            teamName: teamNameInput,
+                            members: memberInputs
+                        });
+                    });
+
+                    conn.on("data", (msg) => {
+                        if (msg && msg.type === "welcome") {
+                            window.removeEventListener("cpia-local-welcome", onLocalWelcome);
+                            finalizePlayerJoin(msg);
+                        }
+                    });
+                });
+
+                peer.on("error", () => {});
+            } catch (e) {}
+        }
+
+        function syncTeamProgress(isCompleted = false) {
+            if (roomMode !== "player") return;
+            const payload = {
+                type: "progress",
+                teamId: currentTeamDocId,
+                score: erScore,
+                currentCase: erIndex,
+                completed: isCompleted
+            };
+            if (playerHostConn && playerHostConn.open) {
+                try { playerHostConn.send(payload); } catch (e) {}
+            }
+            if (localRoomChannel) {
+                try { localRoomChannel.postMessage(payload); } catch (e) {}
+            }
+        }
+
+        function startErShift(customQueue = null) {
+            erQueue = Array.isArray(customQueue) && customQueue.length > 0
+                ? customQueue
+                : generateSharedCaseOrder();
             erIndex = 0;
             erScore = 0;
             erStreak = 0;
             erMissedCases = [];
+            prefetchErQueueVoices(erQueue, 0);
             setXrayVisual(true);
             loadErCase();
         }
@@ -2531,57 +3804,103 @@
         function loadErCase() {
             if (erIndex >= erQueue.length) {
                 playTone("ok");
-                const grade = getErFinalGrade(erScore, erQueue.length);
-                infoPanel.innerHTML = `
+                syncTeamProgress(true);
+                const maxScore = erQueue.length * 4;
+                const grade = getErFinalGrade(erScore, maxScore);
+                const todayStr = new Date().toLocaleDateString("it-IT");
+                const membersLine = roomMode === "player" && currentTeamMembers.length > 0
+                    ? `<div style="font-size:0.84rem; color:#e2e8f0; margin-top:0.2rem;">Componenti: ${escapeHtml(currentTeamMembers.join(", "))}</div>`
+                    : "";
+                renderMedicalClipboard(`
                     <div class="grade-badge-card">
-                        <div style="font-size:0.82rem; text-transform:uppercase; letter-spacing:0.6px; color:#93c5fd; font-weight:700;">Grado raggiunto</div>
+                        ${roomMode === "player" ? `<div style="font-size:0.88rem; font-weight:800; color:#fde047; margin-bottom:0.2rem;">👥 Équipe: ${escapeHtml(currentTeamName)} (PIN ${escapeHtml(currentRoomPin)})</div>${membersLine}` : ""}
+                        <div style="font-size:0.82rem; text-transform:uppercase; letter-spacing:0.6px; color:#93c5fd; font-weight:700; margin-top:0.35rem;">Referto Finale & Qualifica</div>
                         <h2 style="font-size:1.45rem; font-weight:800; margin:0.35rem 0;">${grade.title}</h2>
-                        <p style="font-size:1.05rem; font-weight:700; color:#facc15;">Punteggio finale: ${erScore} / ${erQueue.length}</p>
+                        <p style="font-size:1.05rem; font-weight:700; color:#facc15;">Punteggio turno: ${erScore} / ${maxScore} punti</p>
                         <p style="font-size:0.9rem; color:#e2e8f0; margin-top:0.35rem;">${grade.msg}</p>
                     </div>
+                    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.5rem; padding:0.25rem 0;">
+                        <span style="font-size:0.82rem; color:var(--muted); font-weight:600;">Data: ${todayStr} • Direzione Sanitaria CPIA</span>
+                        <span class="clinical-stamp">✔ TURNO VALIDATO</span>
+                    </div>
                     ${erMissedCases.length > 0 ? `
-                        <div class="info-box">
-                            <h3>📌 Argomenti da ripassare</h3>
-                            <p>${erMissedCases.join(", ")}</p>
+                        <div class="record-section">
+                            <div class="record-section-title"><span>📌 Note di Revisione Clinica</span></div>
+                            <div class="record-section-body">
+                                <p style="font-size:0.95rem;">Argomenti da ripassare: <strong>${erMissedCases.join(", ")}</strong></p>
+                            </div>
                         </div>
                     ` : ""}
-                    <button type="button" class="next-btn" onclick="startErShift()">Nuovo turno con altri pazienti 🔄</button>
-                `;
+                    <div style="display:flex; gap:0.55rem; flex-wrap:wrap;">
+                        <button type="button" class="secondary-btn" style="flex:1;" onclick="window.print()">🖨️ Stampa / Salva Referto PDF</button>
+                        ${roomMode === "player"
+                            ? `<button type="button" class="next-btn" style="flex:1;" onclick="renderErIntroScreen()">Torna alla schermata Pronto Soccorso 🏥</button>`
+                            : `<button type="button" class="next-btn" style="flex:1;" onclick="startErShift()">Nuovo turno 🔄</button>`
+                        }
+                    </div>
+                `, "Referto di Dimissione");
                 return;
             }
             const c = erQueue[erIndex];
             erStep = "triage";
-            erHintUsed = false;
+            erCasePerfect = true;
+            erLocationFirstTry = true;
             resetHotspotStates();
             setXrayVisual(true);
-            playTone("beep");
+            playTone(c.triage === "rosso" ? "alarm" : "beep");
+            syncTeamProgress(false);
 
-            infoPanel.innerHTML = `
+            const maxScore = erQueue.length * 4;
+            const verbaleNum = `PS-${2026}-${104 + erIndex}`;
+            const isRedCase = c.triage === "rosso";
+            prefetchErQueueVoices(erQueue, erIndex);
+            renderMedicalClipboard(`
                 <div class="er-status-bar">
-                    <span>Paziente ${erIndex + 1} di ${erQueue.length}</span>
-                    <span>Punti: ${erScore} • Serie: ${erStreak} 🔥</span>
+                    <span>Verbale ${verbaleNum} • Paziente ${erIndex + 1}/${erQueue.length}</span>
+                    <span id="er-score-display">Punti: ${erScore}/${maxScore} • Serie: ${erStreak} 🔥</span>
                 </div>
-                <div class="patient-card">
-                    <div class="patient-header">
-                        <div class="patient-avatar">${c.avatar}</div>
-                        <div style="flex:1;">
-                            <span class="urgency-tag" style="background:#334155; color:#fff;">⏳ In attesa di Triage</span>
-                            <h3 style="font-size:1.1rem; font-weight:800;">${c.patient}</h3>
-                        </div>
-                        <button type="button" class="speak-btn" onclick="speakItalian('${c.story.replace(/'/g, "\\'")}')">🔊 Ascolta</button>
+                <div class="record-section">
+                    <div class="record-section-title">
+                        <span>1. Anagrafica & Anamnesi</span>
+                        <span>${roomMode === "player" ? `Équipe: ${escapeHtml(currentTeamName)}` : "Turno Singolo"}</span>
                     </div>
-                    <p class="patient-symptom">"${c.story}"</p>
+                    <div class="record-section-body" style="padding:0.65rem;">
+                        <div class="patient-card" style="border:none; padding:0.35rem;">
+                            <div class="patient-header">
+                                <div class="patient-avatar">${c.avatar}</div>
+                                <div style="flex:1;">
+                                    <span class="urgency-tag" style="background:#334155; color:#fff;">⏳ In attesa di Triage</span>
+                                    <h3 style="font-size:1.08rem; font-weight:800;">${c.patient}</h3>
+                                </div>
+                                <button type="button" class="speak-btn" onclick="speakItalian(erQueue[erIndex].story, erQueue[erIndex].gender || 'neutral', this)">🔊 Ascolta</button>
+                            </div>
+                            <p class="patient-symptom">"${c.story}"</p>
+                        </div>
+                    </div>
                 </div>
 
-                <div id="er-step-box" class="feedback-box">
-                    <strong>Fase 1 • Assegna il Codice Triage:</strong> quale priorità ha questo paziente?
-                    <div class="triage-choice-grid">
-                        <button type="button" class="triage-pick-btn pick-rosso" onclick="chooseErTriage('rosso')">🔴 Codice Rosso<br><span style="font-weight:500; font-size:0.76rem;">Emergenza grave</span></button>
-                        <button type="button" class="triage-pick-btn pick-giallo" onclick="chooseErTriage('giallo')">🟡 Codice Giallo<br><span style="font-weight:500; font-size:0.76rem;">Sospetta frattura</span></button>
-                        <button type="button" class="triage-pick-btn pick-verde" onclick="chooseErTriage('verde')">🟢 Codice Verde<br><span style="font-weight:500; font-size:0.76rem;">Trauma muscolare lieve</span></button>
+                <div class="record-section">
+                    <div class="record-section-title"><span>2. Iter Diagnostico & Terapeutico</span></div>
+                    <div class="record-section-body" id="er-clinical-body" style="display:flex; flex-direction:column; gap:0.75rem;">
+                        <div id="er-step-box" class="feedback-box">
+                            <strong>Fase 1 • Assegna il Codice Triage:</strong> leggi i sintomi del paziente e scegli la priorità:
+                            <div class="triage-choice-grid">
+                                <button type="button" class="triage-pick-btn pick-rosso" onclick="chooseErTriage('rosso')">🔴 Codice Rosso<br><span style="font-weight:500; font-size:0.76rem;">Emergenza grave</span></button>
+                                <button type="button" class="triage-pick-btn pick-giallo" onclick="chooseErTriage('giallo')">🟡 Codice Giallo<br><span style="font-weight:500; font-size:0.76rem;">Sospetta frattura</span></button>
+                                <button type="button" class="triage-pick-btn pick-verde" onclick="chooseErTriage('verde')">🟢 Codice Verde<br><span style="font-weight:500; font-size:0.76rem;">Trauma muscolare lieve</span></button>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            `;
+            `, `Verbale ${verbaleNum}`, isRedCase);
+        }
+
+        function updateErScoreDisplay() {
+            const el = document.getElementById("er-score-display");
+            if (el) {
+                const maxScore = erQueue.length * 4;
+                el.textContent = `Punti: ${erScore}/${maxScore} • Serie: ${erStreak} 🔥`;
+            }
         }
 
         function chooseErTriage(chosen) {
@@ -2589,6 +3908,13 @@
             const c = erQueue[erIndex];
             const tr = TRIAGE_INFO[c.triage];
             const ok = chosen === c.triage;
+            if (ok) {
+                erScore++;
+            } else {
+                erCasePerfect = false;
+            }
+            updateErScoreDisplay();
+            syncTeamProgress(false);
             playTone(ok ? "ok" : "err");
 
             if (currentLayer !== c.layer) switchAnatomyLayer(c.layer);
@@ -2605,9 +3931,10 @@
             }
 
             const stepBox = document.getElementById("er-step-box");
+            const clinicalBody = document.getElementById("er-clinical-body") || infoPanel;
             stepBox.className = ok ? "feedback-box success" : "feedback-box error";
             stepBox.innerHTML = `
-                ${ok ? "✅ Triage corretto!" : `ℹ️ Il codice corretto è <strong>${tr.label}</strong>.`} ${tr.explain}
+                ${ok ? "✅ Triage corretto! (+1 punto)" : `ℹ️ Il codice corretto è <strong>${tr.label}</strong> (0 punti).`} ${tr.explain}
                 <div style="margin-top:0.55rem; color:#0f172a;">
                     <strong>Fase 2 • Esame sullo scanner:</strong> clicca sull'immagine anatomica il punto interessato (Scheda <strong>${c.layer === "bones" ? "🦴 Ossa" : "💪 Muscoli"}</strong>).
                 </div>
@@ -2615,89 +3942,123 @@
 
             const helpWrap = document.createElement("div");
             helpWrap.style.cssText = "display:flex; gap:0.5rem; flex-wrap:wrap;";
-            helpWrap.innerHTML = `<button type="button" class="secondary-btn" onclick="document.getElementById('er-step-box').innerHTML += '<div style=margin-top:0.4rem>💡 <strong>Suggerimento:</strong> ${c.hint.replace(/'/g, "\\'")}</div>'; this.disabled=true;">💡 Suggerimento anatomico</button>`;
-            infoPanel.appendChild(helpWrap);
+            const helpBtn = document.createElement("button");
+            helpBtn.type = "button";
+            helpBtn.className = "secondary-btn";
+            helpBtn.textContent = "💡 Suggerimento anatomico";
+            helpBtn.onclick = () => {
+                const hintEl = document.createElement("div");
+                hintEl.style.marginTop = "0.4rem";
+                hintEl.innerHTML = `💡 <strong>Suggerimento:</strong> ${escapeHtml(c.hint)}`;
+                stepBox.appendChild(hintEl);
+                helpBtn.disabled = true;
+            };
+            helpWrap.appendChild(helpBtn);
+            clinicalBody.appendChild(helpWrap);
         }
 
         function checkErLocation(item) {
             const c = erQueue[erIndex];
             const fb = document.getElementById("er-step-box");
+            const clinicalBody = document.getElementById("er-clinical-body") || infoPanel;
             const el = document.querySelector(`.hotspot[data-id="${item.id}"]`);
             if (item.id === c.targetId) {
                 playTone("ok");
                 erStep = "question";
                 if (el) el.classList.add("correct");
+                let locMsg = `✅ Esatto! Hai individuato: <strong>${item.name}</strong> (+1 punto).`;
+                if (erLocationFirstTry) {
+                    erScore++;
+                } else {
+                    locMsg = `✅ Individuato: <strong>${item.name}</strong> (0 punti perché non al primo tentativo).`;
+                }
+                updateErScoreDisplay();
+                syncTeamProgress(false);
                 fb.className = "feedback-box success";
-                fb.innerHTML = `✅ Esatto! Hai individuato: <strong>${item.name}</strong>. Ora rispondi alla domanda di anatomia:`;
+                fb.innerHTML = `${locMsg} Ora rispondi alla domanda di anatomia:`;
                 const shuffledQ = shuffleOptions(c.options, c.correctOpt);
-                erCurrentCorrectOpt = shuffledQ.correctIndex;
                 const qDiv = document.createElement("div");
                 qDiv.className = "quiz-options";
                 qDiv.id = "er-anatomy-q";
                 qDiv.innerHTML = `
                     <p style="font-weight:700; margin-top:0.35rem;">Fase 3 • ${c.question}</p>
                     ${shuffledQ.options.map((opt, idx) => `
-                        <button type="button" class="option-btn" onclick="answerErQuestion(${idx}, this)">${opt}</button>
+                        <button type="button" class="option-btn" data-correct="${idx === shuffledQ.correctIndex ? "1" : "0"}" onclick="answerErQuestion(this)">${opt}</button>
                     `).join("")}
                 `;
-                infoPanel.appendChild(qDiv);
+                clinicalBody.appendChild(qDiv);
             } else {
                 playTone("err");
-                erStreak = 0;
+                erLocationFirstTry = false;
+                erCasePerfect = false;
                 if (el) el.classList.add("wrong");
                 fb.className = "feedback-box error";
                 fb.innerHTML = `❌ Non è <strong>${item.name}</strong>. Riprova osservando bene la zona descritta dal paziente!`;
             }
         }
 
-        function answerErQuestion(idx, btn) {
-            if (erStep !== "question") return;
+        function answerErQuestion(btn) {
+            if (erStep !== "question" || !btn) return;
             erStep = "firstaid";
             const c = erQueue[erIndex];
+            const clinicalBody = document.getElementById("er-clinical-body") || infoPanel;
             const qBox = document.getElementById("er-anatomy-q");
             const buttons = qBox.querySelectorAll(".option-btn");
-            buttons.forEach((b, i) => {
+            const anatOk = btn.dataset.correct === "1";
+
+            buttons.forEach(b => {
                 b.disabled = true;
-                if (i === erCurrentCorrectOpt) b.classList.add("correct");
-                else if (i === idx) b.classList.add("wrong");
+                if (b.dataset.correct === "1") b.classList.add("correct");
+                else if (b === btn) b.classList.add("wrong");
             });
 
-            const anatOk = idx === erCurrentCorrectOpt;
+            if (anatOk) {
+                erScore++;
+            } else {
+                erCasePerfect = false;
+            }
+            updateErScoreDisplay();
+            syncTeamProgress(false);
             playTone(anatOk ? "ok" : "err");
-            btn.dataset.anatOk = anatOk ? "1" : "0";
 
             const shuffledFa = shuffleOptions(c.firstAidOptions, c.firstAidCorrect);
-            erCurrentFirstAidCorrect = shuffledFa.correctIndex;
 
             const faDiv = document.createElement("div");
             faDiv.className = "quiz-options";
             faDiv.id = "er-firstaid-q";
             faDiv.innerHTML = `
-                <p style="font-weight:700; margin-top:0.45rem; color:#0369a1;">Fase 4 • Primo Soccorso: ${c.firstAidQuestion}</p>
+                <p style="font-weight:700; margin-top:0.45rem; color:#0369a1;">Fase 4 • Protocollo Primo Soccorso: ${c.firstAidQuestion}</p>
                 ${shuffledFa.options.map((opt, i) => `
-                    <button type="button" class="option-btn" onclick="answerErFirstAid(${i}, ${anatOk})">${opt}</button>
+                    <button type="button" class="option-btn" data-correct="${i === shuffledFa.correctIndex ? "1" : "0"}" onclick="answerErFirstAid(this, ${anatOk})">${opt}</button>
                 `).join("")}
             `;
-            infoPanel.appendChild(faDiv);
+            clinicalBody.appendChild(faDiv);
         }
 
-        function answerErFirstAid(idx, anatOk) {
-            if (erStep !== "firstaid") return;
+        function answerErFirstAid(btn, anatOk) {
+            if (erStep !== "firstaid" || !btn) return;
             erStep = "done";
             const c = erQueue[erIndex];
+            const clinicalBody = document.getElementById("er-clinical-body") || infoPanel;
             const faBox = document.getElementById("er-firstaid-q");
             const buttons = faBox.querySelectorAll(".option-btn");
-            buttons.forEach((b, i) => {
+            const faOk = btn.dataset.correct === "1";
+
+            buttons.forEach(b => {
                 b.disabled = true;
-                if (i === erCurrentFirstAidCorrect) b.classList.add("correct");
-                else if (i === idx) b.classList.add("wrong");
+                if (b.dataset.correct === "1") b.classList.add("correct");
+                else if (b === btn) b.classList.add("wrong");
             });
 
-            const faOk = idx === erCurrentFirstAidCorrect;
             playTone(faOk ? "ok" : "err");
 
-            if (anatOk && faOk) {
+            if (faOk) {
                 erScore++;
+            } else {
+                erCasePerfect = false;
+            }
+
+            if (erCasePerfect) {
                 erStreak++;
             } else {
                 erStreak = 0;
@@ -2705,23 +4066,29 @@
                 if (itemObj && !erMissedCases.includes(itemObj.name)) erMissedCases.push(itemObj.name);
             }
 
+            updateErScoreDisplay();
+            syncTeamProgress(false);
+
             const next = document.createElement("button");
             next.type = "button";
             next.className = "next-btn";
-            next.textContent = erIndex + 1 < erQueue.length ? "Prossimo paziente ➡️" : "Vedi Grado Finale 🏆";
+            next.textContent = erIndex + 1 < erQueue.length ? "Prossimo paziente ➡️" : "Chiudi Cartella & Vedi Referto 🏆";
             next.onclick = () => { erIndex++; loadErCase(); };
-            infoPanel.appendChild(next);
+            clinicalBody.appendChild(next);
         }
 
         /* ================= MODALITÀ QUIZ ================= */
         function startQuizSession() {
+            infoPanel.classList.remove("clipboard-mode", "red-alert");
             quizSessionQuestions = [...QUIZ_QUESTIONS].sort(() => Math.random() - 0.5).slice(0, 8);
             quizIndex = 0;
             quizScore = 0;
+            quizSessionQuestions.slice(0, 3).forEach(item => prefetchItalianTts(item.q, "neutral"));
             renderQuizPanel();
         }
 
         function renderQuizPanel() {
+            infoPanel.classList.remove("clipboard-mode", "red-alert");
             if (quizSessionQuestions.length === 0) {
                 startQuizSession();
                 return;
@@ -2742,6 +4109,7 @@
             const shuffledQuiz = shuffleOptions(q.opts, q.ans);
             quizCurrentAns = shuffledQuiz.correctIndex;
             quizAnswered = false;
+            prefetchItalianTts(q.q, "neutral");
             infoPanel.innerHTML = `
                 <div class="er-status-bar">
                     <span>Domanda ${quizIndex + 1} di ${quizSessionQuestions.length}</span>
@@ -2749,7 +4117,7 @@
                 </div>
                 <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:0.5rem;">
                     <h2 style="font-size:1.22rem; font-weight:800;">${q.q}</h2>
-                    <button type="button" class="speak-btn" onclick="speakItalian('${q.q.replace(/'/g, "\\'")}')">🔊</button>
+                    <button type="button" class="speak-btn" onclick="speakItalian(quizSessionQuestions[quizIndex].q, 'neutral', this)">🔊</button>
                 </div>
                 <div class="quiz-options">
                     ${shuffledQuiz.options.map((opt, idx) => `
@@ -2817,6 +4185,7 @@
         renderHotspots();
         renderExplorePanel();
         loadAnatomyPlate("bones", "front");
+        prefetchAllErVoices();
     </script>
 </body>
 </html>
