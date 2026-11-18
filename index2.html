@@ -554,6 +554,147 @@
             gap: 1rem;
         }
 
+        /* ================= STILE CARTELLETTA CLINICA OSPEDALIERA (PRONTO SOCCORSO) ================= */
+        .info-panel.clipboard-mode {
+            position: relative;
+            background-color: #6f4222;
+            background-image:
+                radial-gradient(rgba(255, 235, 205, 0.08) 1px, transparent 1px),
+                radial-gradient(rgba(38, 19, 6, 0.18) 1px, transparent 1px),
+                repeating-linear-gradient(
+                    90deg,
+                    rgba(255, 255, 255, 0.025) 0px,
+                    rgba(255, 255, 255, 0.025) 1px,
+                    transparent 1px,
+                    transparent 4px
+                ),
+                linear-gradient(145deg, #8b5630 0%, #6d3f1f 48%, #542f15 100%);
+            background-size: 6px 6px, 6px 6px, 100% 100%, 100% 100%;
+            background-position: 0 0, 3px 3px, 0 0, 0 0;
+            border: 3px solid #42220d;
+            border-radius: 22px;
+            padding: 3.35rem 1.05rem 1.15rem;
+            box-shadow:
+                inset 0 2px 3px rgba(255, 224, 185, 0.25),
+                inset 0 -4px 10px rgba(28, 13, 4, 0.55),
+                0 14px 28px rgba(15, 23, 42, 0.24);
+        }
+
+        .info-panel.clipboard-mode::before {
+            content: "";
+            position: absolute;
+            inset: 7px;
+            border: 1.5px dashed rgba(245, 208, 169, 0.35);
+            border-radius: 16px;
+            pointer-events: none;
+        }
+
+        .clipboard-metal-clip {
+            position: absolute;
+            top: -16px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 176px;
+            height: 68px;
+            z-index: 6;
+            pointer-events: none;
+            filter: drop-shadow(0 6px 7px rgba(0, 0, 0, 0.42));
+        }
+
+        .medical-sheet {
+            position: relative;
+            background: #fffdf9;
+            border: 1px solid #cbd5e1;
+            border-top: 5px solid #0f172a;
+            border-radius: 4px 4px 10px 10px;
+            padding: 1.25rem 1.15rem 1.15rem;
+            box-shadow:
+                0 1px 0 #e2e8f0,
+                0 5px 0 -2px #f8fafc,
+                0 6px 0 -2px #cbd5e1,
+                0 10px 18px rgba(15, 23, 42, 0.24);
+            display: flex;
+            flex-direction: column;
+            gap: 0.9rem;
+        }
+
+        .medical-sheet-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 0.65rem;
+            padding-bottom: 0.65rem;
+            border-bottom: 2px solid #0f172a;
+            flex-wrap: wrap;
+        }
+
+        .hospital-emblem {
+            display: flex;
+            align-items: center;
+            gap: 0.55rem;
+        }
+
+        .hospital-cross {
+            width: 30px;
+            height: 30px;
+            border-radius: 7px;
+            background: #dc2626;
+            color: #ffffff;
+            font-weight: 900;
+            font-size: 1.15rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .sheet-meta-box {
+            text-align: right;
+            font-size: 0.74rem;
+            color: #475569;
+            font-weight: 700;
+            line-height: 1.35;
+        }
+
+        .record-section {
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            background: #ffffff;
+            overflow: hidden;
+        }
+
+        .record-section-title {
+            background: #f1f5f9;
+            border-bottom: 1px solid #cbd5e1;
+            padding: 0.35rem 0.75rem;
+            font-size: 0.74rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #334155;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .record-section-body {
+            padding: 0.75rem;
+        }
+
+        .clinical-stamp {
+            display: inline-block;
+            border: 2.5px solid #16a34a;
+            color: #15803d;
+            font-weight: 900;
+            font-size: 0.78rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            padding: 0.25rem 0.65rem;
+            border-radius: 6px;
+            transform: rotate(-3deg);
+            background: rgba(220, 252, 231, 0.55);
+        }
+
         .bone-header {
             display: flex;
             justify-content: space-between;
@@ -697,9 +838,9 @@
         }
 
         .patient-card {
-            border-radius: 14px;
-            padding: 1rem;
-            border: 2px solid var(--border);
+            border-radius: 10px;
+            padding: 0.9rem;
+            border: 1.5px solid var(--border);
             background: #ffffff;
         }
 
@@ -877,12 +1018,12 @@
 
         .team-lobby-box {
             background: #ffffff;
-            border: 2px solid var(--border);
-            border-radius: 14px;
-            padding: 1.15rem;
+            border: 1.5px solid var(--border);
+            border-radius: 12px;
+            padding: 1rem;
             display: flex;
             flex-direction: column;
-            gap: 0.85rem;
+            gap: 0.8rem;
         }
 
         .pin-display-banner {
@@ -943,6 +1084,68 @@
         .leaderboard-row.top-team {
             background: #fefce8;
             border-color: #eab308;
+        }
+
+        /* ================= MONITOR ECG LIVE (CLASSIFICA SQUADRE) ================= */
+        .ecg-monitor-card {
+            background: #020617;
+            border: 2px solid #1e293b;
+            border-radius: 12px;
+            padding: 0.75rem 0.85rem;
+            box-shadow: inset 0 0 24px rgba(16, 185, 129, 0.14);
+            color: #e2e8f0;
+        }
+
+        .ecg-monitor-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.45rem;
+            font-size: 0.78rem;
+            font-weight: 800;
+            letter-spacing: 0.4px;
+            text-transform: uppercase;
+            color: #34d399;
+        }
+
+        .ecg-live-dot {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #10b981;
+            box-shadow: 0 0 8px #10b981;
+            margin-right: 5px;
+            animation: ecgPulse 1.2s infinite;
+        }
+
+        @keyframes ecgPulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.35; transform: scale(0.8); }
+        }
+
+        .ecg-svg {
+            width: 100%;
+            height: 170px;
+            display: block;
+            border-radius: 8px;
+            background: #030712;
+            border: 1px solid rgba(52, 211, 153, 0.25);
+        }
+
+        .ecg-legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem 0.9rem;
+            margin-top: 0.55rem;
+            font-size: 0.78rem;
+            font-weight: 700;
+        }
+
+        .ecg-legend-item {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
         }
 
         @media print {
@@ -1006,7 +1209,7 @@
             </div>
 
             <div class="anatomy-stage" id="anatomy-stage">
-                <div class="loading-xray" id="loading-xray">
+                <div class="loading-xray active" id="loading-xray">
                     <div style="font-size: 1.8rem;">🔬</div>
                     <div id="loading-text">Caricamento tavola anatomica...</div>
                 </div>
@@ -1422,6 +1625,7 @@
         const ER_CASES = [
             {
                 patient: "Marco, 28 anni (Ciclista)",
+                gender: "male",
                 avatar: "🚴",
                 triage: "giallo",
                 layer: "bones",
@@ -1445,6 +1649,7 @@
             },
             {
                 patient: "Elena, 67 anni",
+                gender: "female",
                 avatar: "👵",
                 triage: "rosso",
                 layer: "bones",
@@ -1468,6 +1673,7 @@
             },
             {
                 patient: "Ahmed, 34 anni (Muratore)",
+                gender: "male",
                 avatar: "👷",
                 triage: "rosso",
                 layer: "bones",
@@ -1491,6 +1697,7 @@
             },
             {
                 patient: "Sofia, 19 anni (Calciatrice)",
+                gender: "female",
                 avatar: "⚽",
                 triage: "verde",
                 layer: "muscles",
@@ -1514,6 +1721,7 @@
             },
             {
                 patient: "Carlos, 41 anni (Traslocatore)",
+                gender: "male",
                 avatar: "📦",
                 triage: "verde",
                 layer: "muscles",
@@ -1537,6 +1745,7 @@
             },
             {
                 patient: "Fatima, 24 anni (Pattinatrice)",
+                gender: "female",
                 avatar: "⛸️",
                 triage: "giallo",
                 layer: "bones",
@@ -1560,6 +1769,7 @@
             },
             {
                 patient: "Luca, 31 anni",
+                gender: "male",
                 avatar: "🛹",
                 triage: "giallo",
                 layer: "bones",
@@ -1583,6 +1793,7 @@
             },
             {
                 patient: "Nadia, 38 anni (Podista)",
+                gender: "female",
                 avatar: "🏃‍♀️",
                 triage: "verde",
                 layer: "muscles",
@@ -1606,6 +1817,7 @@
             },
             {
                 patient: "Davide, 22 anni (Pugile dilettante)",
+                gender: "male",
                 avatar: "🥊",
                 triage: "giallo",
                 layer: "bones",
@@ -1629,6 +1841,7 @@
             },
             {
                 patient: "Giulia, 45 anni (Impiegata)",
+                gender: "female",
                 avatar: "💻",
                 triage: "verde",
                 layer: "muscles",
@@ -1652,6 +1865,7 @@
             },
             {
                 patient: "Matteo, 30 anni (Palestra)",
+                gender: "male",
                 avatar: "🏋️",
                 triage: "verde",
                 layer: "muscles",
@@ -1675,6 +1889,7 @@
             },
             {
                 patient: "Chiara, 52 anni (Escursionista)",
+                gender: "female",
                 avatar: "🥾",
                 triage: "verde",
                 layer: "muscles",
@@ -1825,17 +2040,16 @@
         let erCurrentCorrectOpt = 0;
         let erCurrentFirstAidCorrect = 0;
 
-        /* ================= STATO STANZE MULTIGIOCATORE A SQUADRE (PEERJS) ================= */
-        const PEER_PREFIX = "cpia-ps-ortopedia-";
+        const PEER_PREFIX = "cpia-ps-ortopedico-";
         let peerInstance = null;
-        let hostSharedCaseIndices = [];
         let playerHostConn = null;
-
-        let roomMode = "none"; // "none" | "host" | "player"
+        let localRoomChannel = null;
+        let roomMode = "none";
         let currentRoomPin = "";
         let currentTeamDocId = "";
         let currentTeamName = "";
         let currentTeamMembers = [];
+        let hostSharedCaseIndices = [];
         let latestRoomTeams = [];
 
         let quizSessionQuestions = [];
@@ -1961,11 +2175,9 @@
         function renderFallbackAnatomySvg(layer, view) {
             const isBones = layer === "bones";
             const isSide = view === "right" || view === "left";
-
             const boneMain = "#f1ebd9";
             const boneShade = "#d6ccb4";
             const boneStroke = "#8c7f65";
-
             const muscMain = "#dc2626";
             const muscDark = "#991b1b";
             const muscLight = "#ef4444";
@@ -1978,35 +2190,16 @@
                         <g transform="translate(50,0) scale(${dir},1) translate(-50,0)" stroke="${boneStroke}" stroke-width="0.28" stroke-linejoin="round" stroke-linecap="round">
                             <path d="M 45.2 6.8 C 45.2 3.4, 53.5 3.0, 54.4 6.6 C 54.8 8.0, 54.2 9.4, 53.5 10.2 L 50.8 10.4 L 49.5 9.8 C 47.2 10.2, 45.2 8.8, 45.2 6.8 Z" fill="${boneMain}" />
                             <ellipse cx="52.9" cy="7.2" rx="0.9" ry="1.2" fill="#1e293b" />
-                            <path d="M 51.0 8.2 L 54.2 8.4 L 53.8 10.3 L 51.2 10.2 Z" fill="${boneShade}" />
-                            <rect x="52.4" y="10.2" width="1.4" height="0.6" fill="#ffffff" stroke="none" />
-                            <rect x="52.2" y="10.9" width="1.4" height="0.6" fill="#ffffff" stroke="none" />
                             <path d="M 49.4 9.6 L 50.4 12.2 L 53.6 12.8 L 53.8 11.4 L 51.0 11.2 L 50.3 9.5 Z" fill="${boneMain}" />
                             <path d="M 47.6 10.4 Q 48.4 14.0 47.4 17.5 Q 45.4 24.5 47.6 32.0 Q 48.6 36.5 47.4 41.0 L 46.2 45.5 L 48.0 45.8 L 49.4 41.2 Q 50.4 36.5 49.4 32.0 Q 47.4 24.5 49.2 17.5 Q 50.0 14.0 49.2 10.4 Z" fill="${boneShade}" />
-                            <path d="M 46.0 18.2 L 49.2 18.6 L 47.2 25.0 Z" fill="${boneMain}" />
-                            <path d="M 49.2 17.6 Q 51.5 17.0 53.8 18.0" fill="none" stroke="${boneMain}" stroke-width="1.0" />
-                            <path d="M 53.6 18.2 L 54.6 18.4 L 54.2 26.8 L 53.2 26.6 Z" fill="${boneMain}" />
-                            <g fill="none" stroke="${boneMain}" stroke-width="0.95">
-                                <path d="M 47.5 18.8 Q 51.2 19.2 53.8 19.0" />
-                                <path d="M 47.0 20.6 Q 51.5 21.2 54.0 20.8" />
-                                <path d="M 46.6 22.4 Q 51.8 23.2 54.0 22.6" />
-                                <path d="M 46.5 24.2 Q 52.0 25.2 53.8 24.4" />
-                                <path d="M 46.8 26.0 Q 51.8 27.0 53.5 26.2" />
-                                <path d="M 47.2 27.8 Q 51.2 28.8 52.6 27.8" />
-                                <path d="M 47.6 29.6 Q 50.4 30.4 51.4 29.5" />
-                            </g>
                             <path d="M 46.8 40.5 C 48.5 39.2, 53.2 40.2, 53.6 43.2 C 53.8 45.5, 52.4 48.6, 50.2 48.8 C 48.0 49.0, 46.4 46.5, 46.8 40.5 Z" fill="${boneMain}" />
-                            <circle cx="50.0" cy="45.6" r="1.4" fill="${boneShade}" />
                             <path d="M 49.0 46.2 L 51.2 46.2 L 51.4 68.2 L 48.8 68.2 Z" fill="${boneMain}" />
-                            <ellipse cx="50.2" cy="68.4" rx="2.0" ry="1.4" fill="${boneShade}" />
                             <ellipse cx="52.3" cy="69.2" rx="0.9" ry="1.4" fill="#ffffff" />
                             <path d="M 49.8 70.2 L 51.8 70.2 L 51.4 91.2 L 49.8 91.2 Z" fill="${boneMain}" />
                             <path d="M 48.2 71.2 L 49.1 71.2 L 48.9 91.4 L 48.1 91.4 Z" fill="${boneShade}" />
                             <path d="M 47.4 91.5 L 51.5 91.5 L 56.4 94.6 L 56.4 95.8 L 47.2 95.8 Z" fill="${boneMain}" />
                             <path d="M 48.6 18.8 L 50.6 18.8 L 50.4 33.0 L 48.6 33.0 Z" fill="${boneMain}" />
                             <path d="M 49.8 33.4 L 51.0 33.4 L 52.2 45.6 L 51.1 45.6 Z" fill="${boneMain}" />
-                            <path d="M 48.6 33.2 L 49.6 33.2 L 50.6 45.6 L 49.7 45.6 Z" fill="${boneShade}" />
-                            <path d="M 50.2 45.8 L 52.4 45.8 L 53.2 51.5 L 51.0 51.5 Z" fill="${boneMain}" />
                         </g>
                     `;
                 } else {
@@ -2014,126 +2207,32 @@
                     fallbackSvg.innerHTML = `
                         <g stroke="${boneStroke}" stroke-width="0.28" stroke-linejoin="round" stroke-linecap="round">
                             <path d="M 45.4 6.5 C 45.4 3.0, 54.6 3.0, 54.6 6.5 C 54.6 8.6, 53.4 10.2, 52.4 10.8 L 47.6 10.8 C 46.6 10.2, 45.4 8.6, 45.4 6.5 Z" fill="${boneMain}" />
-                            ${isBack ? `
-                                <path d="M 50.0 3.3 L 50.0 7.2 M 46.6 8.8 L 50.0 7.2 L 53.4 8.8" fill="none" stroke="${boneStroke}" stroke-width="0.25" />
-                            ` : `
-                                <ellipse cx="48.1" cy="7.2" rx="1.2" ry="1.1" fill="#1e293b" />
-                                <ellipse cx="51.9" cy="7.2" rx="1.2" ry="1.1" fill="#1e293b" />
-                                <path d="M 50.0 7.8 L 49.3 9.5 L 50.7 9.5 Z" fill="#1e293b" />
-                                <rect x="48.3" y="10.2" width="3.4" height="0.7" rx="0.2" fill="#ffffff" stroke="none" />
-                                <path d="M 47.2 9.6 L 47.7 12.6 Q 50.0 13.8 52.3 12.6 L 52.8 9.6 L 51.8 11.2 L 48.2 11.2 Z" fill="${boneMain}" />
-                                <rect x="48.5" y="11.0" width="3.0" height="0.6" rx="0.2" fill="#ffffff" stroke="none" />
-                            `}
+                            ${!isBack ? `<path d="M 47.2 9.6 L 47.7 12.6 Q 50.0 13.8 52.3 12.6 L 52.8 9.6 L 51.8 11.2 L 48.2 11.2 Z" fill="${boneMain}" />` : ""}
                             <rect x="48.7" y="13.6" width="2.6" height="27.8" rx="0.8" fill="${boneShade}" />
-                            <g fill="${boneMain}">
-                                ${[14.2,15.6,17.0,18.5,20.0,21.5,23.0,24.5,26.0,27.5,29.0,30.5,32.2,34.0,35.8,37.6,39.4].map(vy => `
-                                    <rect x="48.3" y="${vy}" width="3.4" height="1.1" rx="0.35" />
-                                `).join("")}
-                            </g>
-                            ${isBack ? `
-                                <path d="M 45.6 18.2 L 39.2 18.8 L 44.6 25.4 Z" fill="${boneMain}" />
-                                <path d="M 54.4 18.2 L 60.8 18.8 L 55.4 25.4 Z" fill="${boneMain}" />
-                            ` : `
-                                <path d="M 49.0 17.6 Q 43.5 16.6 37.2 18.0" fill="none" stroke="${boneMain}" stroke-width="1.15" />
-                                <path d="M 51.0 17.6 Q 56.5 16.6 62.8 18.0" fill="none" stroke="${boneMain}" stroke-width="1.15" />
-                            `}
-                            <g fill="none" stroke="${boneMain}" stroke-width="0.9">
-                                <path d="M 48.5 18.6 C 43.2 18.4, 42.4 20.6, 48.6 20.4" />
-                                <path d="M 51.5 18.6 C 56.8 18.4, 57.6 20.6, 51.4 20.4" />
-                                <path d="M 48.5 20.4 C 42.2 20.2, 41.4 22.8, 48.6 22.4" />
-                                <path d="M 51.5 20.4 C 57.8 20.2, 58.6 22.8, 51.4 22.4" />
-                                <path d="M 48.5 22.2 C 41.4 22.2, 41.0 25.2, 48.6 24.4" />
-                                <path d="M 51.5 22.2 C 58.6 22.2, 59.0 25.2, 51.4 24.4" />
-                                <path d="M 48.5 24.0 C 41.2 24.2, 41.4 27.6, 48.8 26.4" />
-                                <path d="M 51.5 24.0 C 58.8 24.2, 58.6 27.6, 51.2 26.4" />
-                                <path d="M 48.5 25.8 C 41.8 26.4, 42.6 29.8, 49.0 28.0" />
-                                <path d="M 51.5 25.8 C 58.2 26.4, 57.4 29.8, 51.0 28.0" />
-                                <path d="M 48.5 27.6 C 42.8 28.4, 44.0 31.2, 49.2 29.4" />
-                                <path d="M 51.5 27.6 C 57.2 28.4, 56.0 31.2, 50.8 29.4" />
-                            </g>
-                            ${!isBack ? `
-                                <path d="M 48.9 17.8 L 51.1 17.8 L 50.8 27.6 L 50.0 29.0 L 49.2 27.6 Z" fill="${boneMain}" />
-                            ` : ""}
-                            <path d="M 48.2 41.0 L 51.8 41.0 L 51.0 46.2 L 50.0 47.4 L 49.0 46.2 Z" fill="${boneShade}" />
                             <path d="M 48.2 41.4 C 44.2 39.6, 40.4 41.2, 41.0 44.8 C 41.4 47.2, 43.2 49.4, 45.6 49.2 C 47.4 49.0, 48.4 47.2, 48.8 45.8 Z" fill="${boneMain}" />
                             <path d="M 51.8 41.4 C 55.8 39.6, 59.6 41.2, 59.0 44.8 C 58.6 47.2, 56.8 49.4, 54.4 49.2 C 52.6 49.0, 51.6 47.2, 51.2 45.8 Z" fill="${boneMain}" />
                             <path d="M 36.2 18.6 L 38.0 18.8 L 35.4 33.0 L 33.8 32.8 Z" fill="${boneMain}" />
                             <path d="M 63.8 18.6 L 62.0 18.8 L 64.6 33.0 L 66.2 32.8 Z" fill="${boneMain}" />
-                            <path d="M 33.6 33.4 L 34.4 33.5 L 31.6 45.6 L 30.7 45.5 Z" fill="${boneMain}" />
-                            <path d="M 34.8 33.4 L 35.6 33.5 L 33.4 45.6 L 32.6 45.5 Z" fill="${boneShade}" />
-                            <path d="M 66.4 33.4 L 65.6 33.5 L 68.4 45.6 L 69.3 45.5 Z" fill="${boneMain}" />
-                            <path d="M 65.2 33.4 L 64.4 33.5 L 66.6 45.6 L 67.4 45.5 Z" fill="${boneShade}" />
-                            <path d="M 30.6 45.8 L 33.4 46.0 L 32.6 51.6 L 29.6 51.0 Z" fill="${boneMain}" />
-                            <path d="M 69.4 45.8 L 66.6 46.0 L 67.4 51.6 L 70.4 51.0 Z" fill="${boneMain}" />
                             <path d="M 41.6 47.6 L 44.0 47.8 L 45.2 68.2 L 43.2 68.2 Z" fill="${boneMain}" />
                             <path d="M 58.4 47.6 L 56.0 47.8 L 54.8 68.2 L 56.8 68.2 Z" fill="${boneMain}" />
-                            ${!isBack ? `
-                                <ellipse cx="44.3" cy="69.2" rx="1.1" ry="1.3" fill="#ffffff" />
-                                <ellipse cx="55.7" cy="69.2" rx="1.1" ry="1.3" fill="#ffffff" />
-                            ` : ""}
                             <path d="M 44.4 70.2 L 46.2 70.2 L 45.8 91.2 L 44.4 91.2 Z" fill="${boneMain}" />
-                            <path d="M 42.6 70.8 L 43.4 70.8 L 43.1 91.4 L 42.3 91.4 Z" fill="${boneShade}" />
                             <path d="M 55.6 70.2 L 53.8 70.2 L 54.2 91.2 L 55.6 91.2 Z" fill="${boneMain}" />
-                            <path d="M 57.4 70.8 L 56.6 70.8 L 56.9 91.4 L 57.7 91.4 Z" fill="${boneShade}" />
-                            <path d="M 42.4 91.6 L 45.8 91.6 L 46.2 95.6 L 41.4 95.6 Z" fill="${boneMain}" />
-                            <path d="M 57.6 91.6 L 54.2 91.6 L 53.8 95.6 L 58.6 95.6 Z" fill="${boneMain}" />
                         </g>
                     `;
                 }
             } else {
-                if (isSide) {
-                    const dir = view === "right" ? 1 : -1;
-                    fallbackSvg.innerHTML = `
-                        <g transform="translate(50,0) scale(${dir},1) translate(-50,0)" stroke="${muscDark}" stroke-width="0.28">
-                            <ellipse cx="49.8" cy="7.2" rx="4.4" ry="4.8" fill="#fca5a5" opacity="0.35" stroke="#f87171" />
-                            <path d="M 47.2 11.2 L 51.8 11.4 L 52.4 17.5 L 46.4 17.5 Z" fill="${muscMain}" />
-                            <path d="M 46.2 17.5 L 54.2 18.0 C 55.2 21.5, 54.8 25.5, 53.4 27.5 L 46.0 27.5 Z" fill="${muscMain}" />
-                            <path d="M 46.4 27.5 L 53.6 27.5 L 53.2 41.0 L 46.8 41.0 Z" fill="${muscLight}" />
-                            <path d="M 45.0 40.5 C 43.2 43.5, 43.5 49.0, 46.8 50.5 L 52.5 49.5 L 52.5 41.0 Z" fill="${muscDark}" />
-                            <path d="M 50.0 49.0 L 53.6 49.5 C 54.2 56.0, 53.6 63.0, 52.2 68.0 L 50.0 68.0 Z" fill="${muscMain}" />
-                            <path d="M 46.6 49.5 L 50.0 49.0 L 50.0 68.0 L 47.2 68.0 C 46.2 62.0, 46.0 55.0, 46.6 49.5 Z" fill="${muscDark}" />
-                            <rect x="47.8" y="68.0" width="4.4" height="3.2" rx="1.2" fill="${tendon}" />
-                            <path d="M 47.4 71.2 C 45.4 75.5, 45.8 81.5, 48.0 85.0 L 49.2 91.5 L 51.6 91.5 L 52.0 71.2 Z" fill="${muscMain}" />
-                            <path d="M 47.4 91.5 L 51.6 91.5 L 56.4 94.6 L 56.4 95.8 L 47.2 95.8 Z" fill="${tendon}" />
-                            <path d="M 47.6 17.5 C 50.2 17.0, 52.4 18.8, 52.0 22.8 L 47.4 22.8 Z" fill="${muscLight}" />
-                            <path d="M 50.0 22.8 L 52.2 22.8 L 51.6 32.5 L 50.0 32.5 Z" fill="${muscMain}" />
-                            <path d="M 47.4 22.8 L 50.0 22.8 L 50.0 32.5 L 47.6 32.5 Z" fill="${muscDark}" />
-                            <path d="M 48.2 32.8 L 51.4 32.8 L 52.4 45.8 L 49.8 45.8 Z" fill="${muscMain}" />
-                        </g>
-                    `;
-                } else {
-                    const isBack = view === "back";
-                    fallbackSvg.innerHTML = `
-                        <g stroke="${muscDark}" stroke-width="0.28">
-                            <ellipse cx="50.0" cy="7.2" rx="4.5" ry="4.8" fill="#fca5a5" opacity="0.35" stroke="#f87171" />
-                            <path d="M 47.4 11.5 L 52.6 11.5 L 54.5 17.5 L 45.5 17.5 Z" fill="${muscMain}" />
-                            ${isBack ? `
-                                <path d="M 45.5 17.5 L 54.5 17.5 L 50.0 28.5 Z" fill="${muscLight}" />
-                                <path d="M 41.2 18.5 L 58.8 18.5 L 55.6 35.5 L 44.4 35.5 Z" fill="${muscMain}" />
-                                <ellipse cx="45.6" cy="45.0" rx="4.2" ry="4.8" fill="${muscDark}" />
-                                <ellipse cx="54.4" cy="45.0" rx="4.2" ry="4.8" fill="${muscDark}" />
-                            ` : `
-                                <path d="M 41.2 18.0 L 49.8 18.2 L 49.8 26.2 C 46.0 26.8, 42.2 25.6, 41.2 22.5 Z" fill="${muscMain}" />
-                                <path d="M 58.8 18.0 L 50.2 18.2 L 50.2 26.2 C 54.0 26.8, 57.8 25.6, 58.8 22.5 Z" fill="${muscMain}" />
-                                <rect x="45.6" y="27.2" width="8.8" height="13.8" rx="2.0" fill="${muscLight}" />
-                            `}
-                            <ellipse cx="38.2" cy="19.5" rx="2.6" ry="2.4" fill="${muscLight}" />
-                            <ellipse cx="61.8" cy="19.5" rx="2.6" ry="2.4" fill="${muscLight}" />
-                            <path d="M 35.6 21.2 L 38.6 21.5 L 36.2 32.5 L 33.4 32.2 Z" fill="${isBack ? muscDark : muscMain}" />
-                            <path d="M 64.4 21.2 L 61.4 21.5 L 63.8 32.5 L 66.6 32.2 Z" fill="${isBack ? muscDark : muscMain}" />
-                            <path d="M 33.2 33.0 L 35.8 33.2 L 33.2 45.6 L 30.8 45.4 Z" fill="${muscMain}" />
-                            <path d="M 66.8 33.0 L 64.2 33.2 L 66.8 45.6 L 69.2 45.4 Z" fill="${muscMain}" />
-                            <path d="M 40.8 48.0 L 48.2 48.5 L 46.6 67.8 L 42.2 67.8 Z" fill="${isBack ? muscDark : muscMain}" />
-                            <path d="M 59.2 48.0 L 51.8 48.5 L 53.4 67.8 L 57.8 67.8 Z" fill="${isBack ? muscDark : muscMain}" />
-                            <rect x="42.4" y="67.8" width="4.0" height="3.0" rx="1.0" fill="${tendon}" />
-                            <rect x="53.6" y="67.8" width="4.0" height="3.0" rx="1.0" fill="${tendon}" />
-                            <path d="M 42.0 70.8 L 46.6 70.8 L 45.8 85.5 L 42.4 85.5 Z" fill="${muscMain}" />
-                            <path d="M 58.0 70.8 L 53.4 70.8 L 54.2 85.5 L 57.6 85.5 Z" fill="${muscMain}" />
-                            <path d="M 42.2 91.6 L 46.0 91.6 L 46.4 95.6 L 41.4 95.6 Z" fill="${tendon}" />
-                            <path d="M 57.8 91.6 L 54.0 91.6 L 53.6 95.6 L 58.6 95.6 Z" fill="${tendon}" />
-                        </g>
-                    `;
-                }
+                fallbackSvg.innerHTML = `
+                    <g stroke="${muscDark}" stroke-width="0.28">
+                        <ellipse cx="50.0" cy="7.2" rx="4.5" ry="4.8" fill="#fca5a5" opacity="0.35" />
+                        <path d="M 41.2 18.0 L 58.8 18.0 L 55.6 41.0 L 44.4 41.0 Z" fill="${muscMain}" />
+                        <path d="M 40.8 48.0 L 48.2 48.5 L 46.6 67.8 L 42.2 67.8 Z" fill="${muscLight}" />
+                        <path d="M 59.2 48.0 L 51.8 48.5 L 53.4 67.8 L 57.8 67.8 Z" fill="${muscLight}" />
+                        <path d="M 42.0 70.8 L 46.6 70.8 L 45.8 85.5 L 42.4 85.5 Z" fill="${muscMain}" />
+                        <path d="M 58.0 70.8 L 53.4 70.8 L 54.2 85.5 L 57.6 85.5 Z" fill="${muscMain}" />
+                        <path d="M 42.2 91.6 L 46.0 91.6 L 46.4 95.6 L 41.4 95.6 Z" fill="${tendon}" />
+                        <path d="M 57.8 91.6 L 54.0 91.6 L 53.6 95.6 L 58.6 95.6 Z" fill="${tendon}" />
+                    </g>
+                `;
             }
             plateImg.style.display = "none";
             fallbackSvg.style.display = "block";
@@ -2330,13 +2429,98 @@
             if (btn) btn.classList.toggle("active", enabled);
         }
 
-        function speakItalian(text) {
-            if (!("speechSynthesis" in window)) return;
+        const preferredItalianVoices = {
+            female: null,
+            male: null,
+            neutral: null
+        };
+
+        function selectBestItalianVoices() {
+            if (!("speechSynthesis" in window)) return preferredItalianVoices;
+            const voices = window.speechSynthesis.getVoices() || [];
+            const itVoices = voices.filter(v => (v.lang || "").toLowerCase().startsWith("it"));
+            if (itVoices.length === 0) return preferredItalianVoices;
+
+            const maleHints = ["diego", "giuseppe", "luca", "cosimo", "marco", "matteo", "alessandro", "male", "uomo", "maschile"];
+            const femaleHints = ["elsa", "isabella", "alice", "federica", "paola", "silvia", "bianca", "carla", "female", "donna", "femminile", "google italiano"];
+
+            const baseQualityScore = (v) => {
+                const name = (v.name || "").toLowerCase();
+                let score = 0;
+                if (name.includes("natural") || name.includes("neural") || name.includes("online")) score += 50;
+                if (name.includes("google")) score += 40;
+                if (name.includes("enhanced") || name.includes("premium") || name.includes("siri")) score += 35;
+                if (!v.localService) score += 15;
+                return score;
+            };
+
+            const pickForGender = (targetGender) => {
+                const scored = itVoices.map(v => {
+                    const name = (v.name || "").toLowerCase();
+                    let score = baseQualityScore(v);
+                    const isMaleName = maleHints.some(h => name.includes(h));
+                    const isFemaleName = femaleHints.some(h => name.includes(h));
+
+                    if (targetGender === "male") {
+                        if (isMaleName) score += 120;
+                        if (isFemaleName) score -= 80;
+                    } else if (targetGender === "female") {
+                        if (isFemaleName) score += 120;
+                        if (isMaleName) score -= 80;
+                    } else {
+                        if (isFemaleName || isMaleName) score += 25;
+                    }
+                    return { v, score };
+                });
+                scored.sort((a, b) => b.score - a.score);
+                return scored[0]?.v || null;
+            };
+
+            preferredItalianVoices.male = pickForGender("male");
+            preferredItalianVoices.female = pickForGender("female");
+            preferredItalianVoices.neutral = pickForGender("neutral");
+            return preferredItalianVoices;
+        }
+
+        if ("speechSynthesis" in window) {
+            selectBestItalianVoices();
+            window.speechSynthesis.onvoiceschanged = () => {
+                selectBestItalianVoices();
+            };
+        }
+
+        function speakItalian(text, gender = "neutral") {
+            if (!("speechSynthesis" in window) || !text) return;
             window.speechSynthesis.cancel();
-            const utter = new SpeechSynthesisUtterance(text);
-            utter.lang = "it-IT";
-            utter.rate = 0.95;
-            window.speechSynthesis.speak(utter);
+
+            const pool = preferredItalianVoices.neutral ? preferredItalianVoices : selectBestItalianVoices();
+            const voice = pool[gender] || pool.neutral;
+            const voiceName = (voice?.name || "").toLowerCase();
+            const hasDedicatedMaleVoice = ["diego", "giuseppe", "luca", "cosimo", "marco", "matteo", "alessandro", "male", "uomo"].some(h => voiceName.includes(h));
+
+            const sentences = String(text)
+                .replace(/\s+/g, " ")
+                .split(/(?<=[.!?:;])\s+/)
+                .map(s => s.trim())
+                .filter(Boolean);
+
+            sentences.forEach(sentence => {
+                const utter = new SpeechSynthesisUtterance(sentence);
+                utter.lang = "it-IT";
+                if (voice) utter.voice = voice;
+                if (gender === "male") {
+                    utter.rate = 0.95;
+                    utter.pitch = hasDedicatedMaleVoice ? 0.98 : 0.82;
+                } else if (gender === "female") {
+                    utter.rate = 0.97;
+                    utter.pitch = 1.05;
+                } else {
+                    utter.rate = 0.96;
+                    utter.pitch = 1.02;
+                }
+                utter.volume = 1;
+                window.speechSynthesis.speak(utter);
+            });
         }
 
         toggleNames.addEventListener("change", () => {
@@ -2345,6 +2529,7 @@
 
         /* ================= PANNELLO ESPLORAZIONE ================= */
         function renderExplorePanel() {
+            infoPanel.classList.remove("clipboard-mode");
             const isBones = currentLayer === "bones";
             const list = isBones ? BONES : MUSCLES;
             const current = isBones ? selectedBone : selectedMuscle;
@@ -2396,7 +2581,64 @@
         }
 
         /* ================= MODALITÀ PRONTO SOCCORSO A SQUADRE (PEERJS - ZERO CONFIG) ================= */
+        function getMetalClipSvg() {
+            return `
+                <svg class="clipboard-metal-clip" viewBox="0 0 180 70" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                    <defs>
+                        <linearGradient id="steelBody" x1="0" y1="0" x2="1" y2="0">
+                            <stop offset="0%" stop-color="#64748b"/>
+                            <stop offset="18%" stop-color="#e2e8f0"/>
+                            <stop offset="42%" stop-color="#94a3b8"/>
+                            <stop offset="65%" stop-color="#f8fafc"/>
+                            <stop offset="85%" stop-color="#94a3b8"/>
+                            <stop offset="100%" stop-color="#475569"/>
+                        </linearGradient>
+                        <linearGradient id="steelPlate" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0%" stop-color="#f1f5f9"/>
+                            <stop offset="35%" stop-color="#cbd5e1"/>
+                            <stop offset="75%" stop-color="#64748b"/>
+                            <stop offset="100%" stop-color="#334155"/>
+                        </linearGradient>
+                    </defs>
+                    <path d="M58 26 L58 14 Q58 4 72 4 L108 4 Q122 4 122 14 L122 26" fill="none" stroke="url(#steelBody)" stroke-width="6.5" stroke-linecap="round"/>
+                    <circle cx="90" cy="11" r="4.2" fill="#334155" stroke="#e2e8f0" stroke-width="1.5"/>
+                    <rect x="24" y="23" width="132" height="34" rx="7" fill="url(#steelPlate)" stroke="#334155" stroke-width="1.5"/>
+                    <rect x="34" y="29" width="112" height="6" rx="3" fill="#475569" opacity="0.55"/>
+                    <rect x="18" y="52" width="144" height="9" rx="4.5" fill="#1e293b"/>
+                    <circle cx="38" cy="41" r="3.2" fill="#475569" stroke="#f8fafc" stroke-width="1"/>
+                    <circle cx="142" cy="41" r="3.2" fill="#475569" stroke="#f8fafc" stroke-width="1"/>
+                </svg>
+            `;
+        }
+
+        function renderMedicalClipboard(innerHtml, subtitle = "Cartella Clinica di Accettazione") {
+            infoPanel.classList.add("clipboard-mode");
+            infoPanel.innerHTML = `
+                ${getMetalClipSvg()}
+                <div class="medical-sheet">
+                    <div class="medical-sheet-header">
+                        <div class="hospital-emblem">
+                            <div class="hospital-cross">+</div>
+                            <div>
+                                <div style="font-size:0.72rem; font-weight:800; color:#dc2626; letter-spacing:0.6px; text-transform:uppercase;">Azienda Ospedaliera CPIA</div>
+                                <div style="font-size:0.98rem; font-weight:800; color:#0f172a;">Pronto Soccorso Ortopedico</div>
+                            </div>
+                        </div>
+                        <div class="sheet-meta-box">
+                            <div>REP. TRAUMATOLOGIA</div>
+                            <div style="color:#0284c7;">${subtitle}</div>
+                        </div>
+                    </div>
+                    ${innerHtml}
+                </div>
+            `;
+        }
+
         function destroyActivePeer() {
+            if (localRoomChannel) {
+                try { localRoomChannel.close(); } catch (e) {}
+                localRoomChannel = null;
+            }
             if (playerHostConn) {
                 try { playerHostConn.close(); } catch (e) {}
                 playerHostConn = null;
@@ -2407,6 +2649,181 @@
             }
         }
 
+        function setupLocalRoomChannel(pin, isHost) {
+            if (typeof BroadcastChannel === "undefined") return;
+            try {
+                localRoomChannel = new BroadcastChannel(PEER_PREFIX + pin);
+                localRoomChannel.onmessage = (event) => {
+                    const msg = event.data;
+                    if (!msg || typeof msg !== "object") return;
+                    if (isHost) {
+                        handleIncomingRoomMessage(msg, (reply) => {
+                            try { localRoomChannel.postMessage(reply); } catch (e) {}
+                        });
+                    } else if (msg.type === "welcome" && msg.targetTeamId === currentTeamDocId) {
+                        window.dispatchEvent(new CustomEvent("cpia-local-welcome", { detail: msg }));
+                    }
+                };
+            } catch (e) {}
+        }
+
+        function handleIncomingRoomMessage(msg, sendReply) {
+            if (msg.type === "join") {
+                const teamId = msg.teamId || ("team_" + Date.now() + "_" + Math.random().toString(36).slice(2, 6));
+                const existing = latestRoomTeams.find(t => t.id === teamId);
+                if (existing) {
+                    existing.teamName = msg.teamName;
+                    existing.members = msg.members;
+                } else {
+                    latestRoomTeams.push({
+                        id: teamId,
+                        teamName: msg.teamName,
+                        members: msg.members || [],
+                        score: 0,
+                        currentCase: 0,
+                        completed: false,
+                        finishedAt: null,
+                        history: [{ step: 0, score: 0, ok: true }]
+                    });
+                }
+                if (sendReply) {
+                    sendReply({
+                        type: "welcome",
+                        targetTeamId: teamId,
+                        teamId,
+                        caseIndices: hostSharedCaseIndices
+                    });
+                }
+                sortAndRenderHostLeaderboard();
+            } else if (msg.type === "progress") {
+                const t = latestRoomTeams.find(x => x.id === msg.teamId);
+                if (t) {
+                    const prevScore = t.score;
+                    const newScore = Number(msg.score) || 0;
+                    const newCase = Number(msg.currentCase) || 0;
+                    t.score = newScore;
+                    t.currentCase = newCase;
+                    t.completed = Boolean(msg.completed);
+                    if (!Array.isArray(t.history)) t.history = [{ step: 0, score: 0, ok: true }];
+                    const lastPoint = t.history[t.history.length - 1];
+                    if (!lastPoint || lastPoint.step !== newCase || lastPoint.score !== newScore) {
+                        t.history.push({
+                            step: newCase,
+                            score: newScore,
+                            ok: newScore > prevScore
+                        });
+                    }
+                    if (t.completed && !t.finishedAt) t.finishedAt = Date.now();
+                    sortAndRenderHostLeaderboard();
+                }
+            }
+        }
+
+        const ECG_COLORS = ["#22c55e", "#38bdf8", "#facc15", "#f43f5e", "#c084fc", "#fb923c", "#2dd4bf", "#a3e635"];
+
+        function buildTeamEcgChartHtml(teams, totalCases) {
+            const W = 540;
+            const H = 170;
+            const padLeft = 28;
+            const padRight = 22;
+            const padTop = 18;
+            const padBottom = 22;
+            const plotW = W - padLeft - padRight;
+            const plotH = H - padTop - padBottom;
+
+            // Griglia millimetrata stile monitor ECG ospedaliero
+            let gridLines = "";
+            for (let x = padLeft; x <= W - padRight; x += 20) {
+                gridLines += `<line x1="${x}" y1="${padTop}" x2="${x}" y2="${H - padBottom}" stroke="rgba(16,185,129,0.12)" stroke-width="1"/>`;
+            }
+            for (let s = 0; s <= totalCases; s++) {
+                const y = padTop + plotH - (s / Math.max(1, totalCases)) * plotH;
+                gridLines += `<line x1="${padLeft}" y1="${y.toFixed(1)}" x2="${W - padRight}" y2="${y.toFixed(1)}" stroke="rgba(16,185,129,0.22)" stroke-width="1"/>`;
+                gridLines += `<text x="${padLeft - 6}" y="${(y + 3).toFixed(1)}" fill="#64748b" font-size="9" font-weight="700" text-anchor="end">${s}</text>`;
+            }
+
+            const traces = teams.map((team, idx) => {
+                const color = ECG_COLORS[idx % ECG_COLORS.length];
+                const hist = Array.isArray(team.history) && team.history.length > 0
+                    ? team.history
+                    : [{ step: 0, score: 0, ok: true }];
+
+                // Leggero offset verticale per non sovrapporre linee a pari punteggio
+                const laneOffset = ((idx % 4) - 1.5) * 1.4;
+                const getX = (step) => padLeft + (Math.min(step, totalCases) / Math.max(1, totalCases)) * plotW;
+                const getY = (score) => padTop + plotH - (Math.min(score, totalCases) / Math.max(1, totalCases)) * plotH + laneOffset;
+
+                let d = `M ${getX(hist[0].step).toFixed(1)} ${getY(hist[0].score).toFixed(1)}`;
+                let lastX = getX(hist[0].step);
+                let lastY = getY(hist[0].score);
+
+                for (let i = 1; i < hist.length; i++) {
+                    const prev = hist[i - 1];
+                    const curr = hist[i];
+                    const x0 = getX(prev.step);
+                    const y0 = getY(prev.score);
+                    const x1 = getX(curr.step);
+                    const y1 = getY(curr.score);
+                    const span = Math.max(12, x1 - x0);
+                    const mid = x0 + span * 0.45;
+
+                    if (curr.ok) {
+                        // Complesso QRS elettrocardiografico (picco netto verso l'alto e onda S)
+                        const qX = mid - 6;
+                        const rX = mid - 1;
+                        const sX = mid + 4;
+                        const tX = mid + 10;
+                        const rPeakY = Math.max(6, y1 - 15);
+                        const sDipY = Math.min(H - 6, y1 + 8);
+                        d += ` L ${qX.toFixed(1)} ${(y0 + 3).toFixed(1)}`;
+                        d += ` L ${rX.toFixed(1)} ${rPeakY.toFixed(1)}`;
+                        d += ` L ${sX.toFixed(1)} ${sDipY.toFixed(1)}`;
+                        d += ` L ${tX.toFixed(1)} ${y1.toFixed(1)}`;
+                        d += ` L ${x1.toFixed(1)} ${y1.toFixed(1)}`;
+                    } else {
+                        // Onda piatta / lieve oscillazione senza avanzamento di punteggio
+                        d += ` L ${mid.toFixed(1)} ${(y0 + 2).toFixed(1)} L ${x1.toFixed(1)} ${y1.toFixed(1)}`;
+                    }
+                    lastX = x1;
+                    lastY = y1;
+                }
+
+                // Aggiunge un battito terminale vivo sul punto attuale della squadra
+                const beatEnd = Math.min(W - 6, lastX + 10);
+                d += ` L ${(lastX + 2).toFixed(1)} ${(lastY + 2).toFixed(1)} L ${(lastX + 4).toFixed(1)} ${Math.max(6, lastY - 9).toFixed(1)} L ${(lastX + 6).toFixed(1)} ${Math.min(H - 6, lastY + 5).toFixed(1)} L ${beatEnd.toFixed(1)} ${lastY.toFixed(1)}`;
+
+                return `
+                    <path d="${d}" fill="none" stroke="${color}" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="filter: drop-shadow(0 0 4px ${color});" />
+                    <circle cx="${beatEnd.toFixed(1)}" cy="${lastY.toFixed(1)}" r="3.6" fill="${color}" stroke="#ffffff" stroke-width="1.2" />
+                `;
+            }).join("");
+
+            const legend = teams.map((t, idx) => {
+                const color = ECG_COLORS[idx % ECG_COLORS.length];
+                return `
+                    <span class="ecg-legend-item">
+                        <span style="width:10px; height:10px; border-radius:50%; background:${color}; box-shadow:0 0 6px ${color}; display:inline-block;"></span>
+                        <span style="color:#f8fafc;">${escapeHtml(t.teamName)}</span>
+                        <span style="color:${color};">(${t.score} pt)</span>
+                    </span>
+                `;
+            }).join("");
+
+            return `
+                <div class="ecg-monitor-card">
+                    <div class="ecg-monitor-header">
+                        <span><span class="ecg-live-dot"></span>Monitor ECG • Andamento Squadre</span>
+                        <span style="color:#94a3b8;">0 → ${totalCases} Pazienti</span>
+                    </div>
+                    <svg class="ecg-svg" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" aria-label="Grafico elettrocardiogramma andamento squadre">
+                        ${gridLines}
+                        ${traces}
+                    </svg>
+                    <div class="ecg-legend">${legend}</div>
+                </div>
+            `;
+        }
+
         function renderErIntroScreen() {
             resetHotspotStates();
             setXrayVisual(true);
@@ -2415,12 +2832,12 @@
             currentRoomPin = "";
             currentTeamDocId = "";
 
-            infoPanel.innerHTML = `
+            renderMedicalClipboard(`
                 <div class="team-lobby-box">
                     <div style="text-align:center;">
-                        <span class="region-tag muscle-tag">🚑 Simulazione Clinica CPIA</span>
-                        <h2 style="font-size:1.4rem; font-weight:800; margin:0.35rem 0;">Pronto Soccorso Ortopedico</h2>
-                        <p style="color:var(--muted); font-size:0.92rem;">Scegli se giocare in classe a squadre con codice PIN oppure avviare un turno individuale.</p>
+                        <span class="region-tag muscle-tag">🚑 Accettazione & Triage</span>
+                        <h2 style="font-size:1.35rem; font-weight:800; margin:0.35rem 0;">Pronto Soccorso Ortopedico</h2>
+                        <p style="color:var(--muted); font-size:0.9rem;">Scegli se giocare in classe a squadre con codice PIN oppure avviare un turno individuale.</p>
                     </div>
 
                     <div style="display:grid; grid-template-columns: 1fr 1fr; gap:0.65rem;">
@@ -2438,7 +2855,7 @@
                         </button>
                     </div>
                 </div>
-            `;
+            `, "Accettazione • Turno Aperto");
         }
 
         function startSingleErShift() {
@@ -2458,133 +2875,121 @@
         }
 
         function openHostRoomScreen() {
-            if (typeof Peer === "undefined") {
-                infoPanel.innerHTML = `
-                    <div class="feedback-box error">
-                        ⚠️ Libreria di connessione non caricata. Verifica la connessione Internet o usa il <strong>Turno Singolo</strong>.
-                    </div>
-                    <button type="button" class="secondary-btn" onclick="renderErIntroScreen()">⬅️ Torna indietro</button>
-                `;
-                return;
-            }
-
             destroyActivePeer();
-            infoPanel.innerHTML = `
+            renderMedicalClipboard(`
                 <div class="team-lobby-box" style="text-align:center;">
                     <div style="font-size:1.8rem;">⏳</div>
                     <p style="font-weight:700;">Apertura stanza alla LIM in corso...</p>
                 </div>
-            `;
+            `, "Postazione Docente • LIM");
 
             const pin = generateRoomPin();
             const sharedCases = generateSharedCaseOrder();
             hostSharedCaseIndices = sharedCases.map(c => ER_CASES.indexOf(c));
             latestRoomTeams = [];
 
-            const peer = new Peer(PEER_PREFIX + pin, { debug: 0 });
-            peerInstance = peer;
+            setupLocalRoomChannel(pin, true);
 
-            peer.on("open", () => {
+            const activateHostLocalOnly = () => {
                 roomMode = "host";
                 currentRoomPin = pin;
                 renderHostDashboard();
-            });
+            };
 
-            peer.on("connection", (conn) => {
-                conn.on("data", (msg) => {
-                    if (!msg || typeof msg !== "object") return;
-                    if (msg.type === "join") {
-                        const teamId = msg.teamId || ("team_" + Date.now() + "_" + Math.random().toString(36).slice(2, 6));
-                        const existing = latestRoomTeams.find(t => t.id === teamId);
-                        if (existing) {
-                            existing.teamName = msg.teamName;
-                            existing.members = msg.members;
-                        } else {
-                            latestRoomTeams.push({
-                                id: teamId,
-                                teamName: msg.teamName,
-                                members: msg.members || [],
-                                score: 0,
-                                currentCase: 0,
-                                completed: false,
-                                finishedAt: null
-                            });
-                        }
-                        conn.send({
-                            type: "welcome",
-                            teamId,
-                            caseIndices: hostSharedCaseIndices
-                        });
-                        sortAndRenderHostLeaderboard();
-                    } else if (msg.type === "progress") {
-                        const t = latestRoomTeams.find(x => x.id === msg.teamId);
-                        if (t) {
-                            t.score = Number(msg.score) || 0;
-                            t.currentCase = Number(msg.currentCase) || 0;
-                            t.completed = Boolean(msg.completed);
-                            if (t.completed && !t.finishedAt) t.finishedAt = Date.now();
-                            sortAndRenderHostLeaderboard();
-                        }
-                    }
+            if (typeof Peer === "undefined") {
+                activateHostLocalOnly();
+                return;
+            }
+
+            try {
+                const peer = new Peer(PEER_PREFIX + pin, { debug: 0 });
+                peerInstance = peer;
+
+                peer.on("open", () => {
+                    roomMode = "host";
+                    currentRoomPin = pin;
+                    renderHostDashboard();
                 });
-            });
 
-            peer.on("error", (err) => {
-                if (err && err.type === "unavailable-id") {
-                    openHostRoomScreen();
-                    return;
-                }
-                infoPanel.innerHTML = `
-                    <div class="feedback-box error">
-                        ⚠️ Impossibile creare la stanza (${escapeHtml(err?.type || "errore di rete")}). Riprova o usa il <strong>Turno Singolo</strong>!
-                    </div>
-                    <button type="button" class="secondary-btn" onclick="renderErIntroScreen()">⬅️ Torna indietro</button>
-                `;
-            });
+                peer.on("connection", (conn) => {
+                    conn.on("data", (msg) => {
+                        handleIncomingRoomMessage(msg, (reply) => {
+                            try { conn.send(reply); } catch (e) {}
+                        });
+                    });
+                });
+
+                peer.on("error", (err) => {
+                    if (err && err.type === "unavailable-id") {
+                        openHostRoomScreen();
+                        return;
+                    }
+                    activateHostLocalOnly();
+                });
+            } catch (e) {
+                activateHostLocalOnly();
+            }
+        }
+
+        function escapeHtml(str) {
+            return String(str || "")
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;");
         }
 
         function sortAndRenderHostLeaderboard() {
-            latestRoomTeams.sort((a, b) =>
-                (b.score || 0) - (a.score || 0) ||
-                (a.finishedAt || 9999999999999) - (b.finishedAt || 9999999999999)
-            );
+            latestRoomTeams.sort((a, b) => {
+                if (b.score !== a.score) return b.score - a.score;
+                if (a.completed && b.completed && a.finishedAt && b.finishedAt) {
+                    return a.finishedAt - b.finishedAt;
+                }
+                return b.currentCase - a.currentCase;
+            });
             renderHostDashboard();
         }
 
         function renderHostDashboard() {
-            if (roomMode !== "host") return;
-            infoPanel.innerHTML = `
-                <div class="pin-display-banner">
-                    <div style="font-size:0.8rem; text-transform:uppercase; letter-spacing:0.8px; color:#93c5fd; font-weight:700;">PIN della Stanza Pronto Soccorso</div>
-                    <div class="pin-code-text">${currentRoomPin}</div>
-                    <div style="font-size:0.85rem; color:#e2e8f0;">Comunica questo PIN alle squadre (tieni aperta questa pagina alla LIM)</div>
-                </div>
-
+            const totalCases = hostSharedCaseIndices.length || 6;
+            renderMedicalClipboard(`
                 <div class="team-lobby-box">
-                    <div style="display:flex; justify-content:space-between; align-items:center;">
-                        <h3 style="font-size:1.05rem; font-weight:800;">🏆 Classifica in diretta (${latestRoomTeams.length} ${latestRoomTeams.length === 1 ? "squadra" : "squadre"})</h3>
-                        <button type="button" class="secondary-btn" style="padding:0.35rem 0.65rem; font-size:0.8rem;" onclick="openHostRoomScreen()">🔄 Nuova stanza</button>
+                    <div class="pin-display-banner">
+                        <div style="font-size:0.82rem; text-transform:uppercase; letter-spacing:0.6px; color:#93c5fd; font-weight:700;">Codice PIN Stanza (LIM / Docente)</div>
+                        <div class="pin-code-text">${escapeHtml(currentRoomPin)}</div>
+                        <div style="font-size:0.86rem; color:#e2e8f0;">Comunica questo PIN alle squadre per farle entrare dal loro dispositivo</div>
+                    </div>
+
+                    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.5rem;">
+                        <h3 style="font-size:1.05rem; font-weight:800;">🏆 Classifica Squadre (${latestRoomTeams.length})</h3>
+                        <button type="button" class="secondary-btn" onclick="renderErIntroScreen()">Chiudi Stanza ✖</button>
                     </div>
 
                     ${latestRoomTeams.length === 0 ? `
-                        <div class="feedback-box" style="text-align:center; color:var(--muted);">
-                            In attesa che le squadre inseriscano il PIN <strong>${currentRoomPin}</strong>...
+                        <div class="feedback-box" style="text-align:center;">
+                            ⏳ In attesa che le squadre inseriscano il PIN <strong>${escapeHtml(currentRoomPin)}</strong>...
                         </div>
                     ` : `
+                        ${buildTeamEcgChartHtml(latestRoomTeams, totalCases)}
                         <div style="display:flex; flex-direction:column; gap:0.5rem;">
                             ${latestRoomTeams.map((t, idx) => {
-                                const membersText = Array.isArray(t.members) && t.members.length > 0 ? t.members.join(", ") : "Nessun componente indicato";
-                                const doneBadge = t.completed ? "✅ Turno concluso" : `🩺 Paziente ${Math.min((t.currentCase || 0) + 1, 6)}/6`;
+                                const color = ECG_COLORS[idx % ECG_COLORS.length];
+                                const medal = idx === 0 ? "🥇" : idx === 1 ? "🥈" : idx === 2 ? "🥉" : `#${idx + 1}`;
+                                const statusLabel = t.completed
+                                    ? "✅ Turno completato"
+                                    : `🩺 Paziente ${Math.min(t.currentCase + 1, totalCases)} / ${totalCases}`;
                                 return `
-                                    <div class="leaderboard-row ${idx === 0 && (t.score || 0) > 0 ? "top-team" : ""}">
-                                        <div style="min-width:0; flex:1;">
-                                            <div style="font-weight:800; font-size:0.98rem;">${idx === 0 ? "🥇" : idx === 1 ? "🥈" : idx === 2 ? "🥉" : `#${idx + 1}`} ${escapeHtml(t.teamName || "Squadra")}</div>
-                                            <div style="font-size:0.78rem; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">👥 ${escapeHtml(membersText)}</div>
-                                            <div style="font-size:0.76rem; font-weight:700; color:#0369a1; margin-top:0.15rem;">${doneBadge}</div>
+                                    <div class="leaderboard-row ${idx === 0 ? "top-team" : ""}" style="border-left: 5px solid ${color};">
+                                        <div>
+                                            <div style="font-weight:800; font-size:0.98rem;">${medal} ${escapeHtml(t.teamName)}</div>
+                                            <div style="font-size:0.8rem; color:var(--muted);">
+                                                ${t.members && t.members.length ? escapeHtml(t.members.join(", ")) : "Nessun componente indicato"}
+                                            </div>
+                                            <div style="font-size:0.78rem; font-weight:700; color:#0369a1; margin-top:0.15rem;">${statusLabel}</div>
                                         </div>
-                                        <div style="text-align:right; flex-shrink:0;">
-                                            <div style="font-size:1.25rem; font-weight:800; color:#0f172a;">${t.score || 0} / 6</div>
-                                            <div style="font-size:0.72rem; color:var(--muted); font-weight:700;">punti</div>
+                                        <div style="text-align:right;">
+                                            <div style="font-size:1.25rem; font-weight:800; color:#0f172a;">${t.score} / ${totalCases}</div>
+                                            <div style="font-size:0.75rem; color:var(--muted); font-weight:600;">punti</div>
                                         </div>
                                     </div>
                                 `;
@@ -2592,54 +2997,54 @@
                         </div>
                     `}
                 </div>
-
-                <button type="button" class="secondary-btn" onclick="renderErIntroScreen()">⬅️ Esci dalla vista Docente</button>
-            `;
+            `, `Stanza PIN: ${escapeHtml(currentRoomPin)}`);
         }
 
         function openJoinRoomScreen(errorMsg = "") {
-            infoPanel.innerHTML = `
+            destroyActivePeer();
+            renderMedicalClipboard(`
                 <div class="team-lobby-box">
-                    <div style="display:flex; justify-content:space-between; align-items:center;">
-                        <h2 style="font-size:1.25rem; font-weight:800;">👥 Accesso Squadra</h2>
-                        <button type="button" class="secondary-btn" style="padding:0.35rem 0.65rem; font-size:0.82rem;" onclick="renderErIntroScreen()">⬅️ Indietro</button>
+                    <div style="display:flex; justify-content:space-between; align-items:center; gap:0.5rem;">
+                        <div>
+                            <span class="region-tag">👥 Registrazione Équipe</span>
+                            <h2 style="font-size:1.25rem; font-weight:800;">Entra nella Stanza</h2>
+                        </div>
+                        <button type="button" class="secondary-btn" onclick="renderErIntroScreen()">⬅ Indietro</button>
                     </div>
 
                     ${errorMsg ? `<div class="feedback-box error">${errorMsg}</div>` : ""}
 
                     <div>
-                        <label style="display:block; font-size:0.84rem; font-weight:700; margin-bottom:0.25rem;">1. PIN della Stanza (4 cifre)</label>
-                        <input type="text" id="join-room-pin" class="team-input" maxlength="4" inputmode="numeric" placeholder="Es. 4821" style="letter-spacing:4px; font-size:1.1rem; text-align:center;" />
+                        <label style="display:block; font-size:0.85rem; font-weight:700; margin-bottom:0.25rem;">Codice PIN della stanza (4 cifre) *</label>
+                        <input type="text" id="join-pin-input" class="team-input" maxlength="4" inputmode="numeric" placeholder="Es. 4821" />
                     </div>
 
                     <div>
-                        <label style="display:block; font-size:0.84rem; font-weight:700; margin-bottom:0.25rem;">2. Nome della Squadra</label>
-                        <input type="text" id="join-team-name" class="team-input" maxlength="28" placeholder="Es. I Chirurghi del CPIA" />
+                        <label style="display:block; font-size:0.85rem; font-weight:700; margin-bottom:0.25rem;">Nome della Squadra *</label>
+                        <input type="text" id="join-team-name" class="team-input" maxlength="32" placeholder="Es. I Chirurghi del CPIA" />
                     </div>
 
                     <div>
-                        <label style="display:block; font-size:0.84rem; font-weight:700; margin-bottom:0.25rem;">3. Componenti della Squadra (max 6)</label>
+                        <label style="display:block; font-size:0.85rem; font-weight:700; margin-bottom:0.25rem;">Componenti della squadra (max 6)</label>
                         <div class="members-grid">
-                            <input type="text" class="team-input member-input" maxlength="24" placeholder="Componente 1 (es. Sara)" />
-                            <input type="text" class="team-input member-input" maxlength="24" placeholder="Componente 2" />
-                            <input type="text" class="team-input member-input" maxlength="24" placeholder="Componente 3" />
-                            <input type="text" class="team-input member-input" maxlength="24" placeholder="Componente 4" />
-                            <input type="text" class="team-input member-input" maxlength="24" placeholder="Componente 5" />
-                            <input type="text" class="team-input member-input" maxlength="24" placeholder="Componente 6" />
+                            <input type="text" class="team-input join-member-input" maxlength="25" placeholder="Componente 1" />
+                            <input type="text" class="team-input join-member-input" maxlength="25" placeholder="Componente 2" />
+                            <input type="text" class="team-input join-member-input" maxlength="25" placeholder="Componente 3" />
+                            <input type="text" class="team-input join-member-input" maxlength="25" placeholder="Componente 4" />
+                            <input type="text" class="team-input join-member-input" maxlength="25" placeholder="Componente 5" />
+                            <input type="text" class="team-input join-member-input" maxlength="25" placeholder="Componente 6" />
                         </div>
                     </div>
 
-                    <button type="button" class="er-start-btn" style="margin-top:0.25rem; width:100%;" onclick="submitJoinRoom()">
-                        Entra in Pronto Soccorso 🚑
-                    </button>
+                    <button type="button" class="er-start-btn" style="margin-top:0.25rem;" onclick="submitJoinRoom()">Conferma ed entra in corsia 🚑</button>
                 </div>
-            `;
+            `, "Registrazione Squadra");
         }
 
         function submitJoinRoom() {
-            const pinInput = (document.getElementById("join-room-pin")?.value || "").trim();
+            const pinInput = (document.getElementById("join-pin-input")?.value || "").trim();
             const teamNameInput = (document.getElementById("join-team-name")?.value || "").trim();
-            const memberInputs = Array.from(document.querySelectorAll(".member-input"))
+            const memberInputs = Array.from(document.querySelectorAll(".join-member-input"))
                 .map(el => el.value.trim())
                 .filter(Boolean)
                 .slice(0, 6);
@@ -2649,112 +3054,116 @@
                 return;
             }
             if (!teamNameInput) {
-                openJoinRoomScreen("⚠️ Inserisci il nome della squadra.");
-                return;
-            }
-            if (memberInputs.length === 0) {
-                openJoinRoomScreen("⚠️ Inserisci almeno il nome di 1 componente della squadra.");
-                return;
-            }
-            if (typeof Peer === "undefined") {
-                openJoinRoomScreen("⚠️ Servizio di connessione non disponibile. Usa il Turno Singolo!");
+                openJoinRoomScreen("⚠️ Inserisci il nome della tua squadra.");
                 return;
             }
 
-            destroyActivePeer();
-            infoPanel.innerHTML = `
+            renderMedicalClipboard(`
                 <div class="team-lobby-box" style="text-align:center;">
-                    <div style="font-size:1.8rem;">🚑</div>
-                    <p style="font-weight:700;">Ingresso nella stanza ${escapeHtml(pinInput)}...</p>
+                    <div style="font-size:1.8rem;">📡</div>
+                    <p style="font-weight:700;">Connessione alla stanza <strong>${escapeHtml(pinInput)}</strong> in corso...</p>
                 </div>
-            `;
+            `, `Connessione PIN ${escapeHtml(pinInput)}`);
 
             const teamId = "team_" + Date.now() + "_" + Math.random().toString(36).slice(2, 6);
-            const peer = new Peer({ debug: 0 });
-            peerInstance = peer;
+            currentTeamDocId = teamId;
             let joined = false;
 
+            const finalizePlayerJoin = (msg) => {
+                if (joined) return;
+                joined = true;
+                clearTimeout(timeoutId);
+                roomMode = "player";
+                currentRoomPin = pinInput;
+                currentTeamDocId = msg.teamId || teamId;
+                currentTeamName = teamNameInput;
+                currentTeamMembers = memberInputs;
+
+                const indices = Array.isArray(msg.caseIndices) && msg.caseIndices.length > 0
+                    ? msg.caseIndices.map(i => ER_CASES[i]).filter(Boolean)
+                    : generateSharedCaseOrder();
+
+                startErShift(indices);
+            };
+
+            const onLocalWelcome = (ev) => {
+                window.removeEventListener("cpia-local-welcome", onLocalWelcome);
+                finalizePlayerJoin(ev.detail || {});
+            };
+            window.addEventListener("cpia-local-welcome", onLocalWelcome);
+
+            setupLocalRoomChannel(pinInput, false);
+            if (localRoomChannel) {
+                try {
+                    localRoomChannel.postMessage({
+                        type: "join",
+                        teamId,
+                        teamName: teamNameInput,
+                        members: memberInputs
+                    });
+                } catch (e) {}
+            }
+
             const timeoutId = setTimeout(() => {
+                window.removeEventListener("cpia-local-welcome", onLocalWelcome);
                 if (!joined) {
                     destroyActivePeer();
                     openJoinRoomScreen(`❌ Nessuna stanza attiva trovata con il PIN <strong>${escapeHtml(pinInput)}</strong>. Controlla che il docente abbia aperto la stanza!`);
                 }
             }, 9000);
 
-            peer.on("open", () => {
-                const conn = peer.connect(PEER_PREFIX + pinInput, { reliable: true });
-                playerHostConn = conn;
+            if (typeof Peer === "undefined") return;
 
-                conn.on("open", () => {
-                    conn.send({
-                        type: "join",
-                        teamId,
-                        teamName: teamNameInput,
-                        members: memberInputs
+            try {
+                const peer = new Peer({ debug: 0 });
+                peerInstance = peer;
+
+                peer.on("open", () => {
+                    const conn = peer.connect(PEER_PREFIX + pinInput, { reliable: true });
+                    playerHostConn = conn;
+
+                    conn.on("open", () => {
+                        conn.send({
+                            type: "join",
+                            teamId,
+                            teamName: teamNameInput,
+                            members: memberInputs
+                        });
+                    });
+
+                    conn.on("data", (msg) => {
+                        if (msg && msg.type === "welcome") {
+                            window.removeEventListener("cpia-local-welcome", onLocalWelcome);
+                            finalizePlayerJoin(msg);
+                        }
                     });
                 });
 
-                conn.on("data", (msg) => {
-                    if (msg && msg.type === "welcome" && !joined) {
-                        joined = true;
-                        clearTimeout(timeoutId);
-                        roomMode = "player";
-                        currentRoomPin = pinInput;
-                        currentTeamDocId = msg.teamId || teamId;
-                        currentTeamName = teamNameInput;
-                        currentTeamMembers = memberInputs;
-
-                        const indices = Array.isArray(msg.caseIndices) && msg.caseIndices.length > 0
-                            ? msg.caseIndices.map(i => ER_CASES[i]).filter(Boolean)
-                            : generateSharedCaseOrder();
-
-                        startErShift(indices);
-                    }
-                });
-
-                conn.on("error", () => {
-                    if (!joined) {
-                        clearTimeout(timeoutId);
-                        destroyActivePeer();
-                        openJoinRoomScreen(`❌ Impossibile raggiungere la stanza <strong>${escapeHtml(pinInput)}</strong>. Verifica il PIN e riprova!`);
-                    }
-                });
-            });
-
-            peer.on("error", () => {
-                if (!joined) {
-                    clearTimeout(timeoutId);
-                    destroyActivePeer();
-                    openJoinRoomScreen(`❌ Stanza <strong>${escapeHtml(pinInput)}</strong> non trovata. Controlla il codice alla lavagna!`);
-                }
-            });
-        }
-
-        function syncTeamProgress(isCompleted = false) {
-            if (roomMode !== "player" || !playerHostConn || !playerHostConn.open) return;
-            try {
-                playerHostConn.send({
-                    type: "progress",
-                    teamId: currentTeamDocId,
-                    score: erScore,
-                    currentCase: erIndex,
-                    completed: isCompleted
-                });
+                peer.on("error", () => {});
             } catch (e) {}
         }
 
-        function escapeHtml(str) {
-            return String(str)
-                .replace(/&/g, "&amp;")
-                .replace(/</g, "&lt;")
-                .replace(/>/g, "&gt;")
-                .replace(/"/g, "&quot;");
+        function syncTeamProgress(isCompleted = false) {
+            if (roomMode !== "player") return;
+            const payload = {
+                type: "progress",
+                teamId: currentTeamDocId,
+                score: erScore,
+                currentCase: erIndex,
+                completed: isCompleted
+            };
+            if (playerHostConn && playerHostConn.open) {
+                try { playerHostConn.send(payload); } catch (e) {}
+            }
+            if (localRoomChannel) {
+                try { localRoomChannel.postMessage(payload); } catch (e) {}
+            }
         }
 
         function startErShift(customQueue = null) {
-            erQueue = customQueue && customQueue.length > 0
+            erQueue = Array.isArray(customQueue) && customQueue.length > 0
                 ? customQueue
-                : [...ER_CASES].sort(() => Math.random() - 0.5).slice(0, 6);
+                : generateSharedCaseOrder();
             erIndex = 0;
             erScore = 0;
             erStreak = 0;
@@ -2771,47 +3180,36 @@
             return { title: "🎓 Tirocinante in Formazione", msg: "Continua a esercitarti nella sezione Apparato Locomotore e riprova il turno!" };
         }
 
-        function revealErHint(btn) {
-            const c = erQueue[erIndex];
-            const box = document.getElementById("er-step-box");
-            if (box && c) {
-                const hintDiv = document.createElement("div");
-                hintDiv.style.marginTop = "0.4rem";
-                hintDiv.innerHTML = `💡 <strong>Suggerimento:</strong> ${escapeHtml(c.hint)}`;
-                box.appendChild(hintDiv);
-            }
-            if (btn) btn.disabled = true;
-        }
-
         function loadErCase() {
             if (erIndex >= erQueue.length) {
                 playTone("ok");
                 syncTeamProgress(true);
                 const grade = getErFinalGrade(erScore, erQueue.length);
-                const teamBanner = roomMode === "player" ? `
-                    <div style="background:rgba(255,255,255,0.12); border-radius:10px; padding:0.55rem; margin-bottom:0.5rem; font-size:0.86rem;">
-                        👥 Squadra <strong>${escapeHtml(currentTeamName)}</strong> • Stanza <strong>${escapeHtml(currentRoomPin)}</strong><br>
-                        <span style="color:#cbd5e1; font-size:0.8rem;">${escapeHtml(currentTeamMembers.join(", "))}</span>
-                    </div>
-                ` : "";
-                infoPanel.innerHTML = `
+                renderMedicalClipboard(`
                     <div class="grade-badge-card">
-                        ${teamBanner}
-                        <div style="font-size:0.82rem; text-transform:uppercase; letter-spacing:0.6px; color:#93c5fd; font-weight:700;">Grado raggiunto</div>
+                        ${roomMode === "player" ? `<div style="font-size:0.85rem; font-weight:800; color:#fde047; margin-bottom:0.25rem;">👥 Équipe: ${escapeHtml(currentTeamName)} (PIN ${escapeHtml(currentRoomPin)})</div>` : ""}
+                        <div style="font-size:0.82rem; text-transform:uppercase; letter-spacing:0.6px; color:#93c5fd; font-weight:700;">Referto Finale & Qualifica</div>
                         <h2 style="font-size:1.45rem; font-weight:800; margin:0.35rem 0;">${grade.title}</h2>
-                        <p style="font-size:1.05rem; font-weight:700; color:#facc15;">Punteggio finale: ${erScore} / ${erQueue.length}</p>
+                        <p style="font-size:1.05rem; font-weight:700; color:#facc15;">Esito turno: ${erScore} / ${erQueue.length} pazienti gestiti</p>
                         <p style="font-size:0.9rem; color:#e2e8f0; margin-top:0.35rem;">${grade.msg}</p>
                     </div>
+                    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.5rem; padding:0.25rem 0;">
+                        <span style="font-size:0.82rem; color:var(--muted); font-weight:600;">Firma Direzione Sanitaria CPIA</span>
+                        <span class="clinical-stamp">✔ TURNO VALIDATO</span>
+                    </div>
                     ${erMissedCases.length > 0 ? `
-                        <div class="info-box">
-                            <h3>📌 Argomenti da ripassare</h3>
-                            <p>${erMissedCases.join(", ")}</p>
+                        <div class="record-section">
+                            <div class="record-section-title"><span>📌 Note di Revisione Clinica</span></div>
+                            <div class="record-section-body">
+                                <p style="font-size:0.95rem;">Argomenti da ripassare: <strong>${erMissedCases.join(", ")}</strong></p>
+                            </div>
                         </div>
                     ` : ""}
-                    <button type="button" class="next-btn" onclick="${roomMode === "player" ? "renderErIntroScreen()" : "startErShift()"}">
-                        ${roomMode === "player" ? "Torna alla schermata Stanze 🏥" : "Nuovo turno con altri pazienti 🔄"}
-                    </button>
-                `;
+                    ${roomMode === "player"
+                        ? `<button type="button" class="next-btn" onclick="renderErIntroScreen()">Torna alla schermata Pronto Soccorso 🏥</button>`
+                        : `<button type="button" class="next-btn" onclick="startErShift()">Nuovo turno con altri pazienti 🔄</button>`
+                    }
+                `, "Referto di Dimissione");
                 return;
             }
             const c = erQueue[erIndex];
@@ -2819,41 +3217,48 @@
             resetHotspotStates();
             setXrayVisual(true);
             playTone("beep");
+            syncTeamProgress(false);
 
-            const teamStatusLine = roomMode === "player"
-                ? `<div style="background:#1e3a8a; color:#e0f2fe; padding:0.45rem 0.85rem; border-radius:10px; font-size:0.82rem; font-weight:700; display:flex; justify-content:space-between; flex-wrap:wrap; gap:0.4rem;">
-                    <span>👥 Squadra: <strong>${escapeHtml(currentTeamName)}</strong> (${currentTeamMembers.length}/6)</span>
-                    <span>Stanza PIN: <strong>${escapeHtml(currentRoomPin)}</strong></span>
-                   </div>`
-                : "";
-
-            infoPanel.innerHTML = `
-                ${teamStatusLine}
+            const verbaleNum = `PS-${2026}-${104 + erIndex}`;
+            renderMedicalClipboard(`
                 <div class="er-status-bar">
-                    <span>Paziente ${erIndex + 1} di ${erQueue.length}</span>
+                    <span>Verbale ${verbaleNum} • Paziente ${erIndex + 1}/${erQueue.length}</span>
                     <span>Punti: ${erScore} • Serie: ${erStreak} 🔥</span>
                 </div>
-                <div class="patient-card">
-                    <div class="patient-header">
-                        <div class="patient-avatar">${c.avatar}</div>
-                        <div style="flex:1;">
-                            <span class="urgency-tag" style="background:#334155; color:#fff;">⏳ In attesa di Triage</span>
-                            <h3 style="font-size:1.1rem; font-weight:800;">${c.patient}</h3>
-                        </div>
-                        <button type="button" class="speak-btn" onclick="speakItalian(erQueue[erIndex].story)">🔊 Ascolta</button>
+                <div class="record-section">
+                    <div class="record-section-title">
+                        <span>1. Anagrafica & Anamnesi</span>
+                        <span>${roomMode === "player" ? `Équipe: ${escapeHtml(currentTeamName)}` : "Turno Singolo"}</span>
                     </div>
-                    <p class="patient-symptom">"${c.story}"</p>
+                    <div class="record-section-body" style="padding:0.65rem;">
+                        <div class="patient-card" style="border:none; padding:0.35rem;">
+                            <div class="patient-header">
+                                <div class="patient-avatar">${c.avatar}</div>
+                                <div style="flex:1;">
+                                    <span class="urgency-tag" style="background:#334155; color:#fff;">⏳ In attesa di Triage</span>
+                                    <h3 style="font-size:1.08rem; font-weight:800;">${c.patient}</h3>
+                                </div>
+                                <button type="button" class="speak-btn" onclick="speakItalian(erQueue[erIndex].story, erQueue[erIndex].gender || 'neutral')">🔊 Ascolta</button>
+                            </div>
+                            <p class="patient-symptom">"${c.story}"</p>
+                        </div>
+                    </div>
                 </div>
 
-                <div id="er-step-box" class="feedback-box">
-                    <strong>Fase 1 • Assegna il Codice Triage:</strong> quale priorità ha questo paziente?
-                    <div class="triage-choice-grid">
-                        <button type="button" class="triage-pick-btn pick-rosso" onclick="chooseErTriage('rosso')">🔴 Codice Rosso<br><span style="font-weight:500; font-size:0.76rem;">Emergenza grave</span></button>
-                        <button type="button" class="triage-pick-btn pick-giallo" onclick="chooseErTriage('giallo')">🟡 Codice Giallo<br><span style="font-weight:500; font-size:0.76rem;">Sospetta frattura</span></button>
-                        <button type="button" class="triage-pick-btn pick-verde" onclick="chooseErTriage('verde')">🟢 Codice Verde<br><span style="font-weight:500; font-size:0.76rem;">Trauma muscolare lieve</span></button>
+                <div class="record-section">
+                    <div class="record-section-title"><span>2. Valutazione Clinica & Intervento</span></div>
+                    <div class="record-section-body" id="er-clinical-body" style="display:flex; flex-direction:column; gap:0.75rem;">
+                        <div id="er-step-box" class="feedback-box">
+                            <strong>Fase 1 • Assegnazione Codice Triage:</strong> quale priorità ha questo paziente?
+                            <div class="triage-choice-grid">
+                                <button type="button" class="triage-pick-btn pick-rosso" onclick="chooseErTriage('rosso')">🔴 Codice Rosso<br><span style="font-weight:500; font-size:0.76rem;">Emergenza grave</span></button>
+                                <button type="button" class="triage-pick-btn pick-giallo" onclick="chooseErTriage('giallo')">🟡 Codice Giallo<br><span style="font-weight:500; font-size:0.76rem;">Sospetta frattura</span></button>
+                                <button type="button" class="triage-pick-btn pick-verde" onclick="chooseErTriage('verde')">🟢 Codice Verde<br><span style="font-weight:500; font-size:0.76rem;">Trauma muscolare lieve</span></button>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            `;
+            `, `Verbale N° ${verbaleNum}`);
         }
 
         function chooseErTriage(chosen) {
@@ -2877,6 +3282,7 @@
             }
 
             const stepBox = document.getElementById("er-step-box");
+            const clinicalBody = document.getElementById("er-clinical-body") || infoPanel;
             stepBox.className = ok ? "feedback-box success" : "feedback-box error";
             stepBox.innerHTML = `
                 ${ok ? "✅ Triage corretto!" : `ℹ️ Il codice corretto è <strong>${tr.label}</strong>.`} ${tr.explain}
@@ -2887,13 +3293,25 @@
 
             const helpWrap = document.createElement("div");
             helpWrap.style.cssText = "display:flex; gap:0.5rem; flex-wrap:wrap;";
-            helpWrap.innerHTML = `<button type="button" class="secondary-btn" onclick="revealErHint(this)">💡 Suggerimento anatomico</button>`;
-            infoPanel.appendChild(helpWrap);
+            const helpBtn = document.createElement("button");
+            helpBtn.type = "button";
+            helpBtn.className = "secondary-btn";
+            helpBtn.textContent = "💡 Suggerimento anatomico";
+            helpBtn.onclick = () => {
+                const hintEl = document.createElement("div");
+                hintEl.style.marginTop = "0.4rem";
+                hintEl.innerHTML = `💡 <strong>Suggerimento:</strong> ${escapeHtml(c.hint)}`;
+                stepBox.appendChild(hintEl);
+                helpBtn.disabled = true;
+            };
+            helpWrap.appendChild(helpBtn);
+            clinicalBody.appendChild(helpWrap);
         }
 
         function checkErLocation(item) {
             const c = erQueue[erIndex];
             const fb = document.getElementById("er-step-box");
+            const clinicalBody = document.getElementById("er-clinical-body") || infoPanel;
             const el = document.querySelector(`.hotspot[data-id="${item.id}"]`);
             if (item.id === c.targetId) {
                 playTone("ok");
@@ -2912,7 +3330,7 @@
                         <button type="button" class="option-btn" onclick="answerErQuestion(${idx}, this)">${opt}</button>
                     `).join("")}
                 `;
-                infoPanel.appendChild(qDiv);
+                clinicalBody.appendChild(qDiv);
             } else {
                 playTone("err");
                 erStreak = 0;
@@ -2926,6 +3344,7 @@
             if (erStep !== "question") return;
             erStep = "firstaid";
             const c = erQueue[erIndex];
+            const clinicalBody = document.getElementById("er-clinical-body") || infoPanel;
             const qBox = document.getElementById("er-anatomy-q");
             const buttons = qBox.querySelectorAll(".option-btn");
             buttons.forEach((b, i) => {
@@ -2945,18 +3364,19 @@
             faDiv.className = "quiz-options";
             faDiv.id = "er-firstaid-q";
             faDiv.innerHTML = `
-                <p style="font-weight:700; margin-top:0.45rem; color:#0369a1;">Fase 4 • Primo Soccorso: ${c.firstAidQuestion}</p>
+                <p style="font-weight:700; margin-top:0.45rem; color:#0369a1;">Fase 4 • Protocollo Primo Soccorso: ${c.firstAidQuestion}</p>
                 ${shuffledFa.options.map((opt, i) => `
                     <button type="button" class="option-btn" onclick="answerErFirstAid(${i}, ${anatOk})">${opt}</button>
                 `).join("")}
             `;
-            infoPanel.appendChild(faDiv);
+            clinicalBody.appendChild(faDiv);
         }
 
         function answerErFirstAid(idx, anatOk) {
             if (erStep !== "firstaid") return;
             erStep = "done";
             const c = erQueue[erIndex];
+            const clinicalBody = document.getElementById("er-clinical-body") || infoPanel;
             const faBox = document.getElementById("er-firstaid-q");
             const buttons = faBox.querySelectorAll(".option-btn");
             buttons.forEach((b, i) => {
@@ -2982,13 +3402,14 @@
             const next = document.createElement("button");
             next.type = "button";
             next.className = "next-btn";
-            next.textContent = erIndex + 1 < erQueue.length ? "Prossimo paziente ➡️" : "Vedi Grado Finale 🏆";
+            next.textContent = erIndex + 1 < erQueue.length ? "Prossimo paziente ➡️" : "Chiudi Cartella & Vedi Referto 🏆";
             next.onclick = () => { erIndex++; loadErCase(); };
-            infoPanel.appendChild(next);
+            clinicalBody.appendChild(next);
         }
 
         /* ================= MODALITÀ QUIZ ================= */
         function startQuizSession() {
+            infoPanel.classList.remove("clipboard-mode");
             quizSessionQuestions = [...QUIZ_QUESTIONS].sort(() => Math.random() - 0.5).slice(0, 8);
             quizIndex = 0;
             quizScore = 0;
@@ -2996,6 +3417,7 @@
         }
 
         function renderQuizPanel() {
+            infoPanel.classList.remove("clipboard-mode");
             if (quizSessionQuestions.length === 0) {
                 startQuizSession();
                 return;
