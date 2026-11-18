@@ -3167,11 +3167,59 @@
 
         function prefetchErQueueVoices(queue, startIdx = 0) {
             if (!Array.isArray(queue)) return;
-            for (let i = startIdx; i < Math.min(queue.length, startIdx + 3); i++) {
+            for (let i = startIdx; i < Math.min(queue.length, startIdx + 6); i++) {
                 const item = queue[i];
                 if (item && item.story) {
                     prefetchItalianTts(item.story, item.gender || "neutral");
                 }
+            }
+        }
+
+        function prefetchAllErVoices() {
+            ER_CASES.forEach((item, idx) => {
+                if (item && item.story) {
+                    setTimeout(() => {
+                        prefetchItalianTts(item.story, item.gender || "neutral");
+                    }, idx * 120);
+                }
+            });
+        }
+
+        async function speakItalian(text, gender = "neutral", btnEl = null) {
+            if (!text) return;
+            stopAllSpeech();
+            const cleanText = String(text).replace(/\s+/g, " ").trim();
+
+            if (btnEl) {
+                if (!btnEl.dataset.origLabel) btnEl.dataset.origLabel = btnEl.textContent;
+                activeSpeakBtn = btnEl;
+                btnEl.textContent = "⏳ Voce...";
+                btnEl.disabled = true;
+            }
+
+            try {
+                const wavUrl = await tryNeuralItalianTts(cleanText, gender);
+                const audio = new Audio(wavUrl);
+                activeAudioPlayer = audio;
+                if (btnEl) {
+                    btnEl.disabled = false;
+                    btnEl.textContent = "🔊 In lettura...";
+                }
+                audio.onended = () => {
+                    if (activeSpeakBtn === btnEl && btnEl) {
+                        btnEl.textContent = btnEl.dataset.origLabel || "🔊 Ascolta";
+                        activeSpeakBtn = null;
+                    }
+                };
+                await audio.play();
+                return;
+            } catch (e) {
+                if (btnEl) {
+                    btnEl.disabled = false;
+                    btnEl.textContent = btnEl.dataset.origLabel || "🔊 Ascolta";
+                    activeSpeakBtn = null;
+                }
+                speakWithBrowserFallback(cleanText, gender);
             }
         }
 
@@ -4137,6 +4185,7 @@
         renderHotspots();
         renderExplorePanel();
         loadAnatomyPlate("bones", "front");
+        prefetchAllErVoices();
     </script>
 </body>
 </html>
