@@ -3185,6 +3185,52 @@
             });
         }
 
+        function getPatientAudioUrl(patientLabel) {
+            if (!patientLabel) return "";
+            const firstName = String(patientLabel)
+                .split(",")[0]
+                .trim()
+                .toLowerCase()
+                .normalize("NFD")
+                .replace(/[\u0300-\u036f]/g, "")
+                .replace(/[^a-z0-9]/g, "");
+            return firstName ? `audio/${firstName}.mp3` : "";
+        }
+
+        async function speakPatientCase(caseObj, btnEl = null) {
+            if (!caseObj || !caseObj.story) return;
+            const mp3Url = getPatientAudioUrl(caseObj.patient);
+            if (!mp3Url) {
+                return speakItalian(caseObj.story, caseObj.gender || "neutral", btnEl);
+            }
+
+            stopAllSpeech();
+            if (btnEl) {
+                if (!btnEl.dataset.origLabel) btnEl.dataset.origLabel = btnEl.textContent;
+                activeSpeakBtn = btnEl;
+                btnEl.textContent = "🔊 In lettura...";
+                btnEl.disabled = false;
+            }
+
+            try {
+                const audio = new Audio(mp3Url);
+                activeAudioPlayer = audio;
+                audio.onended = () => {
+                    if (activeSpeakBtn === btnEl && btnEl) {
+                        btnEl.textContent = btnEl.dataset.origLabel || "🔊 Ascolta";
+                        activeSpeakBtn = null;
+                    }
+                };
+                await audio.play();
+            } catch (e) {
+                if (btnEl) {
+                    btnEl.textContent = btnEl.dataset.origLabel || "🔊 Ascolta";
+                    activeSpeakBtn = null;
+                }
+                speakItalian(caseObj.story, caseObj.gender || "neutral", btnEl);
+            }
+        }
+
         async function speakItalian(text, gender = "neutral", btnEl = null) {
             if (!text) return;
             stopAllSpeech();
@@ -3829,7 +3875,7 @@
                                     <span class="urgency-tag" style="background:#334155; color:#fff;">⏳ In attesa di Triage</span>
                                     <h3 style="font-size:1.08rem; font-weight:800;">${c.patient}</h3>
                                 </div>
-                                <button type="button" class="speak-btn" onclick="speakItalian(erQueue[erIndex].story, erQueue[erIndex].gender || 'neutral', this)">🔊 Ascolta</button>
+                                <button type="button" class="speak-btn" onclick="speakPatientCase(erQueue[erIndex], this)">🔊 Ascolta</button>
                             </div>
                             <p class="patient-symptom">"${c.story}"</p>
                         </div>
