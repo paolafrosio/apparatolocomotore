@@ -236,7 +236,7 @@
             border-color: #0f172a;
         }
 
-.anatomy-stage {
+        .anatomy-stage {
             position: relative;
             width: 100%;
             max-width: 100%;
@@ -2974,7 +2974,7 @@
         let activeAudioPlayer = null;
         let activeSpeakBtn = null;
 
-       function selectBestItalianVoices() {
+        function selectBestItalianVoices() {
             if (!("speechSynthesis" in window)) return preferredItalianVoices;
             const voices = window.speechSynthesis.getVoices() || [];
             const itVoices = voices.filter(v => {
@@ -2993,39 +2993,32 @@
             const femaleHints = [
                 "elsa", "isabella", "alice", "federica", "paola", "silvia",
                 "bianca", "carla", "fabiola", "lucia", "chiara", "elena",
-                "giulia", "sofia", "female", "donna", "femminile", "google italiano"
+                "giulia", "sofia", "female", "donna", "femminile"
             ];
 
-            const baseQualityScore = (v) => {
+            const qualityScore = (v) => {
                 const name = (v.name || "").toLowerCase();
                 let score = 0;
-                if (name.includes("natural") || name.includes("neural") || name.includes("online") || name.includes("enhanced")) score += 150;
-                if (name.includes("google")) score += 110;
-                if (name.includes("microsoft")) score += 60;
-                if (name.includes("espeak") || name.includes("compact")) score -= 250;
+                if (name.includes("natural") || name.includes("neural") || name.includes("online") || name.includes("enhanced")) score += 200;
+                if (name.includes("google")) score += 120;
+                if (name.includes("microsoft")) score += 80;
+                if (name.includes("espeak") || name.includes("compact")) score -= 300;
                 return score;
             };
 
-            const validItVoices = itVoices.filter(v => {
-                const name = (v.name || "").toLowerCase();
-                return !name.includes("espeak") && !name.includes("compact");
+            const sorted = [...itVoices].sort((a, b) => qualityScore(b) - qualityScore(a));
+            const bestOverall = sorted[0] || null;
+
+            const maleVoices = sorted.filter(v => {
+                const n = (v.name || "").toLowerCase();
+                return !femaleHints.some(fh => n.includes(fh)) && maleHints.some(h => n.includes(h));
             });
-            const pool = validItVoices.length > 0 ? validItVoices : itVoices;
-            const bestOverall = [...pool].sort((a, b) => baseQualityScore(b) - baseQualityScore(a))[0] || null;
 
-            const maleVoices = pool
-                .filter(v => {
-                    const n = (v.name || "").toLowerCase();
-                    if (femaleHints.some(fh => n.includes(fh))) return false;
-                    return maleHints.some(h => n.includes(h));
-                })
-                .sort((a, b) => baseQualityScore(b) - baseQualityScore(a));
+            const femaleVoices = sorted.filter(v => {
+                const n = (v.name || "").toLowerCase();
+                return femaleHints.some(h => n.includes(h));
+            });
 
-            const femaleVoices = pool
-                .filter(v => femaleHints.some(h => (v.name || "").toLowerCase().includes(h)))
-                .sort((a, b) => baseQualityScore(b) - baseQualityScore(a));
-
-            // IMPORTANTISSIMO: male resta null se non esiste una vera voce maschile
             preferredItalianVoices.male = maleVoices[0] || null;
             preferredItalianVoices.female = femaleVoices[0] || bestOverall;
             preferredItalianVoices.neutral = femaleVoices[0] || bestOverall;
@@ -3090,31 +3083,25 @@
             const u = new SpeechSynthesisUtterance(cleanText);
             u.lang = "it-IT";
 
-            if (gender === "male") {
-                if (selectedSet.male) {
-                    // C'è una vera voce maschile installata nel PC (es. Cosimo / Diego)
-                    u.voice = selectedSet.male;
-                    u.rate = 0.96;
-                    u.pitch = 0.95;
-                } else {
-                    // Nessuna voce maschile nel PC: NON forziamo Elsa/Google femminile, lasciamo u.voice = null
-                    // così il browser permette al pitch = 0.65 di abbassare davvero il timbro
-                    u.rate = 0.90;
-                    u.pitch = 0.65;
-                }
-            } else if (gender === "female") {
-                if (selectedSet.female) u.voice = selectedSet.female;
+            if (gender === "male" && selectedSet.male) {
+                u.voice = selectedSet.male;
                 u.rate = 0.98;
-                u.pitch = 1.05;
+                u.pitch = 0.98;
+            } else if (gender === "female" && selectedSet.female) {
+                u.voice = selectedSet.female;
+                u.rate = 1.0;
+                u.pitch = 1.02;
             } else {
-                if (selectedSet.neutral) u.voice = selectedSet.neutral;
-                u.rate = 0.96;
-                u.pitch = 1.0;
+                const fallbackVoice = selectedSet.neutral || selectedSet.female;
+                if (fallbackVoice) u.voice = fallbackVoice;
+                u.rate = 0.98;
+                u.pitch = gender === "male" ? 0.88 : 1.0;
             }
 
             u.volume = 1.0;
             window.speechSynthesis.speak(u);
         }
+
         async function tryNeuralItalianTts(cleanText, gender) {
             const cacheKey = `${gender}:${cleanText}`;
             if (neuralTtsCache.has(cacheKey)) {
@@ -3198,8 +3185,7 @@
             });
         }
 
-  
-      async function speakItalian(text, gender = "neutral", btnEl = null) {
+        async function speakItalian(text, gender = "neutral", btnEl = null) {
             if (!text) return;
             stopAllSpeech();
             const cleanText = String(text).replace(/\s+/g, " ").trim();
@@ -3235,9 +3221,7 @@
                 }
                 speakWithBrowserFallback(cleanText, gender);
             }
-        } 
-
-        
+        }
 
         const ECG_COLORS = ["#22c55e", "#38bdf8", "#facc15", "#f43f5e", "#c084fc", "#fb923c", "#2dd4bf", "#a3e635"];
 
