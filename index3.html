@@ -3198,7 +3198,8 @@
             });
         }
 
-        async function speakItalian(text, gender = "neutral", btnEl = null) {
+  
+      async function speakItalian(text, gender = "neutral", btnEl = null) {
             if (!text) return;
             stopAllSpeech();
             const cleanText = String(text).replace(/\s+/g, " ").trim();
@@ -3234,50 +3235,9 @@
                 }
                 speakWithBrowserFallback(cleanText, gender);
             }
-        }
+        } 
 
-        async function speakItalian(text, gender = "neutral", btnEl = null) {
-            if (!text) return;
-            stopAllSpeech();
-            const cleanText = String(text).replace(/\s+/g, " ").trim();
-            const cacheKey = `${gender}:${cleanText}`;
-
-            if (btnEl) {
-                if (!btnEl.dataset.origLabel) btnEl.dataset.origLabel = btnEl.textContent;
-                activeSpeakBtn = btnEl;
-                btnEl.textContent = "🔊 In lettura...";
-            }
-
-            // Se l'audio neurale è già pronto in cache, parte all'istante (0 ms)
-            if (neuralTtsCache.has(cacheKey)) {
-                try {
-                    const audio = new Audio(neuralTtsCache.get(cacheKey));
-                    activeAudioPlayer = audio;
-                    audio.onended = () => {
-                        if (activeSpeakBtn === btnEl && btnEl) {
-                            btnEl.textContent = btnEl.dataset.origLabel || "🔊 Ascolta";
-                            activeSpeakBtn = null;
-                        }
-                    };
-                    await audio.play();
-                    return;
-                } catch (e) {}
-            }
-
-            // Avvia subito in parallelo la preparazione neurale per il futuro
-            tryNeuralItalianTts(cleanText, gender).catch(() => {});
-
-            // Nel frattempo parte immediatamente (0 ms) senza farti aspettare
-            speakWithBrowserFallback(cleanText, gender);
-            if (btnEl) {
-                setTimeout(() => {
-                    if (activeSpeakBtn === btnEl) {
-                        btnEl.textContent = btnEl.dataset.origLabel || "🔊 Ascolta";
-                        activeSpeakBtn = null;
-                    }
-                }, 1800);
-            }
-        }
+        
 
         const ECG_COLORS = ["#22c55e", "#38bdf8", "#facc15", "#f43f5e", "#c084fc", "#fb923c", "#2dd4bf", "#a3e635"];
 
