@@ -550,6 +550,16 @@
             opacity: 1;
         }
 
+        .anatomy-stage.hide-hover-labels .hotspot:hover .hotspot-label,
+        .anatomy-stage.hide-hover-labels .hotspot.hovered .hotspot-label {
+            opacity: 0;
+        }
+
+        .anatomy-stage.hide-hover-labels.show-all-labels .hotspot-label,
+        .anatomy-stage.hide-hover-labels .hotspot.correct .hotspot-label {
+            opacity: 1;
+        }
+
         .info-panel {
             background: var(--card);
             border-radius: 16px;
@@ -559,6 +569,84 @@
             display: flex;
             flex-direction: column;
             gap: 1rem;
+        }
+
+        /* ================= SCHEDE ESPLORA: ANATOMIA vs TRAUMI & GLOSSARIO ================= */
+        .subtab-bar {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.45rem;
+            background: #f1f5f9;
+            padding: 0.3rem;
+            border-radius: 10px;
+            border: 1px solid #cbd5e1;
+        }
+
+        .subtab-btn {
+            border: none;
+            background: transparent;
+            color: #475569;
+            padding: 0.48rem 0.65rem;
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 0.85rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .subtab-btn.active {
+            background: #ffffff;
+            color: #0f172a;
+            box-shadow: 0 2px 5px rgba(15, 23, 42, 0.1);
+        }
+
+        .trauma-card {
+            background: #f8fafc;
+            border: 1px solid #cbd5e1;
+            border-left: 4px solid #0284c7;
+            border-radius: 10px;
+            padding: 0.75rem 0.9rem;
+        }
+
+        .trauma-card.warning-card {
+            border-left-color: #d97706;
+            background: #fffbeb;
+        }
+
+        .trauma-card.danger-card {
+            border-left-color: #dc2626;
+            background: #fef2f2;
+        }
+
+        .trauma-card h4 {
+            font-size: 0.96rem;
+            font-weight: 800;
+            color: #0f172a;
+            margin-bottom: 0.25rem;
+        }
+
+        .trauma-card p {
+            font-size: 0.88rem;
+            color: #334155;
+            line-height: 1.45;
+        }
+
+        /* ================= SCHEDA ALLENAMENTO ANATOMICO ================= */
+        .training-target-box {
+            background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%);
+            color: #ffffff;
+            border-radius: 14px;
+            padding: 1.15rem;
+            text-align: center;
+            box-shadow: 0 6px 16px rgba(15, 23, 42, 0.16);
+        }
+
+        .training-target-name {
+            font-size: 1.75rem;
+            font-weight: 800;
+            color: #facc15;
+            margin: 0.35rem 0;
         }
 
         /* ================= STILE CARTELLETTA CLINICA OSPEDALIERA (PRONTO SOCCORSO) ================= */
@@ -1243,13 +1331,14 @@
             <span class="brand-badge">CPIA • SCIENZE</span>
             <div>
                 <h1>Apparato Locomotore & Pronto Soccorso</h1>
-                <p>Esplora ossa e muscoli, poi visita i pazienti in emergenza</p>
+                <p>Esplora ossa e muscoli, allenati e visita i pazienti in emergenza</p>
             </div>
         </div>
         <nav class="mode-nav" aria-label="Modalità di studio">
             <button class="mode-btn active" data-mode="explore">1. Apparato Locomotore 🦴</button>
-            <button class="mode-btn" data-mode="er">2. Pronto Soccorso 🚑</button>
-            <button class="mode-btn" data-mode="quiz">3. Quiz 📝</button>
+            <button class="mode-btn" data-mode="train">2. Allenamento 🎯</button>
+            <button class="mode-btn" data-mode="er">3. Pronto Soccorso 🚑</button>
+            <button class="mode-btn" data-mode="quiz">4. Quiz 📝</button>
             <button type="button" class="sound-toggle-btn" id="btn-sound-toggle" onclick="toggleSoundEffects()" title="Attiva o disattiva suoni discreti">🔊 Audio</button>
         </nav>
     </header>
@@ -1677,6 +1766,40 @@
                     back:  { x: 57.5, y: 78.5 },
                     left:  { x: 35.8, y: 80.6 }
                 }
+            }
+        ];
+
+        /* ================= SCHEDE GUIDA TRAUMI & GLOSSARIO ================= */
+        const TRAUMA_GUIDE_CARDS = [
+            {
+                title: "🦴 Frattura ossea",
+                type: "danger-card",
+                body: "Interruzione della continuità di un osso causata da un trauma violento o da una caduta. Provoca dolore acuto, gonfiore, deformità e impossibilità di muovere l'arto. <strong>Cosa fare:</strong> non muovere né raddrizzare l'osso, immobilizzare l'arto e chiamare il 112/118."
+            },
+            {
+                title: "🔄 Lussazione articolare",
+                type: "warning-card",
+                body: "Spostamento permanente dei capi articolari fuori dalla loro sede naturale (es. spalla o mandibola). <strong>Cosa fare:</strong> non tentare mai di rimettere l'articolazione a posto da soli; immobilizzare nella posizione trovata e recarsi al Pronto Soccorso."
+            },
+            {
+                title: "🦶 Distorsione",
+                type: "warning-card",
+                body: "Allontanamento temporaneo dei capi articolari con stiramento o lesione dei legamenti (frequente a caviglia e ginocchio). Provoca dolore, gonfiore ed ematoma."
+            },
+            {
+                title: "💪 Stiramento e Strappo muscolare",
+                type: "",
+                body: "Lo <strong>stiramento</strong> è un allungamento eccessivo delle fibre muscolari; lo <strong>strappo</strong> è la rottura vera e propria di alcune fibre con dolore improvviso e acuto."
+            },
+            {
+                title: "🧊 Protocollo R.I.C.E. (Primo Soccorso muscolo-articolare)",
+                type: "",
+                body: "<strong>R</strong>iposo (fermare subito lo sforzo), <strong>I</strong>ce/Ghiaccio (avvolto in un panno per 15-20 min, mai a contatto diretto con la pelle), <strong>C</strong>ompressione leggera ed <strong>E</strong>levazione dell'arto."
+            },
+            {
+                title: "🔗 Tendini, Legamenti e Muscoli Antagonisti",
+                type: "",
+                body: "I <strong>tendini</strong> collegano i muscoli alle ossa; i <strong>legamenti</strong> tengono unite le ossa nelle articolazioni. I <strong>muscoli antagonisti</strong> (es. bicipite e tricipite) compiono movimenti opposti: mentre uno si contrae, l'altro si rilassa."
             }
         ];
 
@@ -2391,6 +2514,7 @@
 
         /* ================= STATO GLOBALE & RIFERIMENTI DOM ================= */
         let currentMode = "explore";
+        let exploreSubTab = "anatomy";
         let currentLayer = "bones";
         let currentView = "front";
         let selectedBone = BONES[0];
@@ -2404,6 +2528,11 @@
         let zoomScale = 1;
         let panX = 0;
         let panY = 0;
+
+        let trainQueue = [];
+        let trainIndex = 0;
+        let trainScore = 0;
+        let trainAnswered = false;
 
         let erQueue = [];
         let erIndex = 0;
@@ -2525,6 +2654,10 @@
         const infoPanel = document.getElementById("info-panel");
         const toggleNames = document.getElementById("toggle-names");
         const toolbarHint = document.getElementById("toolbar-hint");
+
+        toggleNames.addEventListener("change", () => {
+            anatomyStage.classList.toggle("show-all-labels", toggleNames.checked);
+        });
 
         const plateCache = {};
         const detectedPlatesData = {};
@@ -2748,6 +2881,12 @@
         }
 
         function renderAnatomyHighlight() {
+            if (currentMode === "training" || currentMode === "er") {
+                if (!hoveredItemId) {
+                    highlightSvg.innerHTML = "";
+                    return;
+                }
+            }
             const targetId = hoveredItemId || (currentLayer === "bones" ? selectedBone?.id : selectedMuscle?.id);
             const list = currentLayer === "bones" ? BONES : MUSCLES;
             const item = list.find(i => i.id === targetId);
@@ -2782,21 +2921,22 @@
             document.getElementById("btn-layer-muscles").classList.toggle("active-muscles", layer === "muscles");
             selectedRegionFilter = "Tutte";
             renderHotspots();
+            loadAnatomyPlate(currentLayer, currentView);
             if (currentMode === "explore") {
                 renderExplorePanel();
             }
-            loadAnatomyPlate(currentLayer, currentView);
         }
 
         function handleAnatomyItemClick(item) {
-            if (currentLayer === "bones") selectedBone = item;
-            else selectedMuscle = item;
-
-            highlightSelectedBone(item.id);
-            renderAnatomyHighlight();
-
+            if (!item) return;
             if (currentMode === "explore") {
+                if (currentLayer === "bones") selectedBone = item;
+                else selectedMuscle = item;
+                highlightSelectedBone(item.id);
+                renderAnatomyHighlight();
                 renderExplorePanel();
+            } else if (currentMode === "train") {
+                checkTrainAnswer(item);
             } else if (currentMode === "er" && erStep === "locate") {
                 checkErLocation(item);
             }
@@ -2894,6 +3034,7 @@
             renderExplorePanel();
         }
 
+        /* ================= 1. MODALITÀ APPARATO LOCOMOTORE (ESPLORA + GUIDA TRAUMI) ================= */
         function renderExplorePanel() {
             infoPanel.classList.remove("clipboard-mode", "red-alert");
             const isBones = currentLayer === "bones";
@@ -2907,7 +3048,58 @@
             const exploreSpeechText = `${item.name}. ${item.desc}. Funzione: ${item.func}`;
             prefetchItalianTts(exploreSpeechText, "neutral");
 
+            const subNavHtml = `
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.5rem; margin-bottom:0.25rem;">
+                    <button type="button" class="layer-btn ${exploreSubTab === "anatomy" ? "active-bones" : ""}" onclick="exploreSubTab='anatomy'; renderExplorePanel();">
+                        🔬 Scheda Anatomica
+                    </button>
+                    <button type="button" class="layer-btn ${exploreSubTab === "glossary" ? "active-muscles" : ""}" onclick="exploreSubTab='glossary'; renderExplorePanel();">
+                        📖 Guida Traumi & Glossario
+                    </button>
+                </div>
+            `;
+
+            if (exploreSubTab === "glossary") {
+                infoPanel.innerHTML = `
+                    ${subNavHtml}
+                    <div>
+                        <span class="region-tag muscle-tag">🩺 Manuale Rapido • Pronto Soccorso</span>
+                        <h2 class="bone-title" style="font-size:1.4rem; margin-top:0.2rem;">Guida Traumi & Glossario</h2>
+                        <p style="font-size:0.9rem; color:var(--muted); margin-top:0.2rem;">Terminologia essenziale per riconoscere i principali traumi dell'apparato locomotore e intervenire correttamente.</p>
+                    </div>
+
+                    <div class="info-box">
+                        <h3>🦴 Frattura</h3>
+                        <p>Rottura parziale o completa di un osso causata da un trauma o una caduta. Può essere <strong>composta</strong> (i monconi restano allineati) o <strong>scomposta</strong> (i frammenti si spostano). <em>Primo soccorso:</em> non muovere la parte, immobilizzare e chiamare i soccorsi.</p>
+                    </div>
+
+                    <div class="info-box">
+                        <h3>🔄 Lussazione</h3>
+                        <p>Perdita permanente dei normali rapporti articolari: i capi ossei escono dalla loro sede naturale (es. spalla o mandibola). Provoca dolore intenso, deformità e impossibilità di movimento. <em>Non tentare mai di rimetterla a posto da soli.</em></p>
+                    </div>
+
+                    <div class="info-box">
+                        <h3>🦶 Distorsione</h3>
+                        <p>Lesione temporanea di un'articolazione (es. caviglia o ginocchio) dovuta a un movimento brusco oltre il limite fisiologico, con stiramento o rottura dei <strong>legamenti</strong>, ma senza spostamento definitivo delle ossa.</p>
+                    </div>
+
+                    <div class="info-box muscle-box">
+                        <h3>💪 Contrattura, Stiramento e Strappo</h3>
+                        <p><strong>Contrattura:</strong> aumento involontario e doloroso del tono muscolare senza rottura di fibre.<br>
+                        <strong>Stiramento:</strong> allungamento eccessivo delle fibre muscolari durante uno sforzo.<br>
+                        <strong>Strappo (lesione):</strong> rottura vera e propria di un numero più o meno esteso di fibre muscolari, con dolore acuto improvviso.</p>
+                    </div>
+
+                    <div class="info-box" style="border-left-color:#16a34a; background:#f0fdf4;">
+                        <h3 style="color:#166534;">🧊 Protocollo R.I.C.E. (Traumi lievi)</h3>
+                        <p><strong>R</strong>est (Riposo), <strong>I</strong>ce (Ghiaccio avvolto in un panno per 15-20 min), <strong>C</strong>ompression (Bendaggio elastico non stretto), <strong>E</strong>levation (Elevazione dell'arto per ridurre il gonfiore).</p>
+                    </div>
+                `;
+                return;
+            }
+
             infoPanel.innerHTML = `
+                ${subNavHtml}
                 <div class="bone-header">
                     <div>
                         <span class="region-tag ${isBones ? "" : "muscle-tag"}">${isBones ? "🦴 Osso" : "💪 Muscolo"} • ${item.region}</span>
@@ -2949,6 +3141,176 @@
             highlightSelectedBone(item.id);
         }
 
+        /* ================= MODALITÀ 2: ALLENAMENTO 🎯 (SENZA PULSANTE PRONUNCIA) ================= */
+        function startTrainSession() {
+            infoPanel.classList.remove("clipboard-mode", "red-alert");
+            anatomyStage.classList.add("hide-hover-labels");
+            const allItems = [
+                ...BONES.map(b => ({ ...b, layerType: "bones" })),
+                ...MUSCLES.map(m => ({ ...m, layerType: "muscles" }))
+            ];
+            trainQueue = allItems.sort(() => Math.random() - 0.5).slice(0, 10);
+            trainIndex = 0;
+            trainScore = 0;
+            trainAnswered = false;
+            prepareCurrentTrainTarget();
+            renderTrainPanel();
+        }
+
+        function prepareCurrentTrainTarget() {
+            if (trainIndex >= trainQueue.length) return;
+            const target = trainQueue[trainIndex];
+            resetHotspotStates();
+            if (currentLayer !== target.layerType) {
+                currentLayer = target.layerType;
+                document.getElementById("btn-layer-bones").classList.toggle("active-bones", currentLayer === "bones");
+                document.getElementById("btn-layer-muscles").classList.toggle("active-muscles", currentLayer === "muscles");
+                renderHotspots();
+                loadAnatomyPlate(currentLayer, currentView);
+            }
+            const pos = target.views[currentView] || target.views.front;
+            if (pos.hidden) {
+                const validView = Object.keys(target.views).find(v => !target.views[v].hidden) || "front";
+                switchAnatomyView(validView);
+            }
+            resetHotspotStates();
+        }
+
+        function renderTrainPanel() {
+            infoPanel.classList.remove("clipboard-mode", "red-alert");
+            if (trainQueue.length === 0) {
+                startTrainSession();
+                return;
+            }
+            if (trainIndex >= trainQueue.length) {
+                playTone("ok");
+                infoPanel.innerHTML = `
+                    <div class="patient-card">
+                        <span class="region-tag">Allenamento completato</span>
+                        <h2 class="bone-title" style="margin:0.4rem 0;">Punteggio: ${trainScore} / ${trainQueue.length}</h2>
+                        <p style="margin-bottom:0.9rem; color:var(--muted);">Ottimo lavoro! Hai completato il riconoscimento anatomico su ossa e muscoli.</p>
+                        <button type="button" class="next-btn" onclick="startTrainSession()">Nuova sessione di allenamento 🔄</button>
+                    </div>
+                `;
+                return;
+            }
+
+            const target = trainQueue[trainIndex];
+            const isBones = target.layerType === "bones";
+            trainAnswered = false;
+
+            infoPanel.innerHTML = `
+                <div class="er-status-bar">
+                    <span>Bersaglio ${trainIndex + 1} di ${trainQueue.length}</span>
+                    <span>Punteggio: ${trainScore}</span>
+                </div>
+
+                <div class="patient-card">
+                    <span class="region-tag ${isBones ? "" : "muscle-tag"}">${isBones ? "🦴 Sistema Scheletrico" : "💪 Sistema Muscolare"} • ${target.region}</span>
+                    <div style="margin-top:0.35rem;">
+                        <p style="font-size:0.88rem; color:var(--muted); font-weight:700; text-transform:uppercase;">Individua sulla tavola anatomica:</p>
+                        <h2 class="bone-title" style="margin:0.2rem 0 0.45rem;">${target.name}</h2>
+                    </div>
+                    <p style="font-size:0.94rem; color:var(--text);">Clicca sul punto corrispondente sulla figura a sinistra.</p>
+                </div>
+
+                <div id="train-feedback" class="feedback-box">
+                    💡 Suggerimento: appartiene alla regione <strong>${target.region}</strong>.
+                </div>
+            `;
+        }
+
+        function checkTrainAnswer(clickedItem) {
+            if (trainAnswered || trainIndex >= trainQueue.length) return;
+            const target = trainQueue[trainIndex];
+            const fb = document.getElementById("train-feedback");
+            const el = document.querySelector(`.hotspot[data-id="${clickedItem.id}"]`);
+
+            if (clickedItem.id === target.id) {
+                trainAnswered = true;
+                trainScore++;
+                playTone("ok");
+                if (el) {
+                    el.classList.remove("selected", "wrong");
+                    el.classList.add("correct");
+                }
+                if (fb) {
+                    fb.className = "feedback-box success";
+                    fb.innerHTML = `✅ Esatto! Hai individuato <strong>${target.name}</strong>.<br><span style="font-weight:500; font-size:0.9rem;">${target.func}</span>`;
+                }
+                const nextBtn = document.createElement("button");
+                nextBtn.type = "button";
+                nextBtn.className = "next-btn";
+                nextBtn.textContent = trainIndex + 1 < trainQueue.length ? "Prossimo elemento ➡️" : "Vedi risultato finale 🏆";
+                nextBtn.onclick = () => {
+                    trainIndex++;
+                    prepareCurrentTrainTarget();
+                    renderTrainPanel();
+                };
+                infoPanel.appendChild(nextBtn);
+            } else {
+                playTone("err");
+                if (el) {
+                    el.classList.remove("selected");
+                    el.classList.add("wrong");
+                }
+                if (fb) {
+                    fb.className = "feedback-box error";
+                    fb.innerHTML = `❌ Hai selezionato <strong>${clickedItem.name}</strong>. Riprova a cercare <strong>${target.name}</strong>!`;
+                }
+            }
+        }
+
+        function prefetchAllErVoices() {
+            ER_CASES.forEach((item, idx) => {
+                if (item && item.story) {
+                    setTimeout(() => {
+                        prefetchItalianTts(item.story, item.gender || "neutral");
+                    }, idx * 120);
+                }
+            });
+        }
+
+        let activeAudioPlayer = null;
+        let activeSpeakBtn = null;
+
+        function stopAllSpeech() {
+            if (activeAudioPlayer) {
+                try {
+                    activeAudioPlayer.pause();
+                    activeAudioPlayer.currentTime = 0;
+                } catch (e) {}
+                activeAudioPlayer = null;
+            }
+            if ("speechSynthesis" in window) {
+                try { window.speechSynthesis.cancel(); } catch (e) {}
+            }
+            if (activeSpeakBtn) {
+                activeSpeakBtn.textContent = activeSpeakBtn.dataset.origLabel || "🔊 Ascolta";
+                activeSpeakBtn.disabled = false;
+                activeSpeakBtn = null;
+            }
+        }
+
+        function prefetchItalianTts() {}
+        function prefetchErQueueVoices() {}
+
+        function speakWithBrowserFallback(text, gender = "neutral") {
+            if (!("speechSynthesis" in window) || !text) return;
+            try {
+                window.speechSynthesis.cancel();
+                const utter = new SpeechSynthesisUtterance(text);
+                utter.lang = "it-IT";
+                utter.rate = 0.96;
+                utter.pitch = gender === "female" ? 1.12 : gender === "male" ? 0.92 : 1.0;
+                const voices = window.speechSynthesis.getVoices().filter(v => v.lang && v.lang.toLowerCase().startsWith("it"));
+                if (voices.length > 0) {
+                    utter.voice = voices[0];
+                }
+                window.speechSynthesis.speak(utter);
+            } catch (e) {}
+        }
+
         function destroyActivePeer() {
             if (playerHostConn) {
                 try { playerHostConn.close(); } catch (e) {}
@@ -2962,227 +3324,6 @@
                 try { localRoomChannel.close(); } catch (e) {}
                 localRoomChannel = null;
             }
-        }
-
-        const preferredItalianVoices = {
-            female: null,
-            male: null,
-            neutral: null
-        };
-        const neuralTtsCache = new Map();
-        const neuralTtsInFlight = new Map();
-        let activeAudioPlayer = null;
-        let activeSpeakBtn = null;
-
-        function selectBestItalianVoices() {
-            if (!("speechSynthesis" in window)) return preferredItalianVoices;
-            const voices = window.speechSynthesis.getVoices() || [];
-            const itVoices = voices.filter(v => {
-                const lang = (v.lang || "").toLowerCase();
-                const name = (v.name || "").toLowerCase();
-                return lang.startsWith("it") || name.includes("italian") || name.includes("italiano");
-            });
-            if (itVoices.length === 0) return preferredItalianVoices;
-
-            const maleHints = [
-                "diego", "cosimo", "giuseppe", "luca", "fabio", "giovanni",
-                "lorenzo", "vittorio", "marco", "matteo", "alessandro",
-                "emanuele", "paolo", "andrea", "roberto", "stefano", "giorgio",
-                "male", "uomo", "maschile"
-            ];
-            const femaleHints = [
-                "elsa", "isabella", "alice", "federica", "paola", "silvia",
-                "bianca", "carla", "fabiola", "lucia", "chiara", "elena",
-                "giulia", "sofia", "female", "donna", "femminile"
-            ];
-
-            const qualityScore = (v) => {
-                const name = (v.name || "").toLowerCase();
-                let score = 0;
-                if (name.includes("natural") || name.includes("neural") || name.includes("online") || name.includes("enhanced")) score += 200;
-                if (name.includes("google")) score += 120;
-                if (name.includes("microsoft")) score += 80;
-                if (name.includes("espeak") || name.includes("compact")) score -= 300;
-                return score;
-            };
-
-            const sorted = [...itVoices].sort((a, b) => qualityScore(b) - qualityScore(a));
-            const bestOverall = sorted[0] || null;
-
-            const maleVoices = sorted.filter(v => {
-                const n = (v.name || "").toLowerCase();
-                return !femaleHints.some(fh => n.includes(fh)) && maleHints.some(h => n.includes(h));
-            });
-
-            const femaleVoices = sorted.filter(v => {
-                const n = (v.name || "").toLowerCase();
-                return femaleHints.some(h => n.includes(h));
-            });
-
-            preferredItalianVoices.male = maleVoices[0] || null;
-            preferredItalianVoices.female = femaleVoices[0] || bestOverall;
-            preferredItalianVoices.neutral = femaleVoices[0] || bestOverall;
-            return preferredItalianVoices;
-        }
-
-        if ("speechSynthesis" in window) {
-            selectBestItalianVoices();
-            window.speechSynthesis.onvoiceschanged = () => {
-                selectBestItalianVoices();
-            };
-        }
-
-        function stopAllSpeech() {
-            if ("speechSynthesis" in window) {
-                window.speechSynthesis.cancel();
-            }
-            if (activeAudioPlayer) {
-                try {
-                    activeAudioPlayer.pause();
-                    activeAudioPlayer.currentTime = 0;
-                } catch (e) {}
-                activeAudioPlayer = null;
-            }
-            if (activeSpeakBtn) {
-                activeSpeakBtn.textContent = activeSpeakBtn.dataset.origLabel || "🔊 Ascolta";
-                activeSpeakBtn.disabled = false;
-                activeSpeakBtn = null;
-            }
-        }
-
-        function pcm16Base64ToWavUrl(base64Pcm, sampleRate = 24000) {
-            const binary = atob(base64Pcm);
-            const pcmLen = binary.length;
-            const buffer = new ArrayBuffer(44 + pcmLen);
-            const view = new DataView(buffer);
-            const writeStr = (offset, str) => {
-                for (let i = 0; i < str.length; i++) view.setUint8(offset + i, str.charCodeAt(i));
-            };
-            writeStr(0, "RIFF");
-            view.setUint32(4, 36 + pcmLen, true);
-            writeStr(8, "WAVE");
-            writeStr(12, "fmt ");
-            view.setUint32(16, 16, true);
-            view.setUint16(20, 1, true);
-            view.setUint16(22, 1, true);
-            view.setUint32(24, sampleRate, true);
-            view.setUint32(28, sampleRate * 2, true);
-            view.setUint16(32, 2, true);
-            view.setUint16(34, 16, true);
-            writeStr(36, "data");
-            view.setUint32(40, pcmLen, true);
-            const bytes = new Uint8Array(buffer, 44);
-            for (let i = 0; i < pcmLen; i++) bytes[i] = binary.charCodeAt(i);
-            return URL.createObjectURL(new Blob([buffer], { type: "audio/wav" }));
-        }
-
-        function speakWithBrowserFallback(cleanText, gender = "neutral") {
-            if (!("speechSynthesis" in window)) return;
-            window.speechSynthesis.cancel();
-            const selectedSet = selectBestItalianVoices();
-            const u = new SpeechSynthesisUtterance(cleanText);
-            u.lang = "it-IT";
-
-            if (gender === "male" && selectedSet.male) {
-                u.voice = selectedSet.male;
-                u.rate = 0.98;
-                u.pitch = 0.98;
-            } else if (gender === "female" && selectedSet.female) {
-                u.voice = selectedSet.female;
-                u.rate = 1.0;
-                u.pitch = 1.02;
-            } else {
-                const fallbackVoice = selectedSet.neutral || selectedSet.female;
-                if (fallbackVoice) u.voice = fallbackVoice;
-                u.rate = 0.98;
-                u.pitch = gender === "male" ? 0.88 : 1.0;
-            }
-
-            u.volume = 1.0;
-            window.speechSynthesis.speak(u);
-        }
-
-        async function tryNeuralItalianTts(cleanText, gender) {
-            const cacheKey = `${gender}:${cleanText}`;
-            if (neuralTtsCache.has(cacheKey)) {
-                return neuralTtsCache.get(cacheKey);
-            }
-            if (neuralTtsInFlight.has(cacheKey)) {
-                return neuralTtsInFlight.get(cacheKey);
-            }
-
-            const fetchPromise = (async () => {
-                const voiceName = gender === "male" ? "Orus" : (gender === "female" ? "Aoede" : "Charon");
-                const stylePrompt = gender === "male"
-                    ? `Leggi in italiano con voce maschile naturale, chiara ed espressiva, come un paziente che descrive i propri sintomi: "${cleanText}"`
-                    : `Leggi in italiano con voce femminile naturale, chiara ed espressiva: "${cleanText}"`;
-
-                const apiKey = "";
-                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent?key=${apiKey}`;
-                const payload = {
-                    contents: [{ parts: [{ text: stylePrompt }] }],
-                    generationConfig: {
-                        responseModalities: ["AUDIO"],
-                        speechConfig: {
-                            voiceConfig: {
-                                prebuiltVoiceConfig: { voiceName }
-                            }
-                        }
-                    },
-                    model: "gemini-2.5-flash-preview-tts"
-                };
-
-                const res = await fetch(apiUrl, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(payload)
-                });
-                if (!res.ok) throw new Error("TTS API error");
-                const data = await res.json();
-                const part = data?.candidates?.[0]?.content?.parts?.[0];
-                const audioData = part?.inlineData?.data;
-                const mimeType = part?.inlineData?.mimeType || "";
-                if (!audioData || !mimeType.startsWith("audio/")) throw new Error("No audio data");
-
-                const rateMatch = mimeType.match(/rate=(\d+)/);
-                const sampleRate = rateMatch ? parseInt(rateMatch[1], 10) : 24000;
-                const wavUrl = pcm16Base64ToWavUrl(audioData, sampleRate);
-                neuralTtsCache.set(cacheKey, wavUrl);
-                return wavUrl;
-            })();
-
-            neuralTtsInFlight.set(cacheKey, fetchPromise);
-            try {
-                return await fetchPromise;
-            } finally {
-                neuralTtsInFlight.delete(cacheKey);
-            }
-        }
-
-        function prefetchItalianTts(text, gender = "neutral") {
-            if (!text) return;
-            const cleanText = String(text).replace(/\s+/g, " ").trim();
-            tryNeuralItalianTts(cleanText, gender).catch(() => {});
-        }
-
-        function prefetchErQueueVoices(queue, startIdx = 0) {
-            if (!Array.isArray(queue)) return;
-            for (let i = startIdx; i < Math.min(queue.length, startIdx + 6); i++) {
-                const item = queue[i];
-                if (item && item.story) {
-                    prefetchItalianTts(item.story, item.gender || "neutral");
-                }
-            }
-        }
-
-        function prefetchAllErVoices() {
-            ER_CASES.forEach((item, idx) => {
-                if (item && item.story) {
-                    setTimeout(() => {
-                        prefetchItalianTts(item.story, item.gender || "neutral");
-                    }, idx * 120);
-                }
-            });
         }
 
         function getPatientAudioUrl(patientLabel) {
@@ -3282,7 +3423,6 @@
             const plotW = W - padLeft - padRight;
             const plotH = H - padTop - padBottom;
 
-            // Griglia millimetrata stile monitor ECG ospedaliero
             let gridLines = "";
             for (let x = padLeft; x <= W - padRight; x += 20) {
                 gridLines += `<line x1="${x}" y1="${padTop}" x2="${x}" y2="${H - padBottom}" stroke="rgba(16,185,129,0.12)" stroke-width="1"/>`;
@@ -3299,7 +3439,6 @@
                     ? team.history
                     : [{ step: 0, score: 0, ok: true }];
 
-                // Leggero offset verticale per non sovrapporre linee a pari punteggio
                 const laneOffset = ((idx % 4) - 1.5) * 1.4;
                 const getX = (step) => padLeft + (Math.min(step, totalCases) / Math.max(1, totalCases)) * plotW;
                 const getY = (score) => padTop + plotH - (Math.min(score, maxScore) / Math.max(1, maxScore)) * plotH + laneOffset;
@@ -3319,7 +3458,6 @@
                     const mid = x0 + span * 0.45;
 
                     if (curr.ok) {
-                        // Complesso QRS elettrocardiografico (picco netto verso l'alto e onda S)
                         const qX = mid - 6;
                         const rX = mid - 1;
                         const sX = mid + 4;
@@ -3332,14 +3470,12 @@
                         d += ` L ${tX.toFixed(1)} ${y1.toFixed(1)}`;
                         d += ` L ${x1.toFixed(1)} ${y1.toFixed(1)}`;
                     } else {
-                        // Onda piatta / lieve oscillazione senza avanzamento di punteggio
                         d += ` L ${mid.toFixed(1)} ${(y0 + 2).toFixed(1)} L ${x1.toFixed(1)} ${y1.toFixed(1)}`;
                     }
                     lastX = x1;
                     lastY = y1;
                 }
 
-                // Aggiunge un battito terminale vivo sul punto attuale della squadra
                 const beatEnd = Math.min(W - 6, lastX + 10);
                 d += ` L ${(lastX + 2).toFixed(1)} ${(lastY + 2).toFixed(1)} L ${(lastX + 4).toFixed(1)} ${Math.max(6, lastY - 9).toFixed(1)} L ${(lastX + 6).toFixed(1)} ${Math.min(H - 6, lastY + 5).toFixed(1)} L ${beatEnd.toFixed(1)} ${lastY.toFixed(1)}`;
 
@@ -4080,7 +4216,7 @@
             clinicalBody.appendChild(next);
         }
 
-        /* ================= MODALITÀ QUIZ ================= */
+        /* ================= 4. MODALITÀ QUIZ ================= */
         function startQuizSession() {
             infoPanel.classList.remove("clipboard-mode", "red-alert");
             quizSessionQuestions = [...QUIZ_QUESTIONS].sort(() => Math.random() - 0.5).slice(0, 8);
@@ -4169,14 +4305,22 @@
                 currentMode = btn.dataset.mode;
 
                 if (currentMode === "explore") {
+                    anatomyStage.classList.remove("hide-hover-labels");
                     setXrayVisual(false);
                     toolbarHint.textContent = "Scegli Ossa o Muscoli e clicca sui punti";
                     renderHotspots();
                     renderExplorePanel();
+                } else if (currentMode === "train") {
+                    anatomyStage.classList.add("hide-hover-labels");
+                    setXrayVisual(false);
+                    toolbarHint.textContent = "Individua l'osso o il muscolo richiesto sull'immagine";
+                    startTrainSession();
                 } else if (currentMode === "er") {
+                    anatomyStage.classList.remove("hide-hover-labels");
                     toolbarHint.textContent = "Individua la lesione sullo scanner";
                     renderErIntroScreen();
                 } else if (currentMode === "quiz") {
+                    anatomyStage.classList.remove("hide-hover-labels");
                     setXrayVisual(false);
                     toolbarHint.textContent = "Rispondi alle domande sull'apparato locomotore";
                     startQuizSession();
