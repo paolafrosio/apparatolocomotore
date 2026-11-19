@@ -242,11 +242,18 @@
             max-width: 100%;
             height: 620px;
             max-height: 75vh;
-            background: #000000;
+            background-color: #05080f;
+            background-image:
+                linear-gradient(rgba(56, 189, 248, 0.11) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(56, 189, 248, 0.11) 1px, transparent 1px),
+                linear-gradient(rgba(56, 189, 248, 0.04) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(56, 189, 248, 0.04) 1px, transparent 1px);
+            background-size: 40px 40px, 40px 40px, 10px 10px, 10px 10px;
+            background-position: -1px -1px;
             border-radius: 14px;
             overflow: hidden;
             border: 2px solid #1e293b;
-            box-shadow: inset 0 0 25px rgba(0, 0, 0, 0.7);
+            box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.85);
             touch-action: none;
             user-select: none;
             cursor: grab;
@@ -2978,53 +2985,43 @@
             if (itVoices.length === 0) return preferredItalianVoices;
 
             const maleHints = [
-                "diego", "giuseppe", "luca", "cosimo", "fabio", "giovanni",
+                "diego", "cosimo", "giuseppe", "luca", "fabio", "giovanni",
                 "lorenzo", "vittorio", "marco", "matteo", "alessandro",
-                "emanuele", "paolo", "andrea", "roberto", "stefano", "male", "uomo", "maschile"
+                "emanuele", "paolo", "andrea", "roberto", "stefano", "giorgio",
+                "male", "uomo", "maschile"
             ];
             const femaleHints = [
                 "elsa", "isabella", "alice", "federica", "paola", "silvia",
                 "bianca", "carla", "fabiola", "lucia", "chiara", "elena",
-                "giulia", "sofia", "female", "donna", "femminile", "google italiano"
+                "giulia", "sofia", "female", "donna", "femminile"
             ];
 
-            const isNeuralVoice = (v) => {
-                const n = (v.name || "").toLowerCase();
-                return n.includes("natural") || n.includes("neural") || n.includes("online") || n.includes("enhanced") || n.includes("premium");
-            };
-
-            const baseQualityScore = (v) => {
+            const qualityScore = (v) => {
                 const name = (v.name || "").toLowerCase();
                 let score = 0;
-                if (isNeuralVoice(v)) score += 150;
-                if (name.includes("google")) score += 110;
-                if (name.includes("microsoft")) score += 60;
-                if (name.includes("espeak") || name.includes("compact")) score -= 250;
+                if (name.includes("natural") || name.includes("neural") || name.includes("online") || name.includes("enhanced")) score += 200;
+                if (name.includes("google")) score += 120;
+                if (name.includes("microsoft")) score += 80;
+                if (name.includes("espeak") || name.includes("compact")) score -= 300;
                 return score;
             };
 
-            const validItVoices = itVoices.filter(v => {
-                const name = (v.name || "").toLowerCase();
-                return !name.includes("espeak") && !name.includes("compact");
+            const sorted = [...itVoices].sort((a, b) => qualityScore(b) - qualityScore(a));
+            const bestOverall = sorted[0] || null;
+
+            const maleVoices = sorted.filter(v => {
+                const n = (v.name || "").toLowerCase();
+                return !femaleHints.some(fh => n.includes(fh)) && maleHints.some(h => n.includes(h));
             });
-            const pool = validItVoices.length > 0 ? validItVoices : itVoices;
-            const bestOverall = [...pool].sort((a, b) => baseQualityScore(b) - baseQualityScore(a))[0] || null;
 
-            const maleVoices = pool
-                .filter(v => {
-                    const n = (v.name || "").toLowerCase();
-                    if (femaleHints.some(fh => n.includes(fh))) return false;
-                    return maleHints.some(h => n.includes(h));
-                })
-                .sort((a, b) => baseQualityScore(b) - baseQualityScore(a));
+            const femaleVoices = sorted.filter(v => {
+                const n = (v.name || "").toLowerCase();
+                return femaleHints.some(h => n.includes(h));
+            });
 
-            const femaleVoices = pool
-                .filter(v => femaleHints.some(h => (v.name || "").toLowerCase().includes(h)))
-                .sort((a, b) => baseQualityScore(b) - baseQualityScore(a));
-
-            preferredItalianVoices.male = maleVoices[0] || bestOverall;
+            preferredItalianVoices.male = maleVoices[0] || null;
             preferredItalianVoices.female = femaleVoices[0] || bestOverall;
-            preferredItalianVoices.neutral = bestOverall;
+            preferredItalianVoices.neutral = femaleVoices[0] || bestOverall;
             return preferredItalianVoices;
         }
 
@@ -3081,23 +3078,26 @@
 
         function speakWithBrowserFallback(cleanText, gender = "neutral") {
             if (!("speechSynthesis" in window)) return;
+            window.speechSynthesis.cancel();
             const selectedSet = selectBestItalianVoices();
-            const chosenVoice = selectedSet[gender] || selectedSet.neutral;
             const u = new SpeechSynthesisUtterance(cleanText);
             u.lang = "it-IT";
-            if (chosenVoice) u.voice = chosenVoice;
-            const voiceNameLower = (chosenVoice?.name || "").toLowerCase();
-            const isFemaleFallback = voiceNameLower.includes("elsa") || voiceNameLower.includes("isabella") || voiceNameLower.includes("alice") || voiceNameLower.includes("google italiano");
-            if (gender === "male") {
-                u.rate = 0.94;
-                u.pitch = isFemaleFallback ? 0.82 : 0.96;
-            } else if (gender === "female") {
+
+            if (gender === "male" && selectedSet.male) {
+                u.voice = selectedSet.male;
                 u.rate = 0.98;
-                u.pitch = 1.04;
+                u.pitch = 0.98;
+            } else if (gender === "female" && selectedSet.female) {
+                u.voice = selectedSet.female;
+                u.rate = 1.0;
+                u.pitch = 1.02;
             } else {
-                u.rate = 0.96;
-                u.pitch = 1.0;
+                const fallbackVoice = selectedSet.neutral || selectedSet.female;
+                if (fallbackVoice) u.voice = fallbackVoice;
+                u.rate = 0.98;
+                u.pitch = gender === "male" ? 0.88 : 1.0;
             }
+
             u.volume = 1.0;
             window.speechSynthesis.speak(u);
         }
@@ -3220,49 +3220,6 @@
                     activeSpeakBtn = null;
                 }
                 speakWithBrowserFallback(cleanText, gender);
-            }
-        }
-
-        async function speakItalian(text, gender = "neutral", btnEl = null) {
-            if (!text) return;
-            stopAllSpeech();
-            const cleanText = String(text).replace(/\s+/g, " ").trim();
-            const cacheKey = `${gender}:${cleanText}`;
-
-            if (btnEl) {
-                if (!btnEl.dataset.origLabel) btnEl.dataset.origLabel = btnEl.textContent;
-                activeSpeakBtn = btnEl;
-                btnEl.textContent = "🔊 In lettura...";
-            }
-
-            // Se l'audio neurale è già pronto in cache, parte all'istante (0 ms)
-            if (neuralTtsCache.has(cacheKey)) {
-                try {
-                    const audio = new Audio(neuralTtsCache.get(cacheKey));
-                    activeAudioPlayer = audio;
-                    audio.onended = () => {
-                        if (activeSpeakBtn === btnEl && btnEl) {
-                            btnEl.textContent = btnEl.dataset.origLabel || "🔊 Ascolta";
-                            activeSpeakBtn = null;
-                        }
-                    };
-                    await audio.play();
-                    return;
-                } catch (e) {}
-            }
-
-            // Avvia subito in parallelo la preparazione neurale per il futuro
-            tryNeuralItalianTts(cleanText, gender).catch(() => {});
-
-            // Nel frattempo parte immediatamente (0 ms) senza farti aspettare
-            speakWithBrowserFallback(cleanText, gender);
-            if (btnEl) {
-                setTimeout(() => {
-                    if (activeSpeakBtn === btnEl) {
-                        btnEl.textContent = btnEl.dataset.origLabel || "🔊 Ascolta";
-                        activeSpeakBtn = null;
-                    }
-                }, 1800);
             }
         }
 
