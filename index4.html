@@ -349,23 +349,6 @@
             box-shadow: 0 0 10px rgba(2, 132, 199, 0.45);
         }
 
-        .sound-toggle-btn {
-            border: 1px solid rgba(255, 255, 255, 0.28);
-            background: rgba(255, 255, 255, 0.12);
-            color: #ffffff;
-            padding: 0.5rem 0.75rem;
-            border-radius: 8px;
-            font-family: inherit;
-            font-size: 0.85rem;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.15s;
-        }
-
-        .sound-toggle-btn:hover {
-            background: rgba(255, 255, 255, 0.22);
-        }
-
         .triage-choice-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -833,23 +816,6 @@
             font-size: 1.65rem;
             font-weight: 800;
             color: #0f172a;
-        }
-
-        .speak-btn {
-            background: var(--primary);
-            color: white;
-            border: none;
-            padding: 0.55rem 0.95rem;
-            border-radius: 10px;
-            font-family: inherit;
-            font-weight: 700;
-            font-size: 0.88rem;
-            cursor: pointer;
-            transition: background 0.15s;
-        }
-
-        .speak-btn:hover {
-            background: var(--primary-dark);
         }
 
         .info-box {
@@ -1361,7 +1327,6 @@
             <button class="mode-btn" data-mode="er">3. Pronto Soccorso 🚑</button>
             <button class="mode-btn" data-mode="quiz">4. Quiz 📝</button>
             <button class="mode-btn" data-mode="gym">5. Palestra & Movimenti 🏋️</button>
-            <button type="button" class="sound-toggle-btn" id="btn-sound-toggle" onclick="toggleSoundEffects()" title="Attiva o disattiva suoni discreti">🔊 Audio</button>
         </nav>
     </header>
 
@@ -2703,7 +2668,6 @@
         let regionFilter = "Tutti";
         let showAllNames = false;
         let isXrayVisual = false;
-        let soundEnabled = true;
 
         // Zoom & Pan
         let zoomLevel = 1;
@@ -2732,7 +2696,6 @@
         let erShowTriageGuide = false;
         let erRedConfirmed = false;
         let erHistory = [];
-        let currentSpeechAudio = null;
 
         // Quiz
         let quizList = [];
@@ -2780,70 +2743,6 @@
                 options: paired.map(p => p.text),
                 correct: paired.findIndex(p => p.isCorrect)
             };
-        }
-
-        /* ================= EFFETTI SONORI DISCRETI (WEB AUDIO) ================= */
-        let audioCtx = null;
-        function playTone(freq, duration = 0.14, type = "sine", vol = 0.08) {
-            if (!soundEnabled) return;
-            try {
-                if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-                const osc = audioCtx.createOscillator();
-                const gain = audioCtx.createGain();
-                osc.type = type;
-                osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-                gain.gain.setValueAtTime(vol, audioCtx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
-                osc.connect(gain);
-                gain.connect(audioCtx.destination);
-                osc.start();
-                osc.stop(audioCtx.currentTime + duration);
-            } catch (e) {}
-        }
-
-        function playSuccessSound() {
-            playTone(523.25, 0.11, "triangle", 0.08);
-            setTimeout(() => playTone(659.25, 0.16, "triangle", 0.08), 90);
-        }
-
-        function playErrorSound() {
-            playTone(220, 0.18, "sawtooth", 0.06);
-        }
-
-        function toggleSoundEffects() {
-            soundEnabled = !soundEnabled;
-            const btn = document.getElementById("btn-sound-toggle");
-            if (btn) btn.textContent = soundEnabled ? "🔊 Audio" : "🔇 Muto";
-        }
-
-        /* ================= LETTURA VOCALE (TTS + MP3 FALLBACK) ================= */
-        function speakText(text, audioFile = null) {
-            try {
-                if (currentSpeechAudio) {
-                    currentSpeechAudio.pause();
-                    currentSpeechAudio = null;
-                }
-                if ("speechSynthesis" in window) {
-                    window.speechSynthesis.cancel();
-                }
-                if (audioFile) {
-                    const audio = new Audio(audioFile);
-                    currentSpeechAudio = audio;
-                    audio.play().catch(() => fallbackTTS(text));
-                    return;
-                }
-                fallbackTTS(text);
-            } catch (e) {
-                fallbackTTS(text);
-            }
-        }
-
-        function fallbackTTS(text) {
-            if (!("speechSynthesis" in window)) return;
-            const utter = new SpeechSynthesisUtterance(text);
-            utter.lang = "it-IT";
-            utter.rate = 0.95;
-            window.speechSynthesis.speak(utter);
         }
 
         /* ================= TAVOLE ANATOMICHE (IMMAGINI + FALLBACK SVG) ================= */
@@ -3083,7 +2982,6 @@
 
             if (currentMode === "explore") {
                 selectedItemId = item.id;
-                playTone(440, 0.08, "sine", 0.05);
                 renderHotspots();
                 renderExplorePanel();
                 return;
@@ -3096,9 +2994,6 @@
                 const isRight = item.id === trainTarget.id;
                 if (isRight) {
                     trainScore++;
-                    playSuccessSound();
-                } else {
-                    playErrorSound();
                 }
                 renderHotspots();
                 renderTrainPanel(item);
@@ -3118,11 +3013,9 @@
                     }
                     erWrongSpotId = null;
                     erPhase = 3;
-                    playSuccessSound();
                     syncTeamProgress(false);
                 } else {
                     erWrongSpotId = item.id;
-                    playErrorSound();
                 }
                 renderHotspots();
                 renderERPanel();
@@ -3142,10 +3035,8 @@
                         muscle: g.muscleName,
                         points: 1
                     };
-                    playSuccessSound();
                 } else {
                     erWrongSpotId = item.id;
-                    playErrorSound();
                 }
                 renderHotspots();
                 renderGymPanel();
@@ -3170,10 +3061,6 @@
                         <span class="region-tag ${isMuscle ? "muscle-tag" : ""}">${isMuscle ? "Muscolo" : "Osso"} • ${item.region}</span>
                         <h2 class="bone-title">${item.name}</h2>
                     </div>
-                    <button type="button" class="speak-btn"
-                        onclick="speakText('${(item.name + ". " + item.desc + " " + item.func).replace(/'/g, "\\'")}')">
-                        🔊 Ascolta spiegazione
-                    </button>
                 </div>
 
                 <div class="info-box ${isMuscle ? "muscle-box" : ""}">
@@ -3248,12 +3135,6 @@
                         Trova e clicca sullo scanner: <span style="color:#0284c7;">${trainTarget.name}</span>
                     </div>
                     <p style="font-size:0.92rem; color:var(--muted);">💡 Indizio: ${trainTarget.desc}</p>
-                    <div style="margin-top:0.6rem;">
-                        <button type="button" class="speak-btn" style="padding:0.4rem 0.75rem; font-size:0.82rem;"
-                            onclick="speakText('Trova ${trainTarget.name.replace(/'/g, "\\'")}')">
-                            🔊 Ascolta il nome
-                        </button>
-                    </div>
                 </div>
 
                 ${trainAnswered && clickedItem ? `
@@ -3444,7 +3325,6 @@
                         history: [{ step: 0, score: 0, ok: true }]
                     });
                 }
-                playTone(587.33, 0.1, "sine", 0.06);
                 sortAndRenderHostLeaderboard();
                 if (typeof replyFn === "function") {
                     replyFn({
@@ -3704,9 +3584,6 @@
             const isCorrect = chosenCode === c.triage;
             if (isCorrect) {
                 erScore++;
-                playSuccessSound();
-            } else {
-                playErrorSound();
             }
             if (c.triage === "rosso" || chosenCode === "rosso") {
                 erRedConfirmed = true;
@@ -3738,9 +3615,6 @@
                     erHistory[erIndex].firstAidOk = true;
                     erHistory[erIndex].points += 1;
                 }
-                playSuccessSound();
-            } else {
-                playErrorSound();
             }
             syncTeamProgress(false);
             renderERPanel();
@@ -4119,12 +3993,6 @@
                             </div>
                         </div>
                         <p class="patient-symptom">“${c.story}”</p>
-                        <div style="margin-top:0.55rem;">
-                            <button type="button" class="speak-btn" style="padding:0.4rem 0.75rem; font-size:0.82rem;"
-                                onclick="speakText('${c.story.replace(/'/g, "\\'")}')">
-                                🔊 Ascolta il paziente
-                            </button>
-                        </div>
                     </div>
 
                     <div class="record-section">
@@ -4232,9 +4100,6 @@
             const q = quizList[quizIndex];
             if (idx === q.correct) {
                 quizScore++;
-                playSuccessSound();
-            } else {
-                playErrorSound();
             }
             renderQuizPanel(idx);
         }
@@ -4329,9 +4194,6 @@
             if (idx === g.correct) {
                 gymScore++;
                 if (gymHistory[gymIndex]) gymHistory[gymIndex].points += 1;
-                playSuccessSound();
-            } else {
-                playErrorSound();
             }
             renderGymPanel();
         }
