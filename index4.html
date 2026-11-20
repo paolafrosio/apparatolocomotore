@@ -2667,7 +2667,7 @@
         let selectedItemId = "cranio";
         let regionFilter = "Tutti";
         let showAllNames = false;
-        let isXrayVisual = false;
+        let isXrayVisual = true;
 
         // Zoom & Pan
         let zoomLevel = 1;
@@ -4376,6 +4376,7 @@
             });
 
             setupZoomAndPan();
+            setXrayVisual(true);
             loadPlateImage();
             renderHotspots();
             renderExplorePanel();
