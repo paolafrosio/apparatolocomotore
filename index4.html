@@ -1327,6 +1327,7 @@
             <button class="mode-btn" data-mode="er">3. Pronto Soccorso 🚑</button>
             <button class="mode-btn" data-mode="quiz">4. Quiz 📝</button>
             <button class="mode-btn" data-mode="gym">5. Palestra & Movimenti 🏋️</button>
+            <button type="button" class="mode-btn" id="btn-sound-toggle" onclick="toggleSound()" title="Attiva/Disattiva effetti sonori">🔊 Audio</button>
         </nav>
     </header>
 
@@ -2668,8 +2669,10 @@
         let regionFilter = "Tutti";
         let showAllNames = false;
         let isXrayVisual = true;
+        let isSoundEnabled = true;
+        let audioCtx = null;
 
-        // Zoom & Pan
+        // Stato zoom e pan
         let zoomLevel = 1;
         let panX = 0;
         let panY = 0;
@@ -2677,33 +2680,49 @@
         let startDragX = 0;
         let startDragY = 0;
 
-        // Allenamento
+        // Stato Allenamento
         let trainTarget = null;
         let trainScore = 0;
         let trainTotal = 0;
         let trainAnswered = false;
 
-        // Pronto Soccorso (3 Fasi: 1=Triage, 2=Dove si è fatto male, 3=Primo Soccorso)
+        // Stato Pronto Soccorso
         let erStarted = false;
         let erSessionCases = [];
         let erIndex = 0;
-        let erPhase = 1;
         let erScore = 0;
-        let erWrongSpotId = null;
+        let erHistory = [];
+        let erPhase = 1;
         let erPhase1Done = false;
         let erPhase2Done = false;
         let erPhase3Done = false;
-        let erShowTriageGuide = false;
+        let erWrongSpotId = null;
         let erRedConfirmed = false;
-        let erHistory = [];
+        let erShowTriageGuide = false;
 
-        // Quiz
+        // Stato Stanza a Squadre & PeerJS / BroadcastChannel
+        const PEER_PREFIX = "cpia-ps-room-";
+        const ECG_COLORS = ["#10b981", "#38bdf8", "#facc15", "#f472b6", "#a78bfa", "#fb923c", "#34d399", "#f87171"];
+        let roomMode = "none";
+        let currentRoomPin = "";
+        let currentTeamDocId = "";
+        let currentTeamName = "";
+        let currentTeamMembers = [];
+        let joinRoomErrorMsg = "";
+        let joinRoomConnecting = false;
+        let hostSharedCaseIndices = [];
+        let latestRoomTeams = [];
+        let peerInstance = null;
+        let playerHostConn = null;
+        let localRoomChannel = null;
+
+        // Stato Quiz
         let quizList = [];
         let quizIndex = 0;
         let quizScore = 0;
         let quizAnswered = false;
 
-        // Palestra (12 Movimenti con Passo 1 + Passo 2 + Riepilogo Finale)
+        // Stato Palestra & Movimenti
         let gymSessionMovements = [];
         let gymIndex = 0;
         let gymScore = 0;
@@ -2713,27 +2732,70 @@
         let gymChosenOpt = null;
         let gymHistory = [];
 
-        // Stanza a Squadre in Pronto Soccorso (PeerJS + BroadcastChannel con monitor ECG live)
-        const PEER_PREFIX = "cpia-ps-ortopedico-";
-        const ECG_COLORS = ["#22c55e", "#38bdf8", "#facc15", "#f43f5e", "#c084fc", "#fb923c", "#2dd4bf", "#a3e635"];
-        let peerInstance = null;
-        let playerHostConn = null;
-        let localRoomChannel = null;
-        let roomMode = "none"; // "none" | "host" | "join_form" | "player"
-        let currentRoomPin = "";
-        let currentTeamDocId = "";
-        let currentTeamName = "";
-        let currentTeamMembers = [];
-        let hostSharedCaseIndices = [];
-        let latestRoomTeams = [];
-        let joinRoomErrorMsg = "";
-        let joinRoomConnecting = false;
+        /* ================= EFFETTI SONORI SINTETIZZATI (BEEP, SIRENA, CONFERME) ================= */
+        function playTone(freq, duration = 0.14, type = "sine", vol = 0.14, delay = 0) {
+            if (!isSoundEnabled) return;
+            try {
+                if (!audioCtx) {
+                    const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+                    if (AudioContextClass) audioCtx = new AudioContextClass();
+                }
+                if (!audioCtx) return;
+                if (audioCtx.state === "suspended") audioCtx.resume();
 
-        // Mescola casualmente le opzioni mantenendo l'indice della risposta corretta
-        function shuffleQuestionOptions(options, correctIndex) {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = type;
+                osc.frequency.setValueAtTime(freq, audioCtx.currentTime + delay);
+
+                gain.gain.setValueAtTime(0.001, audioCtx.currentTime + delay);
+                gain.gain.exponentialRampToValueAtTime(vol, audioCtx.currentTime + delay + 0.015);
+                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + delay + duration);
+
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start(audioCtx.currentTime + delay);
+                osc.stop(audioCtx.currentTime + delay + duration + 0.02);
+            } catch (e) {}
+        }
+
+        const SFX = {
+            click: () => playTone(620, 0.07, "sine", 0.09, 0),
+            success: () => {
+                playTone(587.33, 0.11, "triangle", 0.15, 0);
+                playTone(880, 0.18, "triangle", 0.16, 0.09);
+            },
+            error: () => {
+                playTone(240, 0.16, "sawtooth", 0.13, 0);
+                playTone(185, 0.22, "sawtooth", 0.13, 0.13);
+            },
+            siren: () => {
+                playTone(760, 0.18, "square", 0.11, 0);
+                playTone(580, 0.2, "square", 0.11, 0.18);
+                playTone(760, 0.18, "square", 0.11, 0.38);
+            },
+            fanfare: () => {
+                playTone(523.25, 0.12, "triangle", 0.15, 0);
+                playTone(659.25, 0.12, "triangle", 0.15, 0.11);
+                playTone(783.99, 0.12, "triangle", 0.15, 0.22);
+                playTone(1046.5, 0.28, "triangle", 0.18, 0.33);
+            }
+        };
+
+        function toggleSound() {
+            isSoundEnabled = !isSoundEnabled;
+            const btn = document.getElementById("btn-sound-toggle");
+            if (btn) {
+                btn.textContent = isSoundEnabled ? "🔊 Audio" : "🔇 Muto";
+                btn.style.opacity = isSoundEnabled ? "1" : "0.65";
+            }
+            if (isSoundEnabled) SFX.click();
+        }
+
+        function shuffleQuestionOptions(options, correctIdx) {
             const paired = options.map((text, idx) => ({
                 text,
-                isCorrect: idx === correctIndex
+                isCorrect: idx === correctIdx
             }));
             for (let i = paired.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
@@ -2981,6 +3043,7 @@
             if (!item) return;
 
             if (currentMode === "explore") {
+                SFX.click();
                 selectedItemId = item.id;
                 renderHotspots();
                 renderExplorePanel();
@@ -2994,6 +3057,9 @@
                 const isRight = item.id === trainTarget.id;
                 if (isRight) {
                     trainScore++;
+                    SFX.success();
+                } else {
+                    SFX.error();
                 }
                 renderHotspots();
                 renderTrainPanel(item);
@@ -3007,6 +3073,7 @@
                 if (currentLayer === c.layer && item.id === c.targetId) {
                     erPhase2Done = true;
                     erScore++;
+                    SFX.success();
                     if (erHistory[erIndex]) {
                         erHistory[erIndex].spotOk = true;
                         erHistory[erIndex].points += 1;
@@ -3016,6 +3083,7 @@
                     syncTeamProgress(false);
                 } else {
                     erWrongSpotId = item.id;
+                    SFX.error();
                 }
                 renderHotspots();
                 renderERPanel();
@@ -3028,6 +3096,7 @@
                 if (currentLayer === g.layer && item.id === g.targetId) {
                     gymStep = 2;
                     gymScore++;
+                    SFX.success();
                     erWrongSpotId = null;
                     gymHistory[gymIndex] = {
                         icon: g.icon,
@@ -3037,6 +3106,7 @@
                     };
                 } else {
                     erWrongSpotId = item.id;
+                    SFX.error();
                 }
                 renderHotspots();
                 renderGymPanel();
@@ -3587,6 +3657,11 @@
             }
             if (c.triage === "rosso" || chosenCode === "rosso") {
                 erRedConfirmed = true;
+                SFX.siren();
+            } else if (isCorrect) {
+                SFX.success();
+            } else {
+                SFX.error();
             }
             erPhase = 2;
             erHistory[erIndex] = {
@@ -3611,10 +3686,13 @@
             const isCorrect = optIdx === c.firstAidCorrect;
             if (isCorrect) {
                 erScore++;
+                SFX.success();
                 if (erHistory[erIndex]) {
                     erHistory[erIndex].firstAidOk = true;
                     erHistory[erIndex].points += 1;
                 }
+            } else {
+                SFX.error();
             }
             syncTeamProgress(false);
             renderERPanel();
@@ -3622,10 +3700,12 @@
 
         function nextERCase() {
             if (erIndex + 1 < erSessionCases.length) {
+                SFX.click();
                 erIndex++;
                 syncTeamProgress(false);
                 prepareERCase();
             } else {
+                SFX.fanfare();
                 erIndex++;
                 syncTeamProgress(true);
                 renderERPanel();
@@ -4100,6 +4180,9 @@
             const q = quizList[quizIndex];
             if (idx === q.correct) {
                 quizScore++;
+                SFX.success();
+            } else {
+                SFX.error();
             }
             renderQuizPanel(idx);
         }
@@ -4113,6 +4196,7 @@
             }
 
             if (quizIndex >= quizList.length) {
+                SFX.fanfare();
                 panel.innerHTML = `
                     <div class="grade-badge-card">
                         <div style="font-size:0.85rem; text-transform:uppercase;">Quiz Completato</div>
@@ -4193,19 +4277,24 @@
             const g = gymSessionMovements[gymIndex];
             if (idx === g.correct) {
                 gymScore++;
+                SFX.success();
                 if (gymHistory[gymIndex]) gymHistory[gymIndex].points += 1;
+            } else {
+                SFX.error();
             }
             renderGymPanel();
         }
 
         function nextGymMovement() {
             if (gymIndex + 1 < gymSessionMovements.length) {
+                SFX.click();
                 gymIndex++;
                 gymStep = 1;
                 gymAnsweredQ = false;
                 gymChosenOpt = null;
                 erWrongSpotId = null;
             } else {
+                SFX.fanfare();
                 gymFinished = true;
             }
             renderHotspots();
@@ -4341,9 +4430,11 @@
 
         /* ================= CAMBIO MODALITÀ & INIZIALIZZAZIONE ================= */
         function switchMode(mode) {
+            if (!mode) return;
+            SFX.click();
             currentMode = mode;
             erWrongSpotId = null;
-            document.querySelectorAll(".mode-btn").forEach(btn => {
+            document.querySelectorAll(".mode-btn[data-mode]").forEach(btn => {
                 btn.classList.toggle("active", btn.dataset.mode === mode);
             });
 
@@ -4366,7 +4457,7 @@
         }
 
         window.addEventListener("DOMContentLoaded", () => {
-            document.querySelectorAll(".mode-btn").forEach(btn => {
+            document.querySelectorAll(".mode-btn[data-mode]").forEach(btn => {
                 btn.addEventListener("click", () => switchMode(btn.dataset.mode));
             });
 
