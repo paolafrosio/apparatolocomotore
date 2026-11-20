@@ -693,7 +693,7 @@
             height: 82px;
             z-index: 6;
             pointer-events: none;
-            filter: drop-shadow(0 5px 6px rgba(15, 23, 42, 0.45));
+            filter: drop-shadow(0 6px 8px rgba(15, 23, 42, 0.48));
         }
 
         .medical-sheet {
@@ -702,7 +702,7 @@
             border: 1px solid #cbd5e1;
             border-top: 5px solid #0f172a;
             border-radius: 4px 4px 10px 10px;
-            padding: 1.45rem 1.15rem 1.15rem;
+            padding: 1.55rem 1.15rem 1.15rem;
             box-shadow:
                 0 1px 0 #e2e8f0,
                 0 5px 0 -2px #f8fafc,
@@ -711,6 +711,20 @@
             display: flex;
             flex-direction: column;
             gap: 0.9rem;
+        }
+
+        /* Ombra morbida della ganascia metallica sul bordo superiore del foglio */
+        .medical-sheet::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 162px;
+            height: 16px;
+            background: linear-gradient(to bottom, rgba(15, 23, 42, 0.22) 0%, rgba(15, 23, 42, 0.05) 60%, transparent 100%);
+            border-radius: 0 0 8px 8px;
+            pointer-events: none;
         }
 
         .medical-sheet-header {
@@ -1136,7 +1150,7 @@
             display: inline-block;
             font-size: 0.8rem;
             font-weight: 800;
-            padding: 0.18rem 0.55rem;
+            padding: 0.18rem 0.6rem;
             border-radius: 999px;
             white-space: nowrap;
         }
@@ -1157,6 +1171,138 @@
             background: #fee2e2;
             color: #991b1b;
             border: 1px solid #fca5a5;
+        }
+
+        /* ================= STANZA A SQUADRE & MONITOR ECG IN PRONTO SOCCORSO ================= */
+        .team-lobby-box {
+            background: #ffffff;
+            border: 1.5px solid var(--border);
+            border-radius: 12px;
+            padding: 0.95rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .pin-display-banner {
+            background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%);
+            color: #ffffff;
+            border-radius: 12px;
+            padding: 0.9rem;
+            text-align: center;
+        }
+
+        .pin-code-text {
+            font-size: 2.15rem;
+            font-weight: 800;
+            letter-spacing: 8px;
+            color: #facc15;
+            margin: 0.2rem 0;
+        }
+
+        .team-input {
+            width: 100%;
+            padding: 0.6rem 0.8rem;
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            font-family: inherit;
+            font-size: 0.92rem;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .team-input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .members-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.45rem;
+        }
+
+        @media (max-width: 540px) {
+            .members-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .leaderboard-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.65rem 0.8rem;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            background: #f8fafc;
+        }
+
+        .leaderboard-row.top-team {
+            background: #fefce8;
+            border-color: #eab308;
+        }
+
+        .ecg-monitor-card {
+            background: #020617;
+            border: 2px solid #1e293b;
+            border-radius: 12px;
+            padding: 0.75rem 0.85rem;
+            box-shadow: inset 0 0 24px rgba(16, 185, 129, 0.14);
+            color: #e2e8f0;
+        }
+
+        .ecg-monitor-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.45rem;
+            font-size: 0.78rem;
+            font-weight: 800;
+            letter-spacing: 0.4px;
+            text-transform: uppercase;
+            color: #34d399;
+        }
+
+        .ecg-live-dot {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #10b981;
+            box-shadow: 0 0 8px #10b981;
+            margin-right: 5px;
+            animation: ecgPulse 1.2s infinite;
+        }
+
+        @keyframes ecgPulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.35; transform: scale(0.8); }
+        }
+
+        .ecg-svg {
+            width: 100%;
+            height: 165px;
+            display: block;
+            border-radius: 8px;
+            background: #030712;
+            border: 1px solid rgba(52, 211, 153, 0.25);
+        }
+
+        .ecg-legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem 0.9rem;
+            margin-top: 0.55rem;
+            font-size: 0.78rem;
+            font-weight: 700;
+        }
+
+        .ecg-legend-item {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
         }
 
         @media print {
@@ -2329,7 +2475,7 @@
             }
         ];
 
-        /* ================= ATTIVITÀ PALESTRA & MOVIMENTI ================= */
+        /* ================= ATTIVITÀ PALESTRA & MOVIMENTI (TUTTI E 12 I MUSCOLI) ================= */
         const GYM_MOVEMENTS = [
             {
                 icon: "🛍️",
@@ -2337,23 +2483,35 @@
                 desc: "Pieghi il gomito per portare la busta verso la spalla.",
                 layer: "muscles",
                 targetId: "bicipite",
+                muscleName: "Bicipite",
                 antagonist: "Tricipite (si rilassa)",
                 bonesInvolved: "Omero, Radio e Ulna (articolazione del gomito)",
-                question: "Quale muscolo si contrae (agonista) per piegare il gomito?",
-                options: ["Bicipite", "Quadricipite", "Gemello"],
-                correct: 0
+                question: "Mentre il Bicipite si accorcia per piegare il gomito, quali due ossa dell'avambraccio tira verso l'alto?",
+                options: [
+                    "Radio e Ulna (l'avambraccio si avvicina all'Omero)",
+                    "Tibia e Perone (la gamba si avvicina al Femore)",
+                    "Clavicola e Scapola (il collo si piega)"
+                ],
+                correct: 0,
+                explain: "Il Bicipite si inserisce su Radio e Ulna e li tira verso l'Omero piegando il gomito."
             },
             {
                 icon: "🪑",
-                title: "Alzarsi dalla sedia",
+                title: "Alzarsi dalla sedia senza usare le mani",
                 desc: "Estendi le ginocchia e raddrizzi il bacino per metterti in piedi.",
                 layer: "muscles",
                 targetId: "quadricipite",
+                muscleName: "Quadricipite",
                 antagonist: "Ischiotibiale (si rilassa)",
                 bonesInvolved: "Femore, Rotula, Tibia e Bacino",
-                question: "Quale potente muscolo anteriore della coscia estende il ginocchio?",
-                options: ["Quadricipite", "Tibiale anteriore", "Bicipite"],
-                correct: 0
+                question: "Sopra quale piccolo osso rotondo del ginocchio passa il tendine del Quadricipite?",
+                options: [
+                    "La Rotula (che protegge il ginocchio)",
+                    "La Scapola",
+                    "Lo Sterno"
+                ],
+                correct: 0,
+                explain: "Il tendine del Quadricipite ingloba la Rotula e tira la Tibia per stendere il ginocchio."
             },
             {
                 icon: "🚪",
@@ -2361,11 +2519,17 @@
                 desc: "Porti le braccia in avanti spingendo con le mani contro la porta.",
                 layer: "muscles",
                 targetId: "grande_pettorale",
+                muscleName: "Grande pettorale",
                 antagonist: "Dorsale e Trapezio",
                 bonesInvolved: "Sterno, Costole, Clavicola e Omero",
-                question: "Quale muscolo del torace lavora principalmente quando spingi in avanti?",
-                options: ["Grande pettorale", "Gemello", "Ischiotibiale"],
-                correct: 0
+                question: "Quale osso centrale del petto dà attacco al Grande pettorale insieme alla Clavicola?",
+                options: [
+                    "Lo Sterno (e le Costole anteriori)",
+                    "Il Bacino",
+                    "La Rotula"
+                ],
+                correct: 0,
+                explain: "Il Grande pettorale parte da Sterno, Clavicola e Costole e tira l'Omero in avanti."
             },
             {
                 icon: "🩰",
@@ -2373,11 +2537,17 @@
                 desc: "Spingi le dita dei piedi a terra per sollevare i talloni.",
                 layer: "muscles",
                 targetId: "gemello",
+                muscleName: "Gemello",
                 antagonist: "Tibiale anteriore",
                 bonesInvolved: "Tibia, Perone e Calcagno (tendine d'Achille)",
-                question: "Quale muscolo del polpaccio solleva il tallone?",
-                options: ["Gemello", "Deltoide", "Retto addominale"],
-                correct: 0
+                question: "Dietro quali due ossa della gamba si trova il muscolo Gemello?",
+                options: [
+                    "Dietro Tibia e Perone",
+                    "Dietro Radio e Ulna",
+                    "Davanti al Cranio"
+                ],
+                correct: 0,
+                explain: "Il Gemello si trova dietro Tibia e Perone e solleva il tallone tramite il Tendine d'Achille."
             },
             {
                 icon: "🙋‍♂️",
@@ -2385,11 +2555,143 @@
                 desc: "Sollevi il braccio lateralmente e verso l'alto sopra la spalla.",
                 layer: "muscles",
                 targetId: "deltoide",
+                muscleName: "Deltoide",
                 antagonist: "Grande pettorale e Dorsale",
                 bonesInvolved: "Clavicola, Scapola e Omero",
-                question: "Quale muscolo a forma di triangolo avvolge la spalla e solleva il braccio?",
-                options: ["Deltoide", "Glutei", "Quadricipite"],
-                correct: 0
+                question: "Tra quali ossa della spalla si trova il Deltoide?",
+                options: [
+                    "Tra Clavicola, Scapola e parte alta dell'Omero",
+                    "Tra Femore, Rotula e Tibia",
+                    "Tra Mascella e Mandibola"
+                ],
+                correct: 0,
+                explain: "Il Deltoide avvolge la spalla collegando Clavicola e Scapola all'Omero."
+            },
+            {
+                icon: "💪",
+                title: "Fare un piegamento sulle braccia spingendosi su da terra",
+                desc: "Stendi completamente i gomiti per sollevare il corpo dal pavimento.",
+                layer: "muscles",
+                targetId: "tricipite",
+                muscleName: "Tricipite",
+                antagonist: "Bicipite (si rilassa)",
+                bonesInvolved: "Scapola, Omero e Ulna (articolazione del gomito)",
+                question: "Quale muscolo lavorava al contrario del Tricipite (antagonista) piegando il gomito?",
+                options: [
+                    "Il Bicipite (davanti al braccio)",
+                    "Il Tibiale anteriore",
+                    "I Glutei"
+                ],
+                correct: 0,
+                explain: "Bicipite e Tricipite sono muscoli antagonisti: uno piega il gomito e l'altro lo stende."
+            },
+            {
+                icon: "🚣",
+                title: "Tirare verso di sé il manubrio del vogatore in palestra",
+                desc: "Tiri le braccia indietro e verso i fianchi mantenendo la schiena dritta.",
+                layer: "muscles",
+                targetId: "dorsale",
+                muscleName: "Dorsale",
+                antagonist: "Deltoide e Grande pettorale",
+                bonesInvolved: "Colonna vertebrale, Bacino, Costole e Omero",
+                question: "In quale zona del corpo si estende il muscolo Dorsale?",
+                options: [
+                    "Sui lati della schiena, dalle ascelle fino al Bacino",
+                    "Solo sulla parte davanti del collo",
+                    "Sotto la pianta del piede"
+                ],
+                correct: 0,
+                explain: "Il Dorsale è il muscolo più largo della schiena e tira l'Omero indietro e in basso."
+            },
+            {
+                icon: "🧘",
+                title: "Alzare il busto dal materassino per fare gli addominali",
+                desc: "Fletti il tronco in avanti avvicinando le costole al bacino.",
+                layer: "muscles",
+                targetId: "retto_addominale",
+                muscleName: "Retto addominale",
+                antagonist: "Muscoli della schiena (paravertebrali)",
+                bonesInvolved: "Sterno, Costole e Bacino",
+                question: "Quali due strutture ossee collega il Retto addominale davanti alla pancia?",
+                options: [
+                    "Le Costole e lo Sterno in alto con il Bacino in basso",
+                    "Il Cranio e la Clavicola",
+                    "Il Femore e la Rotula"
+                ],
+                correct: 0,
+                explain: "Il Retto addominale unisce la gabbia toracica al bacino e flette il busto."
+            },
+            {
+                icon: "🪜",
+                title: "Salire due gradini alla volta su una scalinata",
+                desc: "Spingi forte il corpo verso l'alto estendendo l'anca a ogni gradino.",
+                layer: "muscles",
+                targetId: "glutei",
+                muscleName: "Glutei",
+                antagonist: "Muscoli anteriori dell'anca",
+                bonesInvolved: "Bacino e Femore (articolazione dell'anca)",
+                question: "Quale osso della coscia spingono indietro i Glutei quando saliamo le scale?",
+                options: [
+                    "Il Femore (collegandolo al Bacino)",
+                    "L'Omero",
+                    "La Mandibola"
+                ],
+                correct: 0,
+                explain: "I Glutei partono dal Bacino e muovono il Femore indietro estendendo l'anca."
+            },
+            {
+                icon: "⚽",
+                title: "Portare il tallone verso il gluteo prima di calciare un pallone",
+                desc: "Pieghi il ginocchio portando la gamba indietro per caricare il tiro.",
+                layer: "muscles",
+                targetId: "ischiotibiale",
+                muscleName: "Ischiotibiale",
+                antagonist: "Quadricipite (si rilassa)",
+                bonesInvolved: "Bacino, Femore, Tibia e Perone",
+                question: "Quale muscolo davanti alla coscia lavora all'opposto dell'Ischiotibiale?",
+                options: [
+                    "Il Quadricipite (che invece stende il ginocchio)",
+                    "Il Grande pettorale",
+                    "Il Trapezio"
+                ],
+                correct: 0,
+                explain: "L'Ischiotibiale piega il ginocchio, mentre il Quadricipite lo stende."
+            },
+            {
+                icon: "🤷",
+                title: "Alzare le spalle verso le orecchie per dire 'Non lo so'",
+                desc: "Sollevi entrambe le spalle verso l'alto avvicinando le scapole.",
+                layer: "muscles",
+                targetId: "trapezio",
+                muscleName: "Trapezio",
+                antagonist: "Dorsale",
+                bonesInvolved: "Cranio, Clavicola, Scapola e Colonna",
+                question: "Quali ossa della parte alta della schiena muove il Trapezio quando alzi le spalle?",
+                options: [
+                    "Le Scapole e le Clavicole (attorno alla Colonna)",
+                    "Tibia e Perone",
+                    "Radio e Ulna"
+                ],
+                correct: 0,
+                explain: "Il Trapezio collega la base del Cranio e la Colonna alle Scapole e alle Clavicole."
+            },
+            {
+                icon: "👣",
+                title: "Camminare appoggiando solo i talloni",
+                desc: "Alzi le dita dei piedi verso l'alto per non far toccare le punte a terra.",
+                layer: "muscles",
+                targetId: "tibiale_anteriore",
+                muscleName: "Tibiale anteriore",
+                antagonist: "Gemello (Polpaccio)",
+                bonesInvolved: "Tibia e ossa del piede (caviglia)",
+                question: "Accanto a quale osso davanti alla gamba scorre il Tibiale anteriore?",
+                options: [
+                    "Accanto alla Tibia (lo stinco)",
+                    "Accanto all'Omero",
+                    "Sopra lo Sterno"
+                ],
+                correct: 0,
+                explain: "Il Tibiale anteriore scorre proprio accanto alla Tibia e tira il piede verso l'alto."
             }
         ];
 
@@ -2438,10 +2740,47 @@
         let quizScore = 0;
         let quizAnswered = false;
 
-        // Palestra
+        // Palestra (12 Movimenti con Passo 1 + Passo 2 + Riepilogo Finale)
+        let gymSessionMovements = [];
         let gymIndex = 0;
         let gymScore = 0;
         let gymStep = 1;
+        let gymFinished = false;
+        let gymAnsweredQ = false;
+        let gymChosenOpt = null;
+        let gymHistory = [];
+
+        // Stanza a Squadre in Pronto Soccorso (PeerJS + BroadcastChannel con monitor ECG live)
+        const PEER_PREFIX = "cpia-ps-ortopedico-";
+        const ECG_COLORS = ["#22c55e", "#38bdf8", "#facc15", "#f43f5e", "#c084fc", "#fb923c", "#2dd4bf", "#a3e635"];
+        let peerInstance = null;
+        let playerHostConn = null;
+        let localRoomChannel = null;
+        let roomMode = "none"; // "none" | "host" | "join_form" | "player"
+        let currentRoomPin = "";
+        let currentTeamDocId = "";
+        let currentTeamName = "";
+        let currentTeamMembers = [];
+        let hostSharedCaseIndices = [];
+        let latestRoomTeams = [];
+        let joinRoomErrorMsg = "";
+        let joinRoomConnecting = false;
+
+        // Mescola casualmente le opzioni mantenendo l'indice della risposta corretta
+        function shuffleQuestionOptions(options, correctIndex) {
+            const paired = options.map((text, idx) => ({
+                text,
+                isCorrect: idx === correctIndex
+            }));
+            for (let i = paired.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [paired[i], paired[j]] = [paired[j], paired[i]];
+            }
+            return {
+                options: paired.map(p => p.text),
+                correct: paired.findIndex(p => p.isCorrect)
+            };
+        }
 
         /* ================= EFFETTI SONORI DISCRETI (WEB AUDIO) ================= */
         let audioCtx = null;
@@ -2573,29 +2912,39 @@
                     loading.classList.remove("active");
                     return;
                 }
-                img.src = candidates[idx++];
+                const candidate = candidates[idx++];
+                img.onload = () => {
+                    fallbackSvg.style.display = "none";
+                    img.style.display = "block";
+                    loading.classList.remove("active");
+                };
+                img.onerror = () => {
+                    tryNext();
+                };
+                img.src = candidate;
             }
-
-            img.onload = () => {
-                loading.classList.remove("active");
-                fallbackSvg.style.display = "none";
-                img.style.display = "block";
-            };
-            img.onerror = () => tryNext();
-
             tryNext();
         }
 
-        /* ================= CONTROLLI VISTA, ZOOM & RAGGI X ================= */
+        function setXrayVisual(active) {
+            isXrayVisual = Boolean(active);
+            const stage = document.getElementById("anatomy-stage");
+            const btn = document.getElementById("btn-xray-toggle");
+            if (stage) stage.classList.toggle("xray-mode", isXrayVisual);
+            if (btn) btn.classList.toggle("active", isXrayVisual);
+        }
+
         function switchAnatomyLayer(layer) {
             currentLayer = layer;
-            document.getElementById("btn-layer-bones").classList.toggle("active-bones", layer === "bones");
-            document.getElementById("btn-layer-muscles").classList.toggle("active-muscles", layer === "muscles");
-            const items = layer === "bones" ? BONES : MUSCLES;
-            if (!items.some(i => i.id === selectedItemId)) {
-                selectedItemId = items[0].id;
+            const btnBones = document.getElementById("btn-layer-bones");
+            const btnMuscles = document.getElementById("btn-layer-muscles");
+            if (btnBones) btnBones.classList.toggle("active-bones", layer === "bones");
+            if (btnMuscles) btnMuscles.classList.toggle("active-muscles", layer === "muscles");
+
+            const list = layer === "bones" ? BONES : MUSCLES;
+            if (!list.some(item => item.id === selectedItemId)) {
+                selectedItemId = list[0].id;
             }
-            regionFilter = "Tutti";
             loadPlateImage();
             renderHotspots();
             if (currentMode === "explore") renderExplorePanel();
@@ -2610,40 +2959,66 @@
             renderHotspots();
         }
 
-        function setXrayVisual(active) {
-            isXrayVisual = active;
-            document.getElementById("anatomy-stage").classList.toggle("xray-mode", active);
-            document.getElementById("btn-xray-toggle").classList.toggle("active", active);
+        function ensureVisibleView(item) {
+            if (!item || !item.views) return;
+            const vData = item.views[currentView];
+            if (!vData || vData.hidden) {
+                const order = ["front", "back", "right", "left"];
+                const best = order.find(v => item.views[v] && !item.views[v].hidden);
+                if (best && best !== currentView) {
+                    switchAnatomyView(best);
+                }
+            }
         }
 
+        /* ================= ZOOM E PAN SULLO SCANNER ================= */
         function applyZoomTransform() {
             const canvas = document.getElementById("zoom-canvas");
+            if (!canvas) return;
             canvas.style.transform = `translate(${panX}px, ${panY}px) scale(${zoomLevel})`;
-        }
-
-        function setZoom(newZoom) {
-            zoomLevel = Math.max(1, Math.min(2.8, newZoom));
-            if (zoomLevel === 1) {
-                panX = 0;
-                panY = 0;
-            }
-            applyZoomTransform();
+            const resetBtn = document.getElementById("zoom-reset");
+            if (resetBtn) resetBtn.textContent = `${Math.round(zoomLevel * 100)}%`;
         }
 
         function setupZoomAndPan() {
             const stage = document.getElementById("anatomy-stage");
-            document.getElementById("zoom-in").onclick = () => setZoom(zoomLevel + 0.35);
-            document.getElementById("zoom-out").onclick = () => setZoom(zoomLevel - 0.35);
-            document.getElementById("zoom-reset").onclick = () => setZoom(1);
+            const zoomIn = document.getElementById("zoom-in");
+            const zoomOut = document.getElementById("zoom-out");
+            const zoomReset = document.getElementById("zoom-reset");
+            if (!stage) return;
+
+            if (zoomIn) {
+                zoomIn.addEventListener("click", () => {
+                    zoomLevel = Math.min(2.6, +(zoomLevel + 0.25).toFixed(2));
+                    applyZoomTransform();
+                });
+            }
+            if (zoomOut) {
+                zoomOut.addEventListener("click", () => {
+                    zoomLevel = Math.max(0.85, +(zoomLevel - 0.25).toFixed(2));
+                    if (zoomLevel <= 1) { panX = 0; panY = 0; }
+                    applyZoomTransform();
+                });
+            }
+            if (zoomReset) {
+                zoomReset.addEventListener("click", () => {
+                    zoomLevel = 1;
+                    panX = 0;
+                    panY = 0;
+                    applyZoomTransform();
+                });
+            }
 
             stage.addEventListener("wheel", (e) => {
                 e.preventDefault();
-                setZoom(zoomLevel + (e.deltaY < 0 ? 0.2 : -0.2));
+                const delta = e.deltaY < 0 ? 0.15 : -0.15;
+                zoomLevel = Math.min(2.6, Math.max(0.85, +(zoomLevel + delta).toFixed(2)));
+                if (zoomLevel <= 1) { panX = 0; panY = 0; }
+                applyZoomTransform();
             }, { passive: false });
 
             stage.addEventListener("pointerdown", (e) => {
                 if (e.target.closest(".hotspot") || e.target.closest(".zoom-controls")) return;
-                if (zoomLevel <= 1) return;
                 isDragging = true;
                 startDragX = e.clientX - panX;
                 startDragY = e.clientY - panY;
@@ -2661,62 +3036,51 @@
             });
         }
 
-        /* ================= HOTSPOT INTERATTIVI SULLO SCANNER ================= */
+        /* ================= HOTSPOT ANATOMICI & CLICK HANDLER ================= */
         function renderHotspots() {
             const layerEl = document.getElementById("hotspots-layer");
-            const stage = document.getElementById("anatomy-stage");
+            const stageEl = document.getElementById("anatomy-stage");
+            if (!layerEl || !stageEl) return;
+
+            const hideHover = currentMode === "train" || currentMode === "er" || currentMode === "gym";
+            stageEl.classList.toggle("hide-hover-labels", hideHover);
+            stageEl.classList.toggle("show-all-labels", showAllNames && !hideHover);
+
             const items = currentLayer === "bones" ? BONES : MUSCLES;
-
-            const hideHover = (currentMode === "train" && !trainAnswered) ||
-                              (currentMode === "er" && erStarted && !erPhase2Done) ||
-                              (currentMode === "gym" && gymStep === 1);
-
-            stage.classList.toggle("hide-hover-labels", hideHover);
-            stage.classList.toggle("show-all-labels", showAllNames && !hideHover);
-
-            layerEl.innerHTML = "";
-            items.forEach(item => {
+            layerEl.innerHTML = items.map(item => {
                 const pos = item.views[currentView];
-                if (!pos || pos.hidden) return;
+                if (!pos || pos.hidden) return "";
 
-                const spot = document.createElement("div");
-                spot.className = "hotspot" + (currentLayer === "muscles" ? " muscle-type" : "");
-                spot.style.left = pos.x + "%";
-                spot.style.top = pos.y + "%";
-
+                let extraCls = currentLayer === "muscles" ? " muscle-type" : "";
                 if (currentMode === "explore" && item.id === selectedItemId) {
-                    spot.classList.add("selected");
-                }
-                if (currentMode === "train" && trainTarget) {
-                    if (trainAnswered && item.id === trainTarget.id) spot.classList.add("correct");
-                    if (item.id === erWrongSpotId) spot.classList.add("wrong");
-                }
-                if (currentMode === "er" && erStarted && erSessionCases[erIndex]) {
+                    extraCls += " selected";
+                } else if (currentMode === "train" && trainAnswered && trainTarget && item.id === trainTarget.id) {
+                    extraCls += " correct";
+                } else if (currentMode === "er" && erStarted && erIndex < erSessionCases.length) {
                     const c = erSessionCases[erIndex];
-                    if (erPhase2Done && item.id === c.targetId) spot.classList.add("correct");
-                    if (item.id === erWrongSpotId) spot.classList.add("wrong");
-                }
-                if (currentMode === "gym") {
-                    const g = GYM_MOVEMENTS[gymIndex];
-                    if (gymStep > 1 && item.id === g.targetId) spot.classList.add("correct");
-                    if (item.id === erWrongSpotId) spot.classList.add("wrong");
+                    if (erPhase2Done && item.id === c.targetId) extraCls += " correct";
+                    else if (item.id === erWrongSpotId) extraCls += " wrong";
+                } else if (currentMode === "gym" && !gymFinished && gymSessionMovements.length) {
+                    const g = gymSessionMovements[gymIndex];
+                    if (gymStep === 2 && item.id === g.targetId) extraCls += " correct";
+                    else if (item.id === erWrongSpotId) extraCls += " wrong";
                 }
 
-                spot.innerHTML = `
-                    <span class="hotspot-dot"></span>
-                    <span class="hotspot-label">${item.name}</span>
+                return `
+                    <div class="hotspot${extraCls}" style="left:${pos.x}%; top:${pos.y}%;"
+                         onclick="handleHotspotClick('${item.id}')" title="${item.name}">
+                        <span class="hotspot-dot"></span>
+                        <span class="hotspot-label">${item.name}</span>
+                    </div>
                 `;
-
-                spot.addEventListener("click", (e) => {
-                    e.stopPropagation();
-                    handleHotspotClick(item);
-                });
-
-                layerEl.appendChild(spot);
-            });
+            }).join("");
         }
 
-        function handleHotspotClick(item) {
+        function handleHotspotClick(itemId) {
+            const items = currentLayer === "bones" ? BONES : MUSCLES;
+            const item = items.find(x => x.id === itemId);
+            if (!item) return;
+
             if (currentMode === "explore") {
                 selectedItemId = item.id;
                 playTone(440, 0.08, "sine", 0.05);
@@ -2725,34 +3089,37 @@
                 return;
             }
 
-            if (currentMode === "train" && trainTarget && !trainAnswered) {
+            if (currentMode === "train") {
+                if (trainAnswered || !trainTarget) return;
+                trainAnswered = true;
                 trainTotal++;
-                if (item.id === trainTarget.id) {
+                const isRight = item.id === trainTarget.id;
+                if (isRight) {
                     trainScore++;
-                    trainAnswered = true;
-                    erWrongSpotId = null;
                     playSuccessSound();
                 } else {
-                    erWrongSpotId = item.id;
                     playErrorSound();
                 }
                 renderHotspots();
-                renderTrainPanel();
+                renderTrainPanel(item);
                 return;
             }
 
-            if (currentMode === "er" && erStarted && erPhase === 2 && !erPhase2Done) {
+            if (currentMode === "er") {
+                if (!erStarted || erIndex >= erSessionCases.length) return;
+                if (!erPhase1Done || erPhase2Done) return;
                 const c = erSessionCases[erIndex];
-                if (item.id === c.targetId) {
+                if (currentLayer === c.layer && item.id === c.targetId) {
+                    erPhase2Done = true;
                     erScore++;
                     if (erHistory[erIndex]) {
                         erHistory[erIndex].spotOk = true;
                         erHistory[erIndex].points += 1;
                     }
-                    erPhase2Done = true;
                     erWrongSpotId = null;
                     erPhase = 3;
                     playSuccessSound();
+                    syncTeamProgress(false);
                 } else {
                     erWrongSpotId = item.id;
                     playErrorSound();
@@ -2762,12 +3129,19 @@
                 return;
             }
 
-            if (currentMode === "gym" && gymStep === 1) {
-                const g = GYM_MOVEMENTS[gymIndex];
-                if (item.id === g.targetId) {
-                    gymScore++;
+            if (currentMode === "gym") {
+                if (gymFinished || !gymSessionMovements.length || gymStep !== 1) return;
+                const g = gymSessionMovements[gymIndex];
+                if (currentLayer === g.layer && item.id === g.targetId) {
                     gymStep = 2;
+                    gymScore++;
                     erWrongSpotId = null;
+                    gymHistory[gymIndex] = {
+                        icon: g.icon,
+                        title: g.title,
+                        muscle: g.muscleName,
+                        points: 1
+                    };
                     playSuccessSound();
                 } else {
                     erWrongSpotId = item.id;
@@ -2779,86 +3153,47 @@
         }
 
         /* ================= SCHEDA 1: ESPLORA APPARATO LOCOMOTORE ================= */
-        function jumpToStructure(nameQuery) {
-            const clean = nameQuery.trim().toLowerCase();
-            const foundBone = BONES.find(b => clean.includes(b.name.toLowerCase()));
-            if (foundBone) {
-                selectedItemId = foundBone.id;
-                switchAnatomyLayer("bones");
-                ensureVisibleView(foundBone);
-                renderHotspots();
-                renderExplorePanel();
-                return;
-            }
-            const foundMuscle = MUSCLES.find(m => clean.includes(m.name.toLowerCase()));
-            if (foundMuscle) {
-                selectedItemId = foundMuscle.id;
-                switchAnatomyLayer("muscles");
-                ensureVisibleView(foundMuscle);
-                renderHotspots();
-                renderExplorePanel();
-            }
-        }
-
-        function ensureVisibleView(item) {
-            if (item.views[currentView] && !item.views[currentView].hidden) return;
-            const order = ["front", "back", "right", "left"];
-            const best = order.find(v => item.views[v] && !item.views[v].hidden);
-            if (best) switchAnatomyView(best);
-        }
-
         function renderExplorePanel() {
             const panel = document.getElementById("info-panel");
             panel.className = "info-panel";
             const items = currentLayer === "bones" ? BONES : MUSCLES;
-            const item = items.find(i => i.id === selectedItemId) || items[0];
-            const isMuscle = currentLayer === "muscles";
+            const item = items.find(x => x.id === selectedItemId) || items[0];
+            selectedItemId = item.id;
 
             const regions = ["Tutti", "Testa", "Tronco", "Arti superiori", "Arti inferiori"];
-            const filtered = regionFilter === "Tutti" ? items : items.filter(i => i.region === regionFilter);
-
-            const linkedRaw = isMuscle ? item.bones : item.muscles;
-            const linkedChips = linkedRaw.split(/,| e /).map(part => {
-                const txt = part.trim();
-                if (!txt) return "";
-                return `<button type="button" class="bone-chip" style="padding:0.2rem 0.55rem; font-size:0.8rem;" onclick="jumpToStructure('${txt.replace(/'/g, "")}')">🔗 ${txt}</button>`;
-            }).join(" ");
+            const filtered = regionFilter === "Tutti" ? items : items.filter(x => x.region === regionFilter);
+            const isMuscle = currentLayer === "muscles";
 
             panel.innerHTML = `
                 <div class="bone-header">
                     <div>
-                        <span class="region-tag ${isMuscle ? "muscle-tag" : ""}">${isMuscle ? "💪 Muscolo" : "🦴 Osso"} • ${item.region}</span>
+                        <span class="region-tag ${isMuscle ? "muscle-tag" : ""}">${isMuscle ? "Muscolo" : "Osso"} • ${item.region}</span>
                         <h2 class="bone-title">${item.name}</h2>
                     </div>
-                    <button type="button" class="speak-btn" onclick="speakText('${item.name}. ${item.desc} Funzione: ${item.func}')">
-                        🔊 Ascolta scheda
+                    <button type="button" class="speak-btn"
+                        onclick="speakText('${(item.name + ". " + item.desc + " " + item.func).replace(/'/g, "\\'")}')">
+                        🔊 Ascolta spiegazione
                     </button>
                 </div>
 
                 <div class="info-box ${isMuscle ? "muscle-box" : ""}">
-                    <h3>Cos'è</h3>
+                    <h3>Che cos'è</h3>
                     <p>${item.desc}</p>
                 </div>
 
                 <div class="info-box ${isMuscle ? "muscle-box" : ""}">
-                    <h3>Funzione principale</h3>
+                    <h3>A cosa serve (Funzione)</h3>
                     <p>${item.func}</p>
                 </div>
 
                 <div class="info-box ${isMuscle ? "muscle-box" : ""}">
-                    <h3>Articolazioni coinvolte</h3>
-                    <p>${item.joints}</p>
-                </div>
-
-                <div class="info-box ${isMuscle ? "muscle-box" : ""}">
-                    <h3>${isMuscle ? "Ossa collegate (clicca per vedere)" : "Muscoli collegati (clicca per vedere)"}</h3>
-                    <div style="display:flex; flex-wrap:wrap; gap:0.35rem; margin-top:0.35rem;">
-                        ${linkedChips}
-                    </div>
+                    <h3>Articolazioni e Collegamenti</h3>
+                    <p><strong>Articolazioni:</strong> ${item.joints}<br>
+                    <strong>${isMuscle ? "Ossa collegate:" : "Muscoli collegati:"}</strong> ${isMuscle ? item.bones : item.muscles}</p>
                 </div>
 
                 <div>
-                    <div style="font-size:0.82rem; font-weight:800; color:var(--muted); text-transform:uppercase;">
+                    <div style="font-size:0.84rem; font-weight:800; color:var(--muted); text-transform:uppercase;">
                         Elenco ${isMuscle ? "Muscoli" : "Ossa"} (${filtered.length})
                     </div>
                     <div class="filter-bar">
@@ -2872,7 +3207,7 @@
                     <div class="bone-grid">
                         ${filtered.map(el => `
                             <button type="button" class="bone-chip ${el.id === item.id ? "active" : ""}"
-                                onclick="selectedItemId='${el.id}'; ensureVisibleView(BONES.concat(MUSCLES).find(x=>x.id==='${el.id}')); renderHotspots(); renderExplorePanel();">
+                                onclick="selectedItemId='${el.id}'; ensureVisibleView(${isMuscle ? "MUSCLES" : "BONES"}.find(x=>x.id==='${el.id}')); renderHotspots(); renderExplorePanel();">
                                 ${el.name}
                             </button>
                         `).join("")}
@@ -2881,24 +3216,18 @@
             `;
         }
 
-        /* ================= SCHEDA 2: ALLENAMENTO ================= */
+        /* ================= SCHEDA 2: ALLENAMENTO INTERATTIVO ================= */
         function pickNewTrainTarget() {
             const items = currentLayer === "bones" ? BONES : MUSCLES;
-            const visible = items.filter(i => i.views[currentView] && !i.views[currentView].hidden);
-            const pool = visible.length > 1 ? visible : items;
-            let next = pool[Math.floor(Math.random() * pool.length)];
-            if (trainTarget && pool.length > 1 && next.id === trainTarget.id) {
-                next = pool[(pool.indexOf(next) + 1) % pool.length];
-            }
-            trainTarget = next;
+            const pool = trainTarget ? items.filter(x => x.id !== trainTarget.id) : items;
+            trainTarget = pool[Math.floor(Math.random() * pool.length)];
             trainAnswered = false;
-            erWrongSpotId = null;
             ensureVisibleView(trainTarget);
             renderHotspots();
             renderTrainPanel();
         }
 
-        function renderTrainPanel() {
+        function renderTrainPanel(clickedItem = null) {
             const panel = document.getElementById("info-panel");
             panel.className = "info-panel";
             if (!trainTarget) {
@@ -2909,50 +3238,447 @@
 
             panel.innerHTML = `
                 <div class="er-status-bar">
-                    <span>🎯 ALLENAMENTO RAPIDO (${isMuscle ? "MUSCOLI" : "OSSA"})</span>
-                    <span>Punti: ${trainScore} / ${trainTotal}</span>
+                    <span>🎯 ALLENAMENTO (${isMuscle ? "MUSCOLI" : "OSSA"})</span>
+                    <span>Punteggio: ${trainScore} / ${trainTotal}</span>
                 </div>
 
-                <div class="info-box ${isMuscle ? "muscle-box" : ""}">
-                    <h3>Trova sulla tavola anatomica</h3>
-                    <p style="font-size:1.35rem; font-weight:800; margin-top:0.25rem;">
-                        Tocca: <span style="color:var(--primary-dark);">${trainTarget.name}</span>
-                    </p>
-                    <p style="font-size:0.9rem; color:var(--muted); margin-top:0.35rem;">
-                        Indizio: ${trainTarget.desc}
-                    </p>
-                </div>
-
-                <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
-                    <button type="button" class="speak-btn" onclick="speakText('Trova: ${trainTarget.name}')">🔊 Ascolta nome</button>
-                    <button type="button" class="secondary-btn" onclick="pickNewTrainTarget()">⏭️ Cambia bersaglio</button>
-                </div>
-
-                ${trainAnswered ? `
-                    <div class="feedback-box success">
-                        ✅ Ottimo! Hai individuato correttamente <strong>${trainTarget.name}</strong> (${trainTarget.region}).
+                <div class="patient-card" style="background:#f8fafc;">
+                    <span class="region-tag ${isMuscle ? "muscle-tag" : ""}">Regione: ${trainTarget.region}</span>
+                    <div style="font-size:1.15rem; font-weight:800; margin:0.3rem 0;">
+                        Trova e clicca sullo scanner: <span style="color:#0284c7;">${trainTarget.name}</span>
                     </div>
-                    <button type="button" class="next-btn" onclick="pickNewTrainTarget()">Prossimo bersaglio ➡️</button>
-                ` : erWrongSpotId ? `
-                    <div class="feedback-box error">
-                        ❌ Non è quello giusto! Riprova a cercare <strong>${trainTarget.name}</strong> (${trainTarget.region}).
+                    <p style="font-size:0.92rem; color:var(--muted);">💡 Indizio: ${trainTarget.desc}</p>
+                    <div style="margin-top:0.6rem;">
+                        <button type="button" class="speak-btn" style="padding:0.4rem 0.75rem; font-size:0.82rem;"
+                            onclick="speakText('Trova ${trainTarget.name.replace(/'/g, "\\'")}')">
+                            🔊 Ascolta il nome
+                        </button>
                     </div>
+                </div>
+
+                ${trainAnswered && clickedItem ? `
+                    <div class="feedback-box ${clickedItem.id === trainTarget.id ? "success" : "error"}">
+                        ${clickedItem.id === trainTarget.id
+                            ? `✅ Perfetto! Hai individuato <strong>${trainTarget.name}</strong>.`
+                            : `❌ Hai cliccato <strong>${clickedItem.name}</strong>. Quello evidenziato in verde è <strong>${trainTarget.name}</strong>!`}
+                    </div>
+                    <button type="button" class="next-btn" onclick="pickNewTrainTarget()">Prossima Sfida ➡️</button>
                 ` : `
-                    <div class="feedback-box">
-                        👆 Clicca il punto azzurro o rosso corrispondente sull'immagine a sinistra.
-                    </div>
+                    <div class="feedback-box">👆 Clicca direttamente sul pallino corrispondente nella figura a sinistra!</div>
                 `}
             `;
         }
 
-        /* ================= SCHEDA 3: PRONTO SOCCORSO (3 FASI) ================= */
-        function startERSession() {
-            const shuffled = [...ER_CASES].sort(() => Math.random() - 0.5);
-            erSessionCases = shuffled.slice(0, 6);
+        /* ================= SCHEDA 3: PRONTO SOCCORSO (3 FASI + STANZA A SQUADRE) ================= */
+        function escapeHtml(str) {
+            return String(str || "")
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;");
+        }
+
+        function destroyActivePeer() {
+            if (playerHostConn) {
+                try { playerHostConn.close(); } catch (e) {}
+                playerHostConn = null;
+            }
+            if (peerInstance) {
+                try { peerInstance.destroy(); } catch (e) {}
+                peerInstance = null;
+            }
+            if (localRoomChannel) {
+                try { localRoomChannel.close(); } catch (e) {}
+                localRoomChannel = null;
+            }
+        }
+
+        function resetErToLobby() {
+            destroyActivePeer();
+            roomMode = "none";
+            currentRoomPin = "";
+            currentTeamDocId = "";
+            currentTeamName = "";
+            currentTeamMembers = [];
+            joinRoomErrorMsg = "";
+            joinRoomConnecting = false;
+            erStarted = false;
+            erRedConfirmed = false;
+            renderERPanel();
+        }
+
+        function buildTeamEcgChartHtml(teams, totalCases) {
+            const maxScore = totalCases * 3;
+            const W = 540;
+            const H = 165;
+            const padLeft = 28;
+            const padRight = 22;
+            const padTop = 18;
+            const padBottom = 22;
+            const plotW = W - padLeft - padRight;
+            const plotH = H - padTop - padBottom;
+
+            let gridLines = "";
+            for (let x = padLeft; x <= W - padRight; x += 20) {
+                gridLines += `<line x1="${x}" y1="${padTop}" x2="${x}" y2="${H - padBottom}" stroke="rgba(16,185,129,0.12)" stroke-width="1"/>`;
+            }
+            for (let s = 0; s <= maxScore; s += 3) {
+                const y = padTop + plotH - (s / Math.max(1, maxScore)) * plotH;
+                gridLines += `<line x1="${padLeft}" y1="${y.toFixed(1)}" x2="${W - padRight}" y2="${y.toFixed(1)}" stroke="rgba(16,185,129,0.22)" stroke-width="1"/>`;
+                gridLines += `<text x="${padLeft - 6}" y="${(y + 3).toFixed(1)}" fill="#64748b" font-size="9" font-weight="700" text-anchor="end">${s}</text>`;
+            }
+
+            const traces = teams.map((team, idx) => {
+                const color = ECG_COLORS[idx % ECG_COLORS.length];
+                const hist = Array.isArray(team.history) && team.history.length > 0
+                    ? team.history
+                    : [{ step: 0, score: 0, ok: true }];
+
+                const laneOffset = ((idx % 4) - 1.5) * 1.4;
+                const getX = (step) => padLeft + (Math.min(step, totalCases) / Math.max(1, totalCases)) * plotW;
+                const getY = (score) => padTop + plotH - (Math.min(score, maxScore) / Math.max(1, maxScore)) * plotH + laneOffset;
+
+                let d = `M ${getX(hist[0].step).toFixed(1)} ${getY(hist[0].score).toFixed(1)}`;
+                let lastX = getX(hist[0].step);
+                let lastY = getY(hist[0].score);
+
+                for (let i = 1; i < hist.length; i++) {
+                    const prev = hist[i - 1];
+                    const curr = hist[i];
+                    const x0 = getX(prev.step);
+                    const y0 = getY(prev.score);
+                    const x1 = getX(curr.step);
+                    const y1 = getY(curr.score);
+                    const span = Math.max(12, x1 - x0);
+                    const mid = x0 + span * 0.45;
+
+                    if (curr.ok) {
+                        const qX = mid - 6;
+                        const rX = mid - 1;
+                        const sX = mid + 4;
+                        const tX = mid + 10;
+                        const rPeakY = Math.max(6, y1 - 15);
+                        const sDipY = Math.min(H - 6, y1 + 8);
+                        d += ` L ${qX.toFixed(1)} ${(y0 + 3).toFixed(1)}`;
+                        d += ` L ${rX.toFixed(1)} ${rPeakY.toFixed(1)}`;
+                        d += ` L ${sX.toFixed(1)} ${sDipY.toFixed(1)}`;
+                        d += ` L ${tX.toFixed(1)} ${y1.toFixed(1)}`;
+                        d += ` L ${x1.toFixed(1)} ${y1.toFixed(1)}`;
+                    } else {
+                        d += ` L ${mid.toFixed(1)} ${(y0 + 2).toFixed(1)} L ${x1.toFixed(1)} ${y1.toFixed(1)}`;
+                    }
+                    lastX = x1;
+                    lastY = y1;
+                }
+
+                const beatEnd = Math.min(W - 6, lastX + 10);
+                d += ` L ${(lastX + 2).toFixed(1)} ${(lastY + 2).toFixed(1)} L ${(lastX + 4).toFixed(1)} ${Math.max(6, lastY - 9).toFixed(1)} L ${(lastX + 6).toFixed(1)} ${Math.min(H - 6, lastY + 5).toFixed(1)} L ${beatEnd.toFixed(1)} ${lastY.toFixed(1)}`;
+
+                return `
+                    <path d="${d}" fill="none" stroke="${color}" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="filter: drop-shadow(0 0 4px ${color});" />
+                    <circle cx="${beatEnd.toFixed(1)}" cy="${lastY.toFixed(1)}" r="3.6" fill="${color}" stroke="#ffffff" stroke-width="1.2" />
+                `;
+            }).join("");
+
+            const legend = teams.map((t, idx) => {
+                const color = ECG_COLORS[idx % ECG_COLORS.length];
+                return `
+                    <span class="ecg-legend-item">
+                        <span style="width:10px; height:10px; border-radius:50%; background:${color}; box-shadow:0 0 6px ${color}; display:inline-block;"></span>
+                        <span style="color:#f8fafc;">${escapeHtml(t.teamName)}</span>
+                        <span style="color:${color};">(${t.score} pt)</span>
+                    </span>
+                `;
+            }).join("");
+
+            return `
+                <div class="ecg-monitor-card">
+                    <div class="ecg-monitor-header">
+                        <span><span class="ecg-live-dot"></span>Monitor ECG • Andamento Squadre</span>
+                        <span style="color:#94a3b8;">0 → ${maxScore} Punti (${totalCases} Pazienti)</span>
+                    </div>
+                    <svg class="ecg-svg" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" aria-label="Grafico elettrocardiogramma andamento squadre">
+                        ${gridLines}
+                        ${traces}
+                    </svg>
+                    <div class="ecg-legend">${legend}</div>
+                </div>
+            `;
+        }
+
+        function setupLocalRoomChannel(pin, isHost) {
+            if (localRoomChannel) {
+                try { localRoomChannel.close(); } catch (e) {}
+                localRoomChannel = null;
+            }
+            if (typeof BroadcastChannel === "undefined") return;
+            try {
+                localRoomChannel = new BroadcastChannel(PEER_PREFIX + pin);
+                localRoomChannel.onmessage = (ev) => {
+                    const msg = ev.data;
+                    if (!msg) return;
+                    if (isHost) {
+                        handleIncomingRoomMessage(msg, (reply) => {
+                            try { localRoomChannel.postMessage(reply); } catch (e) {}
+                        });
+                    } else if (msg.type === "welcome") {
+                        window.dispatchEvent(new CustomEvent("cpia-local-welcome", { detail: msg }));
+                    }
+                };
+            } catch (e) {}
+        }
+
+        function handleIncomingRoomMessage(msg, replyFn) {
+            if (!msg || typeof msg !== "object") return;
+            if (msg.type === "join") {
+                const existing = latestRoomTeams.find(t => t.teamId === msg.teamId);
+                if (!existing) {
+                    latestRoomTeams.push({
+                        teamId: msg.teamId,
+                        teamName: msg.teamName || "Squadra",
+                        members: Array.isArray(msg.members) ? msg.members : [],
+                        score: 0,
+                        currentCase: 0,
+                        completed: false,
+                        finishedAt: null,
+                        history: [{ step: 0, score: 0, ok: true }]
+                    });
+                }
+                playTone(587.33, 0.1, "sine", 0.06);
+                sortAndRenderHostLeaderboard();
+                if (typeof replyFn === "function") {
+                    replyFn({
+                        type: "welcome",
+                        teamId: msg.teamId,
+                        caseIndices: hostSharedCaseIndices
+                    });
+                }
+            } else if (msg.type === "progress") {
+                const team = latestRoomTeams.find(t => t.teamId === msg.teamId);
+                if (team) {
+                    const prevScore = team.score;
+                    const newScore = Number(msg.score) || 0;
+                    const newCase = Number(msg.currentCase) || 0;
+                    if (newScore !== prevScore || newCase !== team.currentCase || msg.completed) {
+                        const stepNum = msg.completed
+                            ? (hostSharedCaseIndices.length || 6)
+                            : Math.max(team.history.length * 0.35, newCase + (newScore > prevScore ? 0.35 : 0));
+                        team.history.push({
+                            step: stepNum,
+                            score: newScore,
+                            ok: newScore > prevScore
+                        });
+                    }
+                    team.score = newScore;
+                    team.currentCase = newCase;
+                    if (msg.completed && !team.completed) {
+                        team.completed = true;
+                        team.finishedAt = Date.now();
+                    }
+                    sortAndRenderHostLeaderboard();
+                }
+            }
+        }
+
+        function sortAndRenderHostLeaderboard() {
+            latestRoomTeams.sort((a, b) => {
+                if (b.score !== a.score) return b.score - a.score;
+                if (a.completed && b.completed && a.finishedAt && b.finishedAt) {
+                    return a.finishedAt - b.finishedAt;
+                }
+                return b.currentCase - a.currentCase;
+            });
+            if (currentMode === "er") renderERPanel();
+        }
+
+        function openHostRoomScreen() {
+            destroyActivePeer();
+            const pin = String(Math.floor(1000 + Math.random() * 9000));
+            const sharedCases = [...ER_CASES].sort(() => Math.random() - 0.5).slice(0, 6);
+            hostSharedCaseIndices = sharedCases.map(c => ER_CASES.indexOf(c));
+            latestRoomTeams = [];
+            roomMode = "host";
+            currentRoomPin = pin;
+            erStarted = false;
+            renderERPanel();
+
+            setupLocalRoomChannel(pin, true);
+
+            if (typeof Peer === "undefined") return;
+            try {
+                const peer = new Peer(PEER_PREFIX + pin, { debug: 0 });
+                peerInstance = peer;
+
+                peer.on("connection", (conn) => {
+                    conn.on("data", (msg) => {
+                        handleIncomingRoomMessage(msg, (reply) => {
+                            try { conn.send(reply); } catch (e) {}
+                        });
+                    });
+                });
+
+                peer.on("error", (err) => {
+                    if (err && err.type === "unavailable-id") {
+                        openHostRoomScreen();
+                    }
+                });
+            } catch (e) {}
+        }
+
+        function openJoinRoomScreen(errorMsg = "") {
+            destroyActivePeer();
+            roomMode = "join_form";
+            joinRoomErrorMsg = errorMsg;
+            joinRoomConnecting = false;
+            erStarted = false;
+            renderERPanel();
+        }
+
+        function submitJoinRoom() {
+            const pinInput = (document.getElementById("join-pin-input")?.value || "").trim();
+            const teamNameInput = (document.getElementById("join-team-name")?.value || "").trim();
+            const memberInputs = Array.from(document.querySelectorAll(".join-member-input"))
+                .map(el => el.value.trim())
+                .filter(Boolean)
+                .slice(0, 6);
+
+            if (!/^\d{4}$/.test(pinInput)) {
+                openJoinRoomScreen("⚠️ Inserisci un codice PIN valido di 4 cifre.");
+                return;
+            }
+            if (!teamNameInput) {
+                openJoinRoomScreen("⚠️ Inserisci il nome della tua squadra.");
+                return;
+            }
+
+            currentRoomPin = pinInput;
+            joinRoomConnecting = true;
+            joinRoomErrorMsg = "";
+            renderERPanel();
+
+            const teamId = "team_" + Date.now() + "_" + Math.random().toString(36).slice(2, 6);
+            currentTeamDocId = teamId;
+            let joined = false;
+
+            const finalizePlayerJoin = (msg) => {
+                if (joined) return;
+                joined = true;
+                clearTimeout(timeoutId);
+                joinRoomConnecting = false;
+                roomMode = "player";
+                currentRoomPin = pinInput;
+                currentTeamDocId = msg.teamId || teamId;
+                currentTeamName = teamNameInput;
+                currentTeamMembers = memberInputs;
+
+                const customCases = Array.isArray(msg.caseIndices) && msg.caseIndices.length > 0
+                    ? msg.caseIndices.map(i => ER_CASES[i]).filter(Boolean)
+                    : null;
+
+                startERSession(customCases);
+            };
+
+            const onLocalWelcome = (ev) => {
+                window.removeEventListener("cpia-local-welcome", onLocalWelcome);
+                finalizePlayerJoin(ev.detail || {});
+            };
+            window.addEventListener("cpia-local-welcome", onLocalWelcome);
+
+            setupLocalRoomChannel(pinInput, false);
+            if (localRoomChannel) {
+                try {
+                    localRoomChannel.postMessage({
+                        type: "join",
+                        teamId,
+                        teamName: teamNameInput,
+                        members: memberInputs
+                    });
+                } catch (e) {}
+            }
+
+            const timeoutId = setTimeout(() => {
+                window.removeEventListener("cpia-local-welcome", onLocalWelcome);
+                if (!joined) {
+                    destroyActivePeer();
+                    openJoinRoomScreen(`❌ Nessuna stanza attiva trovata con il PIN <strong>${escapeHtml(pinInput)}</strong>. Controlla che il docente abbia aperto la stanza!`);
+                }
+            }, 9000);
+
+            if (typeof Peer === "undefined") return;
+
+            try {
+                const peer = new Peer({ debug: 0 });
+                peerInstance = peer;
+
+                peer.on("open", () => {
+                    const conn = peer.connect(PEER_PREFIX + pinInput, { reliable: true });
+                    playerHostConn = conn;
+
+                    conn.on("open", () => {
+                        conn.send({
+                            type: "join",
+                            teamId,
+                            teamName: teamNameInput,
+                            members: memberInputs
+                        });
+                    });
+
+                    conn.on("data", (msg) => {
+                        if (msg && msg.type === "welcome") {
+                            window.removeEventListener("cpia-local-welcome", onLocalWelcome);
+                            finalizePlayerJoin(msg);
+                        }
+                    });
+                });
+
+                peer.on("error", () => {});
+            } catch (e) {}
+        }
+
+        function syncTeamProgress(isCompleted = false) {
+            if (roomMode !== "player") return;
+            const payload = {
+                type: "progress",
+                teamId: currentTeamDocId,
+                score: erScore,
+                currentCase: erIndex,
+                completed: isCompleted
+            };
+            if (playerHostConn && playerHostConn.open) {
+                try { playerHostConn.send(payload); } catch (e) {}
+            }
+            if (localRoomChannel) {
+                try { localRoomChannel.postMessage(payload); } catch (e) {}
+            }
+        }
+
+        function startSingleERSession() {
+            destroyActivePeer();
+            roomMode = "none";
+            currentRoomPin = "";
+            currentTeamDocId = "";
+            currentTeamName = "";
+            currentTeamMembers = [];
+            startERSession(null);
+        }
+
+        function startERSession(customCases = null) {
+            const sourceCases = Array.isArray(customCases) && customCases.length > 0
+                ? customCases
+                : [...ER_CASES].sort(() => Math.random() - 0.5).slice(0, 6);
+            erSessionCases = sourceCases.map(item => {
+                const mixedFA = shuffleQuestionOptions(item.firstAidOptions, item.firstAidCorrect);
+                return {
+                    ...item,
+                    firstAidOptions: mixedFA.options,
+                    firstAidCorrect: mixedFA.correct
+                };
+            });
             erIndex = 0;
             erScore = 0;
             erHistory = [];
             erStarted = true;
+            syncTeamProgress(false);
             prepareERCase();
         }
 
@@ -2996,6 +3722,7 @@
                 correctTriage: c.triage,
                 structure: (c.layer === "bones" ? BONES : MUSCLES).find(x => x.id === c.targetId)?.name || c.targetId
             };
+            syncTeamProgress(false);
             renderHotspots();
             renderERPanel();
         }
@@ -3015,15 +3742,18 @@
             } else {
                 playErrorSound();
             }
+            syncTeamProgress(false);
             renderERPanel();
         }
 
         function nextERCase() {
             if (erIndex + 1 < erSessionCases.length) {
                 erIndex++;
+                syncTeamProgress(false);
                 prepareERCase();
             } else {
                 erIndex++;
+                syncTeamProgress(true);
                 renderERPanel();
             }
         }
@@ -3033,48 +3763,203 @@
             panel.className = "info-panel clipboard-mode" + (erStarted && erRedConfirmed ? " red-alert" : "");
 
             const clipSvg = `
-                <svg class="clipboard-metal-clip" viewBox="0 0 220 86" aria-hidden="true">
+                <svg class="clipboard-metal-clip" viewBox="0 0 210 82" aria-hidden="true">
                     <defs>
-                        <linearGradient id="steelPlate" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="0%" stop-color="#f8fafc"/>
-                            <stop offset="28%" stop-color="#cbd5e1"/>
-                            <stop offset="65%" stop-color="#94a3b8"/>
-                            <stop offset="100%" stop-color="#475569"/>
-                        </linearGradient>
-                        <linearGradient id="steelClamp" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="0%" stop-color="#e2e8f0"/>
-                            <stop offset="45%" stop-color="#94a3b8"/>
-                            <stop offset="85%" stop-color="#64748b"/>
-                            <stop offset="100%" stop-color="#1e293b"/>
-                        </linearGradient>
-                        <linearGradient id="wireLoop" x1="0" y1="0" x2="1" y2="0">
+                        <linearGradient id="chromeBase" x1="0%" y1="0%" x2="100%" y2="0%">
                             <stop offset="0%" stop-color="#64748b"/>
-                            <stop offset="50%" stop-color="#f1f5f9"/>
-                            <stop offset="100%" stop-color="#475569"/>
+                            <stop offset="12%" stop-color="#e2e8f0"/>
+                            <stop offset="26%" stop-color="#94a3b8"/>
+                            <stop offset="44%" stop-color="#f8fafc"/>
+                            <stop offset="56%" stop-color="#cbd5e1"/>
+                            <stop offset="76%" stop-color="#f1f5f9"/>
+                            <stop offset="89%" stop-color="#64748b"/>
+                            <stop offset="100%" stop-color="#cbd5e1"/>
                         </linearGradient>
+                        <linearGradient id="jawChrome" x1="0%" y1="0%" x2="0%" y2="100%">
+                            <stop offset="0%" stop-color="#f8fafc"/>
+                            <stop offset="22%" stop-color="#cbd5e1"/>
+                            <stop offset="52%" stop-color="#64748b"/>
+                            <stop offset="82%" stop-color="#e2e8f0"/>
+                            <stop offset="100%" stop-color="#334155"/>
+                        </linearGradient>
+                        <linearGradient id="wireSteel" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stop-color="#f8fafc"/>
+                            <stop offset="45%" stop-color="#94a3b8"/>
+                            <stop offset="100%" stop-color="#334155"/>
+                        </linearGradient>
+                        <linearGradient id="innerCavity" x1="0%" y1="0%" x2="0%" y2="100%">
+                            <stop offset="0%" stop-color="#0f172a"/>
+                            <stop offset="100%" stop-color="#334155"/>
+                        </linearGradient>
+                        <radialGradient id="rivetGrad" cx="35%" cy="30%" r="70%">
+                            <stop offset="0%" stop-color="#ffffff"/>
+                            <stop offset="45%" stop-color="#cbd5e1"/>
+                            <stop offset="85%" stop-color="#475569"/>
+                            <stop offset="100%" stop-color="#1e293b"/>
+                        </radialGradient>
                     </defs>
-                    <!-- Occhiello superiore in filo d'acciaio per appendere la cartelletta -->
-                    <path d="M84 22 L84 12 C84 5 136 5 136 12 L136 22" fill="none" stroke="#1e293b" stroke-width="5.5" stroke-linecap="round"/>
-                    <path d="M84 22 L84 12 C84 5 136 5 136 12 L136 22" fill="none" stroke="url(#wireLoop)" stroke-width="3.2" stroke-linecap="round"/>
-                    <!-- Piastra base avvitata alla tavoletta di legno -->
-                    <rect x="44" y="18" width="132" height="32" rx="6" fill="url(#steelPlate)" stroke="#334155" stroke-width="2"/>
-                    <!-- Rivetti metallici -->
-                    <circle cx="56" cy="30" r="3.2" fill="#475569" stroke="#f8fafc" stroke-width="1"/>
-                    <circle cx="164" cy="30" r="3.2" fill="#475569" stroke="#f8fafc" stroke-width="1"/>
-                    <!-- Perno/molla centrale -->
-                    <rect x="74" y="34" width="72" height="7" rx="3.5" fill="#334155"/>
-                    <line x1="78" y1="37.5" x2="142" y2="37.5" stroke="#cbd5e1" stroke-width="1.5" stroke-dasharray="3,2"/>
-                    <!-- Ombra della pinza sul foglio di carta -->
-                    <rect x="28" y="64" width="164" height="6" rx="3" fill="rgba(15, 23, 42, 0.25)"/>
-                    <!-- Ganascia inferiore che morde il bordo del foglio -->
-                    <path d="M36 40 L184 40 L192 62 C193 65 190 67 186 67 L34 67 C30 67 27 65 28 62 Z" fill="url(#steelClamp)" stroke="#1e293b" stroke-width="2"/>
-                    <!-- Nervatura centrale della pinza -->
-                    <rect x="48" y="47" width="124" height="6" rx="3" fill="rgba(255,255,255,0.38)"/>
-                    <line x1="33" y1="62" x2="187" y2="62" stroke="#f8fafc" stroke-width="1.2" opacity="0.75"/>
+
+                    <path d="M 86 24 L 86 12 C 86 5, 124 5, 124 12 L 124 24"
+                          fill="none" stroke="#1e293b" stroke-width="6.5" stroke-linecap="round"/>
+                    <path d="M 86 24 L 86 12 C 86 5, 124 5, 124 12 L 124 24"
+                          fill="none" stroke="url(#wireSteel)" stroke-width="4.5" stroke-linecap="round"/>
+                    <path d="M 90 11 C 96 7, 114 7, 120 11"
+                          fill="none" stroke="#ffffff" stroke-width="1.3" stroke-linecap="round" opacity="0.85"/>
+
+                    <rect x="44" y="21" width="122" height="33" rx="6"
+                          fill="url(#chromeBase)" stroke="#334155" stroke-width="1.4"/>
+                    <line x1="48" y1="22.5" x2="162" y2="22.5" stroke="#ffffff" stroke-width="1.2" opacity="0.9"/>
+
+                    <circle cx="57" cy="36" r="5.5" fill="#1e293b" opacity="0.45"/>
+                    <circle cx="57" cy="35" r="5" fill="url(#rivetGrad)" stroke="#334155" stroke-width="0.9"/>
+                    <circle cx="153" cy="36" r="5.5" fill="#1e293b" opacity="0.45"/>
+                    <circle cx="153" cy="35" r="5" fill="url(#rivetGrad)" stroke="#334155" stroke-width="0.9"/>
+
+                    <rect x="74" y="28" width="62" height="19" rx="4" fill="url(#innerCavity)"/>
+                    <rect x="69" y="34.5" width="72" height="5" rx="2" fill="url(#chromeBase)" stroke="#1e293b" stroke-width="0.8"/>
+                    <g stroke="#e2e8f0" stroke-width="2.1" stroke-linecap="round">
+                        <line x1="82" y1="31" x2="85" y2="43"/>
+                        <line x1="88" y1="31" x2="91" y2="43"/>
+                        <line x1="94" y1="31" x2="97" y2="43"/>
+                        <line x1="113" y1="31" x2="116" y2="43"/>
+                        <line x1="119" y1="31" x2="122" y2="43"/>
+                        <line x1="125" y1="31" x2="128" y2="43"/>
+                    </g>
+
+                    <path d="M 94 18 L 116 18 L 120 45 L 90 45 Z"
+                          fill="url(#chromeBase)" stroke="#334155" stroke-width="1.3"/>
+                    <rect x="97" y="21" width="16" height="4" rx="1.5" fill="#475569" opacity="0.5"/>
+                    <line x1="94" y1="43" x2="116" y2="43" stroke="#ffffff" stroke-width="1.3"/>
+
+                    <path d="M 24 46 L 186 46 L 191 64 C 191 68, 187 71, 182 71 L 28 71 C 23 71, 19 68, 19 64 Z"
+                          fill="url(#jawChrome)" stroke="#334155" stroke-width="1.5"/>
+                    <rect x="34" y="51" width="142" height="3.2" rx="1.5" fill="#475569" opacity="0.35"/>
+                    <rect x="34" y="54.2" width="142" height="1.4" rx="0.7" fill="#ffffff" opacity="0.85"/>
+                    <path d="M 24 66.5 L 186 66.5" stroke="#ffffff" stroke-width="1.8" stroke-linecap="round" opacity="0.85"/>
+                    <path d="M 23 69.8 L 187 69.8" stroke="#0f172a" stroke-width="1.6" stroke-linecap="round" opacity="0.75"/>
                 </svg>
             `;
 
             if (!erStarted) {
+                if (roomMode === "host") {
+                    const totalCases = hostSharedCaseIndices.length || 6;
+                    const maxScore = totalCases * 3;
+                    panel.innerHTML = `
+                        ${clipSvg}
+                        <div class="medical-sheet">
+                            <div class="medical-sheet-header">
+                                <div class="hospital-emblem">
+                                    <div class="hospital-cross">+</div>
+                                    <div>
+                                        <div style="font-weight:900; font-size:0.95rem; color:#0f172a;">POSTAZIONE DOCENTE • LIM</div>
+                                        <div style="font-size:0.78rem; color:#475569;">Pronto Soccorso Ortopedico • Stanza PIN ${escapeHtml(currentRoomPin)}</div>
+                                    </div>
+                                </div>
+                                <button type="button" class="secondary-btn" style="padding:0.35rem 0.65rem; font-size:0.8rem;" onclick="resetErToLobby()">Chiudi Stanza ✖</button>
+                            </div>
+
+                            <div class="team-lobby-box">
+                                <div class="pin-display-banner">
+                                    <div style="font-size:0.8rem; text-transform:uppercase; letter-spacing:0.6px; color:#93c5fd; font-weight:700;">Codice PIN Stanza (LIM / Docente)</div>
+                                    <div class="pin-code-text">${escapeHtml(currentRoomPin)}</div>
+                                    <div style="font-size:0.85rem; color:#e2e8f0;">Comunica questo PIN alle squadre per farle entrare dal loro dispositivo</div>
+                                </div>
+
+                                <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.5rem;">
+                                    <h3 style="font-size:1.02rem; font-weight:800;">🏆 Classifica Squadre (${latestRoomTeams.length})</h3>
+                                </div>
+
+                                ${latestRoomTeams.length === 0 ? `
+                                    <div class="feedback-box" style="text-align:center;">
+                                        ⏳ In attesa che le squadre inseriscano il PIN <strong>${escapeHtml(currentRoomPin)}</strong> nella scheda Pronto Soccorso...
+                                    </div>
+                                ` : `
+                                    ${buildTeamEcgChartHtml(latestRoomTeams, totalCases)}
+                                    <div style="display:flex; flex-direction:column; gap:0.5rem;">
+                                        ${latestRoomTeams.map((t, idx) => {
+                                            const color = ECG_COLORS[idx % ECG_COLORS.length];
+                                            const medal = idx === 0 ? "🥇" : idx === 1 ? "🥈" : idx === 2 ? "🥉" : `#${idx + 1}`;
+                                            const statusLabel = t.completed
+                                                ? "✅ Turno completato"
+                                                : `🩺 Paziente ${Math.min(t.currentCase + 1, totalCases)} / ${totalCases}`;
+                                            return `
+                                                <div class="leaderboard-row ${idx === 0 ? "top-team" : ""}" style="border-left: 5px solid ${color};">
+                                                    <div>
+                                                        <div style="font-weight:800; font-size:0.96rem;">${medal} ${escapeHtml(t.teamName)}</div>
+                                                        <div style="font-size:0.78rem; color:var(--muted);">
+                                                            ${t.members && t.members.length ? escapeHtml(t.members.join(", ")) : "Nessun componente indicato"}
+                                                        </div>
+                                                        <div style="font-size:0.78rem; font-weight:700; color:#0369a1; margin-top:0.15rem;">${statusLabel}</div>
+                                                    </div>
+                                                    <div style="text-align:right;">
+                                                        <div style="font-size:1.2rem; font-weight:800; color:#0f172a;">${t.score} / ${maxScore}</div>
+                                                        <div style="font-size:0.74rem; color:var(--muted); font-weight:600;">punti</div>
+                                                    </div>
+                                                </div>
+                                            `;
+                                        }).join("")}
+                                    </div>
+                                `}
+                            </div>
+                        </div>
+                    `;
+                    return;
+                }
+
+                if (roomMode === "join_form") {
+                    panel.innerHTML = `
+                        ${clipSvg}
+                        <div class="medical-sheet">
+                            <div class="medical-sheet-header">
+                                <div class="hospital-emblem">
+                                    <div class="hospital-cross">+</div>
+                                    <div>
+                                        <div style="font-weight:900; font-size:0.95rem; color:#0f172a;">REGISTRAZIONE ÉQUIPE</div>
+                                        <div style="font-size:0.78rem; color:#475569;">Entra nella Stanza del Docente</div>
+                                    </div>
+                                </div>
+                                <button type="button" class="secondary-btn" style="padding:0.35rem 0.65rem; font-size:0.8rem;" onclick="resetErToLobby()">⬅ Indietro</button>
+                            </div>
+
+                            ${joinRoomConnecting ? `
+                                <div class="team-lobby-box" style="text-align:center; padding:1.4rem;">
+                                    <div style="font-size:1.9rem;">📡</div>
+                                    <p style="font-weight:700;">Connessione alla stanza <strong>${escapeHtml(currentRoomPin)}</strong> in corso...</p>
+                                </div>
+                            ` : `
+                                <div class="team-lobby-box">
+                                    ${joinRoomErrorMsg ? `<div class="feedback-box error">${joinRoomErrorMsg}</div>` : ""}
+
+                                    <div>
+                                        <label style="display:block; font-size:0.84rem; font-weight:700; margin-bottom:0.25rem;">Codice PIN della stanza (4 cifre) *</label>
+                                        <input type="text" id="join-pin-input" class="team-input" maxlength="4" inputmode="numeric" placeholder="Es. 4821" />
+                                    </div>
+
+                                    <div>
+                                        <label style="display:block; font-size:0.84rem; font-weight:700; margin-bottom:0.25rem;">Nome della Squadra *</label>
+                                        <input type="text" id="join-team-name" class="team-input" maxlength="32" placeholder="Es. I Chirurghi del CPIA" />
+                                    </div>
+
+                                    <div>
+                                        <label style="display:block; font-size:0.84rem; font-weight:700; margin-bottom:0.25rem;">Componenti della squadra (max 6)</label>
+                                        <div class="members-grid">
+                                            <input type="text" class="team-input join-member-input" maxlength="25" placeholder="Componente 1" />
+                                            <input type="text" class="team-input join-member-input" maxlength="25" placeholder="Componente 2" />
+                                            <input type="text" class="team-input join-member-input" maxlength="25" placeholder="Componente 3" />
+                                            <input type="text" class="team-input join-member-input" maxlength="25" placeholder="Componente 4" />
+                                            <input type="text" class="team-input join-member-input" maxlength="25" placeholder="Componente 5" />
+                                            <input type="text" class="team-input join-member-input" maxlength="25" placeholder="Componente 6" />
+                                        </div>
+                                    </div>
+
+                                    <button type="button" class="er-start-btn" style="margin-top:0.25rem;" onclick="submitJoinRoom()">Conferma ed entra in corsia 🚑</button>
+                                </div>
+                            `}
+                        </div>
+                    `;
+                    return;
+                }
+
                 panel.innerHTML = `
                     ${clipSvg}
                     <div class="medical-sheet">
@@ -3098,9 +3983,23 @@
                             <div><span class="phase-badge">FASE 3 • COSA FARE / PRIMO SOCCORSO</span><br>Scegli il comportamento corretto per aiutare il paziente.</div>
                         </div>
 
-                        <button type="button" class="er-start-btn" onclick="startERSession()">
+                        <button type="button" class="er-start-btn" onclick="startSingleERSession()">
                             🚑 Inizia il Turno di Guardia (6 Pazienti)
                         </button>
+
+                        <div style="border-top:1.5px dashed #cbd5e1; padding-top:0.85rem; margin-top:0.2rem;">
+                            <div style="font-size:0.82rem; font-weight:800; text-transform:uppercase; color:#475569; margin-bottom:0.5rem; text-align:center;">
+                                🏆 Sfida in Classe a Squadre (con PIN)
+                            </div>
+                            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:0.6rem;">
+                                <button type="button" class="next-btn" style="background:#0f172a; padding:0.75rem 0.65rem; font-size:0.9rem;" onclick="openHostRoomScreen()">
+                                    🏫 Crea Stanza<br><span style="font-size:0.74rem; font-weight:500; opacity:0.9;">(Docente / LIM)</span>
+                                </button>
+                                <button type="button" class="next-btn" style="background:#0284c7; padding:0.75rem 0.65rem; font-size:0.9rem;" onclick="openJoinRoomScreen()">
+                                    👥 Entra in Stanza<br><span style="font-size:0.74rem; font-weight:500; opacity:0.9;">(Squadra con PIN)</span>
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 `;
                 return;
@@ -3112,6 +4011,11 @@
                 let grade = "Tirocinante in Corsia 🩺";
                 if (pct >= 85) grade = "Primario di Ortopedia 🏆";
                 else if (pct >= 65) grade = "Medico di Guardia Esperto 👨‍⚕️";
+
+                const teamBanner = roomMode === "player"
+                    ? `<div style="font-size:0.9rem; font-weight:800; color:#fde047; margin-bottom:0.2rem;">👥 Équipe: ${escapeHtml(currentTeamName)} (PIN ${escapeHtml(currentRoomPin)})</div>
+                       ${currentTeamMembers.length > 0 ? `<div style="font-size:0.82rem; color:#e2e8f0; margin-bottom:0.35rem;">Componenti: ${escapeHtml(currentTeamMembers.join(", "))}</div>` : ""}`
+                    : "";
 
                 panel.innerHTML = `
                     ${clipSvg}
@@ -3128,6 +4032,7 @@
                         </div>
 
                         <div class="grade-badge-card">
+                            ${teamBanner}
                             <div style="font-size:0.82rem; text-transform:uppercase; opacity:0.85;">Valutazione Finale</div>
                             <div style="font-size:1.5rem; font-weight:800; margin:0.25rem 0;">${grade}</div>
                             <div style="font-size:1.15rem; font-weight:700; color:#facc15;">Punteggio Totale: ${erScore} / ${maxPts} (${pct}%)</div>
@@ -3141,16 +4046,19 @@
                             <div class="record-section-body" style="display:flex; flex-direction:column; gap:0.5rem;">
                                 ${erHistory.map((h, idx) => {
                                     const pillCls = h.points === 3 ? "full" : h.points === 2 ? "mid" : "low";
+                                    const ptsLabel = h.points === 1 ? "1 punto" : `${h.points} punti`;
                                     return `
-                                        <div style="font-size:0.85rem; padding:0.55rem 0.65rem; border-radius:8px; background:#f8fafc; border:1px solid #cbd5e1; display:flex; flex-direction:column; gap:0.3rem;">
-                                            <div style="display:flex; justify-content:space-between; align-items:center; gap:0.5rem;">
+                                        <div style="font-size:0.85rem; padding:0.55rem 0.65rem; border-radius:8px; background:#f8fafc; border:1px solid #cbd5e1; display:flex; flex-direction:column; gap:0.35rem;">
+                                            <div>
                                                 <strong>${idx + 1}. ${h.avatar || "🩺"} ${h.patient}</strong>
-                                                <span class="case-score-pill ${pillCls}">⭐ ${h.points} / 3 pt</span>
+                                            </div>
+                                            <div>
+                                                <span class="case-score-pill ${pillCls}">⭐ ${ptsLabel} su 3</span>
                                             </div>
                                             <div style="display:flex; flex-wrap:wrap; gap:0.4rem 0.75rem; font-size:0.8rem; color:#334155;">
-                                                <span>Triage: ${h.triageOk ? "✅ +1" : `❌ 0 (${TRIAGE_INFO[h.correctTriage].label.split("(")[0].trim()})`}</span>
-                                                <span>Anatomia (${h.structure}): ${h.spotOk ? "✅ +1" : "❌ 0"}</span>
-                                                <span>Primo Soccorso: ${h.firstAidOk ? "✅ +1" : "❌ 0"}</span>
+                                                <span>Triage: ${h.triageOk ? "✅ +1 punto" : `❌ 0 punti (${TRIAGE_INFO[h.correctTriage].label.split("(")[0].trim()})`}</span>
+                                                <span>Anatomia (${h.structure}): ${h.spotOk ? "✅ +1 punto" : "❌ 0 punti"}</span>
+                                                <span>Primo Soccorso: ${h.firstAidOk ? "✅ +1 punto" : "❌ 0 punti"}</span>
                                             </div>
                                         </div>
                                     `;
@@ -3159,7 +4067,9 @@
                         </div>
 
                         <div style="display:flex; gap:0.6rem; flex-wrap:wrap;">
-                            <button type="button" class="next-btn" onclick="startERSession()">🔄 Nuovo Turno (6 nuovi pazienti)</button>
+                            ${roomMode === "player"
+                                ? `<button type="button" class="next-btn" onclick="resetErToLobby()">🏥 Torna alla schermata Pronto Soccorso</button>`
+                                : `<button type="button" class="next-btn" onclick="startSingleERSession()">🔄 Nuovo Turno (6 nuovi pazienti)</button>`}
                             <button type="button" class="secondary-btn" onclick="window.print()">🖨️ Stampa Referto</button>
                         </div>
                     </div>
@@ -3181,7 +4091,7 @@
                             <div class="hospital-cross">+</div>
                             <div>
                                 <div style="font-weight:900; font-size:0.9rem;">CARTELLA CLINICA • PAZIENTE ${erIndex + 1} / ${erSessionCases.length}</div>
-                                <div style="font-size:0.78rem; color:#475569;">Punteggio turno: <strong>${erScore} / ${erSessionCases.length * 3}</strong></div>
+                                <div style="font-size:0.78rem; color:#475569;">${roomMode === "player" ? `Équipe: <strong>${escapeHtml(currentTeamName)}</strong> • ` : ""}Punteggio turno: <strong>${erScore} / ${erSessionCases.length * 3}</strong></div>
                             </div>
                         </div>
                         <button type="button" class="secondary-btn" style="padding:0.3rem 0.6rem; font-size:0.78rem;"
@@ -3217,7 +4127,6 @@
                         </div>
                     </div>
 
-                    <!-- FASE 1 -->
                     <div class="record-section">
                         <div class="record-section-title">
                             <span>FASE 1 • CODICE TRIAGE</span>
@@ -3244,7 +4153,6 @@
                         </div>
                     </div>
 
-                    <!-- FASE 2 -->
                     ${erPhase1Done ? `
                         <div class="record-section">
                             <div class="record-section-title">
@@ -3267,7 +4175,6 @@
                         </div>
                     ` : ""}
 
-                    <!-- FASE 3 -->
                     ${erPhase2Done ? `
                         <div class="record-section">
                             <div class="record-section-title">
@@ -3306,7 +4213,13 @@
 
         /* ================= SCHEDA 4: QUIZ GENERALE ================= */
         function startQuiz() {
-            quizList = [...QUIZ_QUESTIONS].sort(() => Math.random() - 0.5).slice(0, 8);
+            quizList = [...QUIZ_QUESTIONS]
+                .sort(() => Math.random() - 0.5)
+                .slice(0, 8)
+                .map(q => {
+                    const mixed = shuffleQuestionOptions(q.options, q.correct);
+                    return { ...q, options: mixed.options, correct: mixed.correct };
+                });
             quizIndex = 0;
             quizScore = 0;
             quizAnswered = false;
@@ -3385,19 +4298,117 @@
         }
 
         /* ================= SCHEDA 5: PALESTRA & MOVIMENTI ================= */
+        function initGymSession() {
+            gymSessionMovements = [...GYM_MOVEMENTS]
+                .sort(() => Math.random() - 0.5)
+                .map(m => {
+                    const mixed = shuffleQuestionOptions(m.options, m.correct);
+                    return { ...m, options: mixed.options, correct: mixed.correct };
+                });
+            gymIndex = 0;
+            gymScore = 0;
+            gymStep = 1;
+            gymFinished = false;
+            gymAnsweredQ = false;
+            gymChosenOpt = null;
+            gymHistory = [];
+            erWrongSpotId = null;
+        }
+
+        function restartGym() {
+            initGymSession();
+            renderHotspots();
+            renderGymPanel();
+        }
+
+        function answerGymQuestion(idx) {
+            if (gymAnsweredQ) return;
+            gymAnsweredQ = true;
+            gymChosenOpt = idx;
+            const g = gymSessionMovements[gymIndex];
+            if (idx === g.correct) {
+                gymScore++;
+                if (gymHistory[gymIndex]) gymHistory[gymIndex].points += 1;
+                playSuccessSound();
+            } else {
+                playErrorSound();
+            }
+            renderGymPanel();
+        }
+
+        function nextGymMovement() {
+            if (gymIndex + 1 < gymSessionMovements.length) {
+                gymIndex++;
+                gymStep = 1;
+                gymAnsweredQ = false;
+                gymChosenOpt = null;
+                erWrongSpotId = null;
+            } else {
+                gymFinished = true;
+            }
+            renderHotspots();
+            renderGymPanel();
+        }
+
         function renderGymPanel() {
             const panel = document.getElementById("info-panel");
             panel.className = "info-panel";
-            const g = GYM_MOVEMENTS[gymIndex];
+            if (!gymSessionMovements.length) initGymSession();
+            const maxPts = gymSessionMovements.length * 2;
+
+            if (gymFinished) {
+                const pct = Math.round((gymScore / maxPts) * 100);
+                let grade = "Atleta Principiante 👟";
+                if (pct >= 85) grade = "Personal Trainer & Fisioterapista 🏆";
+                else if (pct >= 65) grade = "Esperto del Movimento 💪";
+
+                panel.innerHTML = `
+                    <div class="grade-badge-card">
+                        <div style="font-size:0.82rem; text-transform:uppercase; opacity:0.85;">Allenamento Completato (${gymSessionMovements.length} Movimenti)</div>
+                        <div style="font-size:1.5rem; font-weight:800; margin:0.25rem 0;">${grade}</div>
+                        <div style="font-size:1.15rem; font-weight:700; color:#facc15;">Punteggio Finale: ${gymScore} / ${maxPts} (${pct}%)</div>
+                    </div>
+
+                    <div class="record-section">
+                        <div class="record-section-title">
+                            <span>Riepilogo Azioni e Muscoli</span>
+                            <span>Punteggi parziali</span>
+                        </div>
+                        <div class="record-section-body" style="display:flex; flex-direction:column; gap:0.45rem; max-height:330px; overflow-y:auto;">
+                            ${gymHistory.map((h, idx) => {
+                                const pillCls = h.points === 2 ? "full" : h.points === 1 ? "mid" : "low";
+                                const ptsLabel = h.points === 1 ? "1 punto" : `${h.points} punti`;
+                                return `
+                                    <div style="font-size:0.84rem; padding:0.5rem 0.65rem; border-radius:8px; background:#f8fafc; border:1px solid #cbd5e1; display:flex; flex-direction:column; gap:0.3rem;">
+                                        <div><strong>${idx + 1}. ${h.icon} ${h.title}</strong> (${h.muscle})</div>
+                                        <div>
+                                            <span class="case-score-pill ${pillCls}">⭐ ${ptsLabel} su 2</span>
+                                        </div>
+                                    </div>
+                                `;
+                            }).join("")}
+                        </div>
+                    </div>
+
+                    <button type="button" class="next-btn" onclick="restartGym()">🔄 Ripeti i ${gymSessionMovements.length} Movimenti</button>
+                `;
+                return;
+            }
+
+            const g = gymSessionMovements[gymIndex];
+            const targetMuscle = MUSCLES.find(m => m.id === g.targetId);
 
             if (currentLayer !== g.layer) {
                 switchAnatomyLayer(g.layer);
+            }
+            if (targetMuscle) {
+                ensureVisibleView(targetMuscle);
             }
 
             panel.innerHTML = `
                 <div class="er-status-bar">
                     <span>🏋️ PALESTRA & MOVIMENTI</span>
-                    <span>Azione ${gymIndex + 1}/${GYM_MOVEMENTS.length} • Punti: ${gymScore}</span>
+                    <span>Azione ${gymIndex + 1}/${gymSessionMovements.length} • Punti: ${gymScore} / ${maxPts}</span>
                 </div>
 
                 <div class="patient-card" style="background:#f8fafc;">
@@ -3411,21 +4422,58 @@
                     <p>${g.desc}</p>
                 </div>
 
-                ${gymStep === 1 ? `
-                    <div class="info-box muscle-box">
-                        <h3>Passo 1 • Individua il muscolo protagonista</h3>
-                        <p>👆 Clicca sullo scanner a sinistra il muscolo che lavora principalmente in questo movimento!</p>
+                <div class="record-section">
+                    <div class="record-section-title">
+                        <span>Passo 1 • Individua il muscolo protagonista</span>
+                        <span>${gymStep === 2 ? "✅ Completato" : "1 Punto"}</span>
                     </div>
-                    ${erWrongSpotId ? `<div class="feedback-box error">❌ Non è questo muscolo! Guarda bene quale parte del corpo si muove.</div>` : ""}
-                ` : `
-                    <div class="feedback-box success">
-                        ✅ Bravo! Il muscolo protagonista è inserito nella leva formata da: <strong>${g.bonesInvolved}</strong>.<br>
-                        🔄 <strong>Muscolo antagonista:</strong> ${g.antagonist}.
+                    <div class="record-section-body">
+                        ${gymStep === 1 ? `
+                            <p style="font-size:0.92rem; font-weight:600;">👆 Clicca sullo scanner a sinistra il muscolo che lavora principalmente in questo movimento!</p>
+                            ${erWrongSpotId ? `<div class="feedback-box error" style="margin-top:0.5rem;">❌ Non è questo muscolo! Guarda bene quale parte del corpo si muove.</div>` : ""}
+                        ` : `
+                            <div class="feedback-box success">
+                                ✅ Bravo! Il muscolo protagonista è <strong>${g.muscleName}</strong> (leva: <strong>${g.bonesInvolved}</strong>).<br>
+                                🔄 <strong>Muscolo antagonista:</strong> ${g.antagonist}.
+                            </div>
+                        `}
                     </div>
-                    <button type="button" class="next-btn" onclick="gymIndex=(gymIndex+1)%GYM_MOVEMENTS.length; gymStep=1; erWrongSpotId=null; renderHotspots(); renderGymPanel();">
-                        Prossimo Movimento ➡️
-                    </button>
-                `}
+                </div>
+
+                ${gymStep === 2 ? `
+                    <div class="record-section">
+                        <div class="record-section-title">
+                            <span>Passo 2 • Ossa e Leva del Movimento</span>
+                            <span>${gymAnsweredQ ? (gymChosenOpt === g.correct ? "✅ +1 punto" : "❌ 0 punti") : "1 Punto"}</span>
+                        </div>
+                        <div class="record-section-body">
+                            <p style="font-size:0.92rem; font-weight:700; margin-bottom:0.5rem;">${g.question}</p>
+                            <div class="quiz-options">
+                                ${g.options.map((opt, idx) => {
+                                    let cls = "option-btn";
+                                    if (gymAnsweredQ) {
+                                        if (idx === g.correct) cls += " correct";
+                                        else if (idx === gymChosenOpt) cls += " wrong";
+                                    }
+                                    return `
+                                        <button type="button" class="${cls}" ${gymAnsweredQ ? "disabled" : ""} onclick="answerGymQuestion(${idx})">
+                                            ${opt}
+                                        </button>
+                                    `;
+                                }).join("")}
+                            </div>
+
+                            ${gymAnsweredQ ? `
+                                <div class="feedback-box ${gymChosenOpt === g.correct ? "success" : "error"}" style="margin-top:0.6rem;">
+                                    ${gymChosenOpt === g.correct ? "✅ Esatto!" : "❌ Ricorda:"} ${g.explain}
+                                </div>
+                                <button type="button" class="next-btn" style="margin-top:0.75rem;" onclick="nextGymMovement()">
+                                    ${gymIndex + 1 < gymSessionMovements.length ? "Prossimo Movimento ➡️" : "Vedi Punteggio Finale 🏆"}
+                                </button>
+                            ` : ""}
+                        </div>
+                    </div>
+                ` : ""}
             `;
         }
 
@@ -3449,7 +4497,7 @@
                 renderHotspots();
                 renderQuizPanel();
             } else if (mode === "gym") {
-                gymStep = 1;
+                if (!gymSessionMovements.length) initGymSession();
                 renderHotspots();
                 renderGymPanel();
             }
