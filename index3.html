@@ -1140,6 +1140,70 @@
             border: 1px solid #fca5a5;
         }
 
+        /* ================= RIEPILOGO DUE COLONNE & FILTRI PRONTO SOCCORSO ================= */
+        .er-summary-columns {
+            display: grid;
+            grid-template-columns: 1.15fr 0.85fr;
+            gap: 0.75rem;
+            align-items: start;
+        }
+
+        @media (max-width: 720px) {
+            .er-summary-columns {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .er-type-filter-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.35rem;
+            margin-bottom: 0.6rem;
+        }
+
+        .er-type-btn {
+            border: 1px solid var(--border);
+            background: #f8fafc;
+            color: var(--muted);
+            padding: 0.28rem 0.6rem;
+            border-radius: 999px;
+            font-family: inherit;
+            font-size: 0.76rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .er-type-btn.active {
+            background: #0f172a;
+            color: #ffffff;
+            border-color: #0f172a;
+        }
+
+        .er-category-card {
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            padding: 0.55rem 0.65rem;
+            background: #f8fafc;
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .er-mini-bar {
+            width: 100%;
+            height: 7px;
+            background: #e2e8f0;
+            border-radius: 999px;
+            overflow: hidden;
+        }
+
+        .er-mini-bar-fill {
+            height: 100%;
+            border-radius: 999px;
+            transition: width 0.3s ease;
+        }
+
         /* ================= STANZA A SQUADRE & MONITOR ECG IN PRONTO SOCCORSO ================= */
         .team-lobby-box {
             background: #ffffff;
@@ -1270,6 +1334,86 @@
             display: inline-flex;
             align-items: center;
             gap: 0.35rem;
+        }
+
+        /* ================= ELEMENTI SMARTPHONE (NASCOSTI SU PC) ================= */
+        .mobile-scanner-context {
+            display: none;
+        }
+
+        .mobile-quick-jump {
+            display: none;
+        }
+
+        .progress-track {
+            width: 100%;
+            height: 7px;
+            background: #e2e8f0;
+            border-radius: 999px;
+            overflow: hidden;
+            margin-top: 0.45rem;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #38bdf8, #22c55e);
+            border-radius: 999px;
+            transition: width 0.3s ease;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding-bottom: 4.5rem;
+            }
+
+            .mobile-scanner-context.active {
+                display: flex;
+                flex-direction: column;
+                gap: 0.2rem;
+                width: 100%;
+                background: #0f172a;
+                color: #f8fafc;
+                border-left: 4px solid #38bdf8;
+                border-radius: 10px;
+                padding: 0.55rem 0.75rem;
+                margin-bottom: 0.55rem;
+                font-size: 0.82rem;
+                line-height: 1.35;
+                box-shadow: 0 3px 10px rgba(15, 23, 42, 0.14);
+            }
+
+            .mobile-scanner-context.er-context {
+                border-left-color: #ef4444;
+            }
+
+            .mobile-scanner-context.gym-context {
+                border-left-color: #f59e0b;
+            }
+
+            .mobile-quick-jump {
+                display: flex;
+                position: fixed;
+                bottom: 0.85rem;
+                right: 0.85rem;
+                z-index: 60;
+                align-items: center;
+                gap: 0.45rem;
+                background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%);
+                color: #ffffff;
+                border: 2px solid rgba(255, 255, 255, 0.25);
+                border-radius: 999px;
+                padding: 0.65rem 1.05rem;
+                font-family: inherit;
+                font-size: 0.85rem;
+                font-weight: 800;
+                box-shadow: 0 8px 20px rgba(15, 23, 42, 0.38);
+                cursor: pointer;
+                transition: transform 0.15s ease, background 0.2s ease;
+            }
+
+            .mobile-quick-jump:active {
+                transform: scale(0.96);
+            }
         }
 
         /* ================= OTTIMIZZAZIONE RESPONSIVE SMARTPHONE (<= 640px) ================= */
@@ -1504,11 +1648,11 @@
             </div>
         </div>
         <nav class="mode-nav" aria-label="Modalità di studio">
-            <button class="mode-btn active" data-mode="explore">1. Apparato Locomotore 🦴</button>
-            <button class="mode-btn" data-mode="train">2. Allenamento 🎯</button>
+            <button class="mode-btn active" data-mode="explore">1. Esplora 🦴</button>
+            <button class="mode-btn" data-mode="train">2. Allena 🎯</button>
             <button class="mode-btn" data-mode="er">3. Pronto Soccorso 🚑</button>
             <button class="mode-btn" data-mode="quiz">4. Quiz 📝</button>
-            <button class="mode-btn" data-mode="gym">5. Palestra & Movimenti 🏋️</button>
+            <button class="mode-btn" data-mode="gym">5. Palestra 🏋️</button>
             <button type="button" class="mode-btn" id="btn-sound-toggle" onclick="toggleSound()" title="Attiva/Disattiva effetti sonori">🔊 Audio</button>
         </nav>
     </header>
@@ -1541,6 +1685,8 @@
                 <button type="button" class="view-btn" data-view="left" onclick="switchAnatomyView('left')">Lato Sx</button>
             </div>
 
+            <div class="mobile-scanner-context" id="mobile-scanner-context" aria-live="polite"></div>
+
             <div class="anatomy-stage" id="anatomy-stage">
                 <div class="loading-xray active" id="loading-xray">
                     <div style="font-size: 1.8rem;">🔬</div>
@@ -1565,6 +1711,10 @@
 
         <section class="info-panel" id="info-panel" aria-live="polite"></section>
     </main>
+
+    <button type="button" class="mobile-quick-jump" id="mobile-quick-jump" onclick="handleMobileQuickJump()">
+        ⬇️ Vai alla Cartella
+    </button>
 
     <script>
         /* ================= DATABASE OSSA (16 OSSA PRINCIPALI) ================= */
@@ -2881,6 +3031,7 @@
         let erWrongSpotId = null;
         let erRedConfirmed = false;
         let erShowTriageGuide = false;
+        let erSummaryFilter = "all";
 
         // Stato Stanza a Squadre & PeerJS / BroadcastChannel
         const PEER_PREFIX = "cpia-ps-room-";
@@ -3229,6 +3380,7 @@
                 selectedItemId = item.id;
                 renderHotspots();
                 renderExplorePanel();
+                mobileAutoScrollTo("info-panel");
                 return;
             }
 
@@ -3245,6 +3397,7 @@
                 }
                 renderHotspots();
                 renderTrainPanel(item);
+                mobileAutoScrollTo("info-panel");
                 return;
             }
 
@@ -3263,6 +3416,7 @@
                     erWrongSpotId = null;
                     erPhase = 3;
                     syncTeamProgress(false);
+                    mobileAutoScrollTo("info-panel");
                 } else {
                     erWrongSpotId = item.id;
                     SFX.error();
@@ -3286,12 +3440,116 @@
                         muscle: g.muscleName,
                         points: 1
                     };
+                    mobileAutoScrollTo("info-panel");
                 } else {
                     erWrongSpotId = item.id;
                     SFX.error();
                 }
                 renderHotspots();
                 renderGymPanel();
+            }
+        }
+
+        /* ================= NAVIGAZIONE SMARTPHONE (ATTIVA SOLO <= 768PX) ================= */
+        function isMobileViewport() {
+            return window.innerWidth <= 768;
+        }
+
+        function mobileAutoScrollTo(targetId) {
+            if (!isMobileViewport()) return;
+            setTimeout(() => {
+                const el = document.getElementById(targetId);
+                if (el) {
+                    el.scrollIntoView({ behavior: "smooth", block: "start" });
+                }
+            }, 140);
+        }
+
+        function updateMobileScannerContext() {
+            const box = document.getElementById("mobile-scanner-context");
+            if (!box) return;
+
+            if (currentMode === "train" && trainTarget) {
+                const tipo = currentLayer === "muscles" ? "muscolo" : "osso";
+                box.className = "mobile-scanner-context active";
+                box.innerHTML = `
+                    <div style="font-weight:800; color:#38bdf8; font-size:0.74rem; text-transform:uppercase;">🎯 Trova sullo scanner (${tipo})</div>
+                    <div>Tocca: <strong>${escapeHtml(trainTarget.name)}</strong></div>
+                `;
+                return;
+            }
+
+            if (currentMode === "er" && erStarted && erIndex < erSessionCases.length) {
+                const c = erSessionCases[erIndex];
+                const tipo = c.layer === "muscles" ? "muscolo" : "osso";
+                box.className = "mobile-scanner-context active er-context";
+                if (!erPhase1Done) {
+                    box.innerHTML = `
+                        <div style="font-weight:800; color:#fca5a5; font-size:0.74rem; text-transform:uppercase;">🚑 ${escapeHtml(c.patient)} • Fase 1 (Triage)</div>
+                        <div>Assegna prima il <strong>Codice Triage</strong> nella cartella qui sotto.</div>
+                    `;
+                } else if (!erPhase2Done) {
+                    box.innerHTML = `
+                        <div style="font-weight:800; color:#facc15; font-size:0.74rem; text-transform:uppercase;">👆 Fase 2 • Tocca l'${tipo} colpito</div>
+                        <div style="font-size:0.81rem; color:#f8fafc;"><strong>${escapeHtml(c.patient.split("(")[0].trim())}:</strong> “${escapeHtml(c.story)}”</div>
+                    `;
+                } else {
+                    box.innerHTML = `
+                        <div style="font-weight:800; color:#86efac; font-size:0.74rem; text-transform:uppercase;">✅ Fase 2 completata • Vai alla Fase 3</div>
+                        <div>Completa il <strong>Primo Soccorso</strong> nella cartella qui sotto.</div>
+                    `;
+                }
+                return;
+            }
+
+            if (currentMode === "gym" && !gymFinished && gymSessionMovements.length) {
+                const g = gymSessionMovements[gymIndex];
+                box.className = "mobile-scanner-context active gym-context";
+                if (gymStep === 1) {
+                    box.innerHTML = `
+                        <div style="font-weight:800; color:#fcd34d; font-size:0.74rem; text-transform:uppercase;">🏋️ Passo 1 • Tocca il muscolo attivo</div>
+                        <div><strong>${escapeHtml(g.title)}</strong></div>
+                    `;
+                } else {
+                    box.innerHTML = `
+                        <div style="font-weight:800; color:#86efac; font-size:0.74rem; text-transform:uppercase;">✅ Muscolo trovato • Passo 2</div>
+                        <div>Rispondi alla domanda sulle ossa nella scheda qui sotto.</div>
+                    `;
+                }
+                return;
+            }
+
+            box.className = "mobile-scanner-context";
+            box.innerHTML = "";
+        }
+
+        function updateMobileQuickJumpLabel() {
+            const btn = document.getElementById("mobile-quick-jump");
+            const infoPanel = document.getElementById("info-panel");
+            if (!btn || !infoPanel || !isMobileViewport()) return;
+
+            const rect = infoPanel.getBoundingClientRect();
+            const isViewingInfo = rect.top < window.innerHeight * 0.45;
+            if (isViewingInfo) {
+                btn.innerHTML = "⬆️ Vai allo Scanner";
+            } else {
+                if (currentMode === "er") btn.innerHTML = "⬇️ Vai alla Cartella";
+                else if (currentMode === "quiz") btn.innerHTML = "⬇️ Vai alle Domande";
+                else btn.innerHTML = "⬇️ Vai alla Scheda";
+            }
+        }
+
+        function handleMobileQuickJump() {
+            const infoPanel = document.getElementById("info-panel");
+            const scannerPanel = document.querySelector(".skeleton-panel");
+            if (!infoPanel || !scannerPanel) return;
+
+            const rect = infoPanel.getBoundingClientRect();
+            const isViewingInfo = rect.top < window.innerHeight * 0.45;
+            if (isViewingInfo) {
+                scannerPanel.scrollIntoView({ behavior: "smooth", block: "start" });
+            } else {
+                infoPanel.scrollIntoView({ behavior: "smooth", block: "start" });
             }
         }
 
@@ -3346,13 +3604,14 @@
                     <div class="bone-grid">
                         ${filtered.map(el => `
                             <button type="button" class="bone-chip ${el.id === item.id ? "active" : ""}"
-                                onclick="selectedItemId='${el.id}'; ensureVisibleView(${isMuscle ? "MUSCLES" : "BONES"}.find(x=>x.id==='${el.id}')); renderHotspots(); renderExplorePanel();">
+                                onclick="selectedItemId='${el.id}'; ensureVisibleView(${isMuscle ? "MUSCLES" : "BONES"}.find(x=>x.id==='${el.id}')); renderHotspots(); renderExplorePanel(); mobileAutoScrollTo('anatomy-stage');">
                                 ${el.name}
                             </button>
                         `).join("")}
                     </div>
                 </div>
             `;
+            updateMobileScannerContext();
         }
 
         /* ================= SCHEDA 2: ALLENAMENTO INTERATTIVO ================= */
@@ -3364,6 +3623,7 @@
             ensureVisibleView(trainTarget);
             renderHotspots();
             renderTrainPanel();
+            mobileAutoScrollTo("anatomy-stage");
         }
 
         function renderTrainPanel(clickedItem = null) {
@@ -3400,6 +3660,7 @@
                     <div class="feedback-box">👆 Clicca direttamente sul pallino corrispondente nella figura a sinistra!</div>
                 `}
             `;
+            updateMobileScannerContext();
         }
 
         /* ================= SCHEDA 3: PRONTO SOCCORSO (3 FASI + STANZA A SQUADRE) ================= */
@@ -3845,6 +4106,7 @@
             erIndex = 0;
             erScore = 0;
             erHistory = [];
+            erSummaryFilter = "all";
             erStarted = true;
             syncTeamProgress(false);
             prepareERCase();
@@ -3863,6 +4125,7 @@
             if (targetObj) ensureVisibleView(targetObj);
             renderHotspots();
             renderERPanel();
+            mobileAutoScrollTo("info-panel");
         }
 
         function submitERTriage(chosenCode) {
@@ -3895,6 +4158,7 @@
             syncTeamProgress(false);
             renderHotspots();
             renderERPanel();
+            mobileAutoScrollTo("anatomy-stage");
         }
 
         function submitERFirstAid(optIdx) {
@@ -4197,6 +4461,48 @@
                     ? `<div style="font-size:0.95rem; font-weight:800; color:#93c5fd; margin-bottom:0.2rem;">🏥 Équipe: ${escapeHtml(currentTeamName)} ${currentTeamMembers.length ? `(${escapeHtml(currentTeamMembers.join(", "))})` : ""}</div>`
                     : "";
 
+                const totCases = erHistory.length;
+                const triageHits = erHistory.filter(h => h.triageOk).length;
+                const spotHits = erHistory.filter(h => h.spotOk).length;
+                const firstAidHits = erHistory.filter(h => h.firstAidOk).length;
+
+                const filteredHistory = erHistory
+                    .map((h, idx) => ({ ...h, originalIdx: idx }))
+                    .filter(h => {
+                        if (erSummaryFilter === "triage_err") return !h.triageOk;
+                        if (erSummaryFilter === "anatomy_err") return !h.spotOk;
+                        if (erSummaryFilter === "firstaid_err") return !h.firstAidOk;
+                        if (erSummaryFilter === "perfect") return h.points === 3;
+                        return true;
+                    });
+
+                const categoryBreakdown = [
+                    {
+                        key: "triage_err",
+                        icon: "🚦",
+                        title: "1. Assegnazione Codice Triage",
+                        hits: triageHits,
+                        color: "#0284c7",
+                        desc: "Valutazione gravità e tempi di attesa"
+                    },
+                    {
+                        key: "anatomy_err",
+                        icon: "🩻",
+                        title: "2. Localizzazione Anatomica",
+                        hits: spotHits,
+                        color: "#7c3aed",
+                        desc: "Individuazione osso o muscolo sullo scanner"
+                    },
+                    {
+                        key: "firstaid_err",
+                        icon: "🩹",
+                        title: "3. Manovra di Primo Soccorso",
+                        hits: firstAidHits,
+                        color: "#16a34a",
+                        desc: "Protocolli R.I.C.E., immobilizzazione e 112"
+                    }
+                ];
+
                 panel.innerHTML = `
                     ${clipSvg}
                     <div class="medical-sheet">
@@ -4218,31 +4524,78 @@
                             <div style="font-size:1.15rem; font-weight:700; color:#facc15;">Punteggio Totale: ${erScore} / ${maxPts} (${pct}%)</div>
                         </div>
 
-                        <div class="record-section">
-                            <div class="record-section-title">
-                                <span>Riepilogo Pazienti Visitati</span>
-                                <span>Punteggi parziali</span>
+                        <div class="er-summary-columns">
+                            <!-- COLONNA SINISTRA: DETTAGLIO DEI 3 PUNTI PER PAZIENTE -->
+                            <div class="record-section">
+                                <div class="record-section-title">
+                                    <span>🩺 Dettaglio 3 Punti per Paziente</span>
+                                    <span>${filteredHistory.length} / ${totCases}</span>
+                                </div>
+                                <div class="record-section-body">
+                                    <div class="er-type-filter-bar">
+                                        <button type="button" class="er-type-btn ${erSummaryFilter === "all" ? "active" : ""}" onclick="erSummaryFilter='all'; renderERPanel();">Tutti (${totCases})</button>
+                                        <button type="button" class="er-type-btn ${erSummaryFilter === "perfect" ? "active" : ""}" onclick="erSummaryFilter='perfect'; renderERPanel();">⭐ 3/3 (${erHistory.filter(h => h.points === 3).length})</button>
+                                        <button type="button" class="er-type-btn ${erSummaryFilter === "triage_err" ? "active" : ""}" onclick="erSummaryFilter='triage_err'; renderERPanel();">❌ Triage (${totCases - triageHits})</button>
+                                        <button type="button" class="er-type-btn ${erSummaryFilter === "anatomy_err" ? "active" : ""}" onclick="erSummaryFilter='anatomy_err'; renderERPanel();">❌ Anatomia (${totCases - spotHits})</button>
+                                        <button type="button" class="er-type-btn ${erSummaryFilter === "firstaid_err" ? "active" : ""}" onclick="erSummaryFilter='firstaid_err'; renderERPanel();">❌ Primo Socc. (${totCases - firstAidHits})</button>
+                                    </div>
+
+                                    <div style="display:flex; flex-direction:column; gap:0.5rem;">
+                                        ${filteredHistory.length === 0 ? `
+                                            <div class="feedback-box" style="font-size:0.83rem; text-align:center;">
+                                                Nessun paziente corrisponde a questo filtro.
+                                            </div>
+                                        ` : filteredHistory.map(h => {
+                                            const pillCls = h.points === 3 ? "full" : h.points === 2 ? "mid" : "low";
+                                            const ptsLabel = h.points === 1 ? "1 punto" : `${h.points} punti`;
+                                            return `
+                                                <div style="font-size:0.84rem; padding:0.55rem 0.65rem; border-radius:8px; background:#f8fafc; border:1px solid #cbd5e1; display:flex; flex-direction:column; gap:0.35rem;">
+                                                    <div style="display:flex; justify-content:space-between; align-items:center; gap:0.4rem; flex-wrap:wrap;">
+                                                        <strong>${h.originalIdx + 1}. ${h.avatar || "🩺"} ${h.patient}</strong>
+                                                        <span class="case-score-pill ${pillCls}">⭐ ${ptsLabel} su 3</span>
+                                                    </div>
+                                                    <div style="display:flex; flex-direction:column; gap:0.2rem; font-size:0.79rem; color:#334155; padding-left:0.2rem;">
+                                                        <span>• <strong>Triage:</strong> ${h.triageOk ? "✅ +1 pt" : `❌ 0 pt (era ${TRIAGE_INFO[h.correctTriage].label.split("(")[0].trim()})`}</span>
+                                                        <span>• <strong>Anatomia (${h.structure}):</strong> ${h.spotOk ? "✅ +1 pt" : "❌ 0 pt"}</span>
+                                                        <span>• <strong>Primo Soccorso:</strong> ${h.firstAidOk ? "✅ +1 pt" : "❌ 0 pt"}</span>
+                                                    </div>
+                                                </div>
+                                            `;
+                                        }).join("")}
+                                    </div>
+                                </div>
                             </div>
-                            <div class="record-section-body" style="display:flex; flex-direction:column; gap:0.5rem;">
-                                ${erHistory.map((h, idx) => {
-                                    const pillCls = h.points === 3 ? "full" : h.points === 2 ? "mid" : "low";
-                                    const ptsLabel = h.points === 1 ? "1 punto" : `${h.points} punti`;
-                                    return `
-                                        <div style="font-size:0.85rem; padding:0.55rem 0.65rem; border-radius:8px; background:#f8fafc; border:1px solid #cbd5e1; display:flex; flex-direction:column; gap:0.35rem;">
-                                            <div>
-                                                <strong>${idx + 1}. ${h.avatar || "🩺"} ${h.patient}</strong>
+
+                            <!-- COLONNA DESTRA: RIEPILOGO PER TIPOLOGIA -->
+                            <div class="record-section">
+                                <div class="record-section-title">
+                                    <span>📊 Riepilogo per Tipologia</span>
+                                    <span>3 Competenze</span>
+                                </div>
+                                <div class="record-section-body" style="display:flex; flex-direction:column; gap:0.6rem;">
+                                    ${categoryBreakdown.map(cat => {
+                                        const catPct = totCases > 0 ? Math.round((cat.hits / totCases) * 100) : 0;
+                                        const isFiltered = erSummaryFilter === cat.key;
+                                        return `
+                                            <div class="er-category-card" style="${isFiltered ? "border-color:#0f172a; background:#f1f5f9;" : ""}">
+                                                <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.83rem;">
+                                                    <strong>${cat.icon} ${cat.title}</strong>
+                                                    <span style="font-weight:800; color:${cat.color};">${cat.hits}/${totCases} (${catPct}%)</span>
+                                                </div>
+                                                <div style="font-size:0.75rem; color:#475569;">${cat.desc}</div>
+                                                <div class="er-mini-bar">
+                                                    <div class="er-mini-bar-fill" style="width:${catPct}%; background:${cat.color};"></div>
+                                                </div>
+                                                ${cat.hits < totCases ? `
+                                                    <button type="button" class="er-type-btn" style="align-self:flex-start; margin-top:0.2rem; font-size:0.72rem;"
+                                                        onclick="erSummaryFilter='${isFiltered ? "all" : cat.key}'; renderERPanel();">
+                                                        ${isFiltered ? "Mostra tutti i pazienti" : `Filtra i ${totCases - cat.hits} errori ➔`}
+                                                    </button>
+                                                ` : `<span style="font-size:0.73rem; font-weight:700; color:#15803d;">🌟 Nessun errore in questa fase!</span>`}
                                             </div>
-                                            <div>
-                                                <span class="case-score-pill ${pillCls}">⭐ ${ptsLabel} su 3</span>
-                                            </div>
-                                            <div style="display:flex; flex-wrap:wrap; gap:0.4rem 0.75rem; font-size:0.8rem; color:#334155;">
-                                                <span>Triage: ${h.triageOk ? "✅ +1 punto" : `❌ 0 punti (${TRIAGE_INFO[h.correctTriage].label.split("(")[0].trim()})`}</span>
-                                                <span>Anatomia (${h.structure}): ${h.spotOk ? "✅ +1 punto" : "❌ 0 punti"}</span>
-                                                <span>Primo Soccorso: ${h.firstAidOk ? "✅ +1 punto" : "❌ 0 punti"}</span>
-                                            </div>
-                                        </div>
-                                    `;
-                                }).join("")}
+                                        `;
+                                    }).join("")}
+                                </div>
                             </div>
                         </div>
 
@@ -4263,6 +4616,7 @@
             const c = erSessionCases[erIndex];
             const triageMeta = TRIAGE_INFO[c.triage];
             const targetObj = (c.layer === "bones" ? BONES : MUSCLES).find(x => x.id === c.targetId);
+            const erProgressPct = Math.round(((erIndex + (erPhase1Done ? 0.33 : 0) + (erPhase2Done ? 0.33 : 0) + (erPhase3Done ? 0.34 : 0)) / erSessionCases.length) * 100);
 
             panel.innerHTML = `
                 ${clipSvg}
@@ -4281,6 +4635,9 @@
                             onclick="erShowTriageGuide=!erShowTriageGuide; renderERPanel();">
                             📋 Guida 5 Codici
                         </button>
+                        <div class="progress-track" aria-label="Avanzamento turno">
+                            <div class="progress-fill" style="width:${erProgressPct}%;"></div>
+                        </div>
                     </div>
 
                     ${erShowTriageGuide ? `
@@ -4386,6 +4743,7 @@
                     ` : ""}
                 </div>
             `;
+            updateMobileScannerContext();
         }
 
         /* ================= SCHEDA 4: QUIZ GENERALE ================= */
@@ -4438,10 +4796,16 @@
             }
 
             const q = quizList[quizIndex];
+            const quizPct = Math.round(((quizIndex + (quizAnswered ? 1 : 0)) / quizList.length) * 100);
             panel.innerHTML = `
-                <div class="er-status-bar">
-                    <span>📝 QUIZ APPARATO LOCOMOTORE</span>
-                    <span>Domanda ${quizIndex + 1}/${quizList.length} • Punti: ${quizScore}</span>
+                <div class="er-status-bar" style="flex-direction:column; align-items:stretch;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.4rem;">
+                        <span>📝 QUIZ APPARATO LOCOMOTORE</span>
+                        <span>Domanda ${quizIndex + 1}/${quizList.length} • Punti: ${quizScore}</span>
+                    </div>
+                    <div class="progress-track" style="background:rgba(255,255,255,0.2);">
+                        <div class="progress-fill" style="width:${quizPct}%;"></div>
+                    </div>
                 </div>
 
                 <div class="info-box">
@@ -4522,9 +4886,11 @@
                 gymAnsweredQ = false;
                 gymChosenOpt = null;
                 erWrongSpotId = null;
+                mobileAutoScrollTo("anatomy-stage");
             } else {
                 SFX.fanfare();
                 gymFinished = true;
+                mobileAutoScrollTo("info-panel");
             }
             renderHotspots();
             renderGymPanel();
@@ -4584,11 +4950,17 @@
             if (targetMuscle) {
                 ensureVisibleView(targetMuscle);
             }
+            const gymPct = Math.round(((gymIndex + (gymStep === 2 ? 0.5 : 0) + (gymAnsweredQ ? 0.5 : 0)) / gymSessionMovements.length) * 100);
 
             panel.innerHTML = `
-                <div class="er-status-bar">
-                    <span>🏋️ PALESTRA & MOVIMENTI</span>
-                    <span>Azione ${gymIndex + 1}/${gymSessionMovements.length} • Punti: ${gymScore} / ${maxPts}</span>
+                <div class="er-status-bar" style="flex-direction:column; align-items:stretch;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.4rem;">
+                        <span>🏋️ PALESTRA & MOVIMENTI</span>
+                        <span>Azione ${gymIndex + 1}/${gymSessionMovements.length} • Punti: ${gymScore} / ${maxPts}</span>
+                    </div>
+                    <div class="progress-track" style="background:rgba(255,255,255,0.2);">
+                        <div class="progress-fill" style="width:${gymPct}%;"></div>
+                    </div>
                 </div>
 
                 <div class="patient-card" style="background:#f8fafc;">
@@ -4655,6 +5027,7 @@
                     </div>
                 ` : ""}
             `;
+            updateMobileScannerContext();
         }
 
         /* ================= CAMBIO MODALITÀ & INIZIALIZZAZIONE ================= */
@@ -4675,14 +5048,19 @@
             } else if (mode === "er") {
                 renderHotspots();
                 renderERPanel();
+                mobileAutoScrollTo("info-panel");
             } else if (mode === "quiz") {
                 renderHotspots();
                 renderQuizPanel();
+                mobileAutoScrollTo("info-panel");
             } else if (mode === "gym") {
                 if (!gymSessionMovements.length) initGymSession();
                 renderHotspots();
                 renderGymPanel();
+                mobileAutoScrollTo("anatomy-stage");
             }
+            updateMobileScannerContext();
+            updateMobileQuickJumpLabel();
         }
 
         window.addEventListener("DOMContentLoaded", () => {
@@ -4695,11 +5073,15 @@
                 renderHotspots();
             });
 
+            window.addEventListener("scroll", updateMobileQuickJumpLabel, { passive: true });
+            window.addEventListener("resize", updateMobileQuickJumpLabel, { passive: true });
+
             setupZoomAndPan();
             setXrayVisual(true);
             loadPlateImage();
             renderHotspots();
             renderExplorePanel();
+            updateMobileQuickJumpLabel();
         });
     </script>
 </body>
